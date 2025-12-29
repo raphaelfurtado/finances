@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: 🚀 Deploy Completo (Backend + Frontend Separados)
 
 on:
   push:
@@ -6,46 +6,84 @@ on:
       - main
 
 jobs:
-  deploy:
+  web-deploy:
+    name: 🎉 Deploy Production
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      # 1. Baixa o código
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
 
-      - name: Setup PHP
+      # 2. Configura o PHP
+      - name: 🐘 Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json, zip
-          tools: composer:v2
+          php-version: '8.2'
+          extensions: mbstring, intl, pdo_mysql
 
-      - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction --no-dev --optimize-autoloader
-
-      - name: Deploy to server
-        uses: appleboy/scp-action@master
+      # 3. Cache do Composer
+      - name: 💾 Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "."
-          target: "/home/${{ secrets.SERVER_USER }}/finances.websiteponto.com.br/server-dir/finances/"
-          rm: false
-          strip_components: 0
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
 
-      - name: Run deployment commands
-        uses: appleboy/ssh-action@master
+      # 4. Instala Dependências (Cria a pasta /vendor)
+      - name: 📦 Install Composer Dependencies
+        run: composer install --no-dev --optimize-autoloader --prefer-dist --no-progress
+
+      # ----------------------------------------------------------------
+      # PARTE 1: Envia o BACKEND (App, Vendor, Config)
+      # ----------------------------------------------------------------
+      - name: 📂 Deploy Backend (App Core)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            cd /home/${{ secrets.SERVER_USER }}/finances.websiteponto.com.br/server-dir/finances/
-            php artisan migrate --force
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-            php artisan storage:link
-            chmod -R 755 storage bootstrap/cache
-            chown -R www-data:www-data storage bootstrap/cache
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          
+          # Destino: Pasta protegida do sistema
+          server-dir: finances/
+          
+          # Exclui a pasta public daqui (pois ela vai para outro lugar no passo seguinte)
+          exclude: |
+            public/**
+            .git*
+            .github/**
+            tests/**
+            storage/*.key
+            .env
+            /README.md
+
+      # ----------------------------------------------------------------
+      # PARTE 2: Envia o FRONTEND (CSS, JS, Assets)
+      # ----------------------------------------------------------------
+      - name: 📂 Deploy Frontend (Public Folder)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          
+          # Origem: Sua pasta public local
+          local-dir: public/
+          
+          # Destino: Sua pasta pública no servidor (Subdomínio)
+          server-dir: finances.websiteponto.com.br/
+          
+          # IMPORTANTE: 
+          # Geralmente excluímos o index.php se o do servidor já estiver 
+          # configurado com os caminhos corretos (../repertorio-app/...).
+          # Se o index.php do seu git já estiver certo, pode remover essa linha de exclude.
+          exclude: |
+            index.php
+
+      # ----------------------------------------------------------------
+      # PARTE 3: Roda as Migrations (Gatilho via URL)
+      # ----------------------------------------------------------------
+      - name: 🚀 Trigger Database Migrations
+        run: curl https://finances.websiteponto.com.br/rodar-migrations-secreto?key=123456
