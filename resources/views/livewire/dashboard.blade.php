@@ -4,7 +4,9 @@
         <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-3">
                 <i data-lucide="gift" class="w-8 h-8 text-blue-600"></i>
-                <h1 class="text-xl font-bold text-gray-900">Minhas Finanças</h1>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900">Minhas Finanças</h1>
+                </div>
             </div>
             <a href="/configuracoes" class="p-2 text-gray-400 hover:text-gray-600">
                 <i data-lucide="settings" class="w-5 h-5"></i>

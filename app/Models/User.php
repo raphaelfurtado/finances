@@ -23,6 +23,10 @@ class User extends Authenticatable
         'password',
         'google_id',
         'avatar',
+        'is_premium',
+        'is_admin',
+        'premium_activated_at',
+        'premium_expires_at',
     ];
 
     /**
