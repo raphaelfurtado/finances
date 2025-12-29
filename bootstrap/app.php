@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'premium' => \App\Http\Middleware\CheckPremium::class,
             'admin' => \App\Http\Middleware\CheckAdmin::class,
         ]);
+
+        $middleware->web(append: [
+            \App\Http\Middleware\CheckMaintenanceMode::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

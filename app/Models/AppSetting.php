@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
+
+class AppSetting extends Model
+{
+    protected $fillable = ['key', 'value'];
+
+    // Helper method to get a setting
+    public static function get(string $key, $default = null)
+    {
+        return Cache::remember("app_setting_{$key}", 3600, function () use ($key, $default) {
+            $setting = self::where('key', $key)->first();
+            return $setting ? $setting->value : $default;
+        });
+    }
+
+    // Helper method to set a setting
+    public static function set(string $key, $value): void
+    {
+        self::updateOrCreate(
+            ['key' => $key],
+            ['value' => $value]
+        );
+
+        Cache::forget("app_setting_{$key}");
+    }
+
+    // Check if maintenance mode is active
+    public static function isMaintenanceMode(): bool
+    {
+        return self::get('maintenance_mode', 'false') === 'true';
+    }
+
+    // Check if global banner is active
+    public static function isBannerActive(): bool
+    {
+        return self::get('global_banner_active', 'false') === 'true';
+    }
+
+    // Get banner data
+    public static function getBanner(): ?array
+    {
+        if (!self::isBannerActive()) {
+            return null;
+        }
+
+        return [
+            'message' => self::get('global_banner_message', ''),
+            'type' => self::get('global_banner_type', 'info'),
+        ];
+    }
+}

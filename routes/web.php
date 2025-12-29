@@ -11,6 +11,7 @@ use App\Livewire\Configuracoes;
 use App\Livewire\UpgradePlan;
 use App\Livewire\Admin\AdminDashboard;
 use App\Livewire\Admin\UserManagement;
+use App\Livewire\Admin\AppSettings;
 use App\Http\Controllers\Auth\SocialiteController;
 use Illuminate\Support\Facades\Auth;
 
@@ -41,6 +42,7 @@ Route::get('/configuracoes', Configuracoes::class)->middleware('auth')->name('co
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', AdminDashboard::class)->name('admin.dashboard');
     Route::get('/users', UserManagement::class)->name('admin.users');
+    Route::get('/settings', AppSettings::class)->name('admin.settings');
 });
 
 // Auth

@@ -25,6 +25,9 @@
 </head>
 
 <body class="font-sans antialiased bg-gray-50 flex justify-center">
+    <!-- Global Banner -->
+    <x-global-banner />
+
     <div class="w-full max-w-md min-h-screen bg-white shadow-xl flex flex-col">
         @auth
             <header class="p-4 border-b flex justify-between items-center bg-gray-50">

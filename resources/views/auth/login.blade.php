@@ -80,6 +80,7 @@
 </head>
 
 <body>
+    <x-global-banner />
     <div class="animated-bg">
         <div class="blob" style="top: 10%; left: 10%;"></div>
         <div class="blob" style="bottom: 10%; right: 10%; background: rgba(30, 64, 175, 0.2);"></div>
