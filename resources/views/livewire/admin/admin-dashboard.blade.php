@@ -143,7 +143,8 @@
                 <i data-lucide="settings" class="w-6 h-6"></i>
                 <span class="text-xs font-medium">Config</span>
             </a>
-            <a href="/" wire:navigate class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600">
+            <a href="/dashboard" wire:navigate
+                class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600">
                 <i data-lucide="home" class="w-6 h-6"></i>
                 <span class="text-xs font-medium">App</span>
             </a>
