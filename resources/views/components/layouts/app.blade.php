@@ -24,7 +24,8 @@
     </style>
 </head>
 
-<body class="font-sans antialiased bg-gray-50 flex justify-center">
+<body
+    class="font-sans antialiased bg-gray-50 flex flex-col items-center {{ session()->has('impersonator_id') ? 'pt-14' : '' }}">
     @if(session()->has('impersonator_id'))
         <div class="fixed top-0 left-0 right-0 bg-indigo-600 text-white z-[60] px-4 py-2 shadow-md">
             <div class="flex items-center justify-between max-w-md mx-auto">
@@ -38,7 +39,6 @@
                 </a>
             </div>
         </div>
-        <div class="h-10 w-full mb-10"></div> <!-- Spacer to push content down -->
     @endif
 
     <!-- Global Banner -->
