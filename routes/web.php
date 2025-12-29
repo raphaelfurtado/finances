@@ -46,6 +46,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/settings', AppSettings::class)->name('admin.settings');
 });
 
+Route::middleware(['auth', App\Http\Middleware\EnsureUserIsPremium::class])->group(function () {
+    // Rotas estritamente premium (nenhuma por enquanto, pois budgets terá paywall visual)
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/orcamentos', App\Livewire\Budgets::class)->name('budgets');
+});
+
 Route::get('/admin/stop-impersonating', function () {
     if (session()->has('impersonator_id')) {
         auth()->loginUsingId(session('impersonator_id'));
