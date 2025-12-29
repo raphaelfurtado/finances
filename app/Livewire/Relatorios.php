@@ -13,6 +13,10 @@ class Relatorios extends Component
     public $categoryExpenses = [];
     public $totalIncome = 0;
     public $totalExpenses = 0;
+    public $chartData = [
+        'labels' => [],
+        'datasets' => []
+    ];
 
     public function mount()
     {
@@ -26,21 +30,42 @@ class Relatorios extends Component
         $userId = auth()->id();
 
         // Get expenses by category
-        $this->categoryExpenses = Transaction::where('user_id', $userId)
+        $expensesByCategory = Transaction::where('user_id', $userId)
             ->expense()
             ->byMonth($this->selectedMonth, $this->selectedYear)
             ->with('category')
             ->get()
-            ->groupBy('category_id')
-            ->map(function ($transactions) {
-                return [
-                    'category' => $transactions->first()->category,
-                    'total' => $transactions->sum('amount'),
-                    'count' => $transactions->count()
-                ];
-            })
-            ->sortByDesc('total')
-            ->values();
+            ->groupBy('category_id');
+
+        $this->categoryExpenses = $expensesByCategory->map(function ($transactions) {
+            return [
+                'category' => $transactions->first()->category,
+                'total' => $transactions->sum('amount'),
+                'count' => $transactions->count()
+            ];
+        })->sortByDesc('total')->values();
+
+        // Prepare Chart Data
+        $labels = [];
+        $data = [];
+        $colors = [];
+
+        foreach ($this->categoryExpenses as $item) {
+            $labels[] = $item['category']->name ?? 'Sem Categoria';
+            $data[] = $item['total'];
+            $colors[] = $item['category']->color ?? '#9CA3AF';
+        }
+
+        $this->chartData = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'data' => $data,
+                    'backgroundColor' => $colors,
+                    'borderWidth' => 0
+                ]
+            ]
+        ];
 
         $this->totalIncome = Transaction::where('user_id', $userId)
             ->income()
@@ -51,6 +76,8 @@ class Relatorios extends Component
             ->expense()
             ->byMonth($this->selectedMonth, $this->selectedYear)
             ->sum('amount');
+
+        $this->dispatch('update-chart', data: $this->chartData);
     }
 
     public function previousMonth()

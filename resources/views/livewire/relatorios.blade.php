@@ -46,7 +46,7 @@
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-6">
             <h2 class="text-lg font-bold text-gray-900 mb-4">Despesas por Categoria</h2>
 
-            @if($categoryExpenses->isEmpty())
+            @if(empty($categoryExpenses))
                 <div class="text-center py-8">
                     <i data-lucide="pie-chart" class="w-12 h-12 mx-auto mb-2 text-gray-300"></i>
                     <p class="text-sm text-gray-400">Nenhuma despesa neste mês</p>
@@ -89,23 +89,100 @@
         </div>
 
         <!-- Visual Chart Placeholder -->
+        <!-- Visual Chart -->
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
             <h2 class="text-lg font-bold text-gray-900 mb-4">Gráfico de Despesas</h2>
-            <div class="flex items-center justify-center h-48 bg-gray-50 rounded-xl">
-                <div class="text-center">
-                    <i data-lucide="bar-chart-3" class="w-12 h-12 mx-auto mb-2 text-gray-300"></i>
-                    <p class="text-sm text-gray-400">Gráfico em desenvolvimento</p>
-                </div>
+            <div class="h-64 relative">
+                <canvas id="expensesChart"></canvas>
             </div>
         </div>
     </div>
 
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let chartInstance = null;
+
+        document.addEventListener('livewire:navigated', () => {
+            initChart(@json($chartData));
+        });
+
+        // Listen for livewire updates
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('update-chart', (event) => {
+                // event.data contains the data sent from dispatch
+                updateChart(event.data);
+            });
+        });
+
+        function initChart(data) {
+            const ctx = document.getElementById('expensesChart');
+            if (!ctx) return;
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            if (!data.labels || data.labels.length === 0) {
+                // Could render an "empty state" here if desired
+                return;
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                usePointStyle: true,
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 11
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%',
+                }
+            });
+        }
+
+        function updateChart(data) {
+             if (chartInstance) {
+                chartInstance.data = data;
+                chartInstance.update();
+            } else {
+                initChart(data);
+            }
+        }
+    </script>
+    
+    <!-- Fix for first load -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if(typeof Chart !== 'undefined') {
+                 initChart(@json($chartData));
+            }
+        });
+    </script>
+
+
     <!-- Bottom Navigation -->
     <x-bottom-nav active="relatorios" />
-</div>
 
-<script>
-    document.addEventListener('livewire:navigated', () => {
-        lucide.createIcons();
-    });
-</script>
+    <script>
+        document.addEventListener('livewire:navigated', () => {
+            lucide.createIcons();
+        });
+
+        document.addEventListener('livewire:init', () => {
+            Livewire.hook('morph.updated', ({ el, component }) => {
+                lucide.createIcons();
+            });
+        });
+    </script>
+</div>
