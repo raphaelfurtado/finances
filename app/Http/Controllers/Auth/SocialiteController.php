@@ -43,6 +43,10 @@ class SocialiteController extends Controller
             'password' => null, // Opcional: senhas são nulas para login social se não definidas
         ]);
 
+        if ($user->wasRecentlyCreated) {
+            \App\Services\CategoryTemplateService::applyPersonalFinancesTemplate($user);
+        }
+
         Auth::login($user);
 
         return redirect()->intended('/');
