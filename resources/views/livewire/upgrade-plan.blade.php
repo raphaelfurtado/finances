@@ -90,10 +90,10 @@
                         <span>Badge Premium no perfil</span>
                     </li>
                 </ul>
-                <button wire:click="simulatePayment" wire:loading.attr="disabled"
+                <button wire:click="checkout" wire:loading.attr="disabled"
                     class="w-full bg-white text-blue-600 font-bold py-4 rounded-xl hover:bg-gray-50 transition-all active:scale-95 shadow-lg disabled:opacity-50">
-                    <span wire:loading.remove wire:target="simulatePayment">🚀 Ativar Premium Agora</span>
-                    <span wire:loading wire:target="simulatePayment">Processando...</span>
+                    <span wire:loading.remove wire:target="checkout">🚀 Assinar Premium Agora</span>
+                    <span wire:loading wire:target="checkout">Redirecionando...</span>
                 </button>
             </div>
         </div>

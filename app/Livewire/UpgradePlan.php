@@ -6,13 +6,23 @@ use Livewire\Component;
 
 class UpgradePlan extends Component
 {
-    public function simulatePayment()
+    public function checkout()
     {
-        // Simulate successful payment
-        auth()->user()->activatePremium(1); // 1 month premium
+        $priceId = config('services.stripe.premium_price_id');
 
-        session()->flash('message', 'Premium ativado com sucesso! Aproveite os recursos exclusivos.');
-        return $this->redirect('/dashboard', navigate: true);
+        if (!$priceId) {
+            session()->flash('error', 'Configuração do Stripe incompleta (ID do preço ausente).');
+            return;
+        }
+
+        $checkout = auth()->user()
+            ->newSubscription('premium', $priceId)
+            ->checkout([
+                'success_url' => route('dashboard', ['checkout' => 'success']),
+                'cancel_url' => route('upgrade'),
+            ]);
+
+        return $this->redirect($checkout->url, navigate: false);
     }
 
     public function render()

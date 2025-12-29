@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, \Laravel\Cashier\Billable;
 
     /**
      * The attributes that are mass assignable.
@@ -69,17 +69,20 @@ class User extends Authenticatable
     // Premium methods
     public function isPremium(): bool
     {
-        if (!$this->is_premium) {
-            return false;
+        if ($this->subscribed('premium')) {
+            return true;
         }
 
-        // Check if premium has expired
-        if ($this->premium_expires_at && $this->premium_expires_at->isPast()) {
-            $this->update(['is_premium' => false]);
-            return false;
+        if ($this->is_premium) {
+            // Check if premium has expired
+            if ($this->premium_expires_at && $this->premium_expires_at->isPast()) {
+                $this->update(['is_premium' => false]);
+                return false;
+            }
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     public function isAdmin(): bool
