@@ -76,6 +76,28 @@
             </button>
         </div>
 
+        <!-- Consultor Sincero -->
+        <div class="mb-6">
+            <div
+                class="bg-gradient-to-r from-purple-800 to-indigo-900 rounded-2xl p-4 shadow-lg text-white relative overflow-hidden">
+                <!-- Decorative Circle -->
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+
+                <div class="flex items-start gap-4 relative z-10">
+                    <div class="bg-white/20 p-2 rounded-xl backdrop-blur-sm">
+                        <i data-lucide="bot" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-bold text-purple-200 uppercase tracking-wider mb-1">Consultor Sincero
+                        </h3>
+                        <p class="font-medium text-sm leading-relaxed">
+                            "{{ $advice }}"
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Recent Transactions -->
         <div class="mb-20">
             <div class="flex items-center justify-between mb-4">

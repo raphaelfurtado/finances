@@ -69,6 +69,62 @@ class Dashboard extends Component
             ->with('category')
             ->recent(5)
             ->get();
+
+        $this->generateAdvice($userId);
+    }
+
+    public $advice = '';
+
+    public function generateAdvice($userId)
+    {
+        $topExpense = Transaction::where('user_id', $userId)
+            ->expense()
+            ->byMonth($this->selectedMonth, $this->selectedYear)
+            ->selectRaw('category_id, sum(amount) as total')
+            ->groupBy('category_id')
+            ->orderByDesc('total')
+            ->with('category')
+            ->first();
+
+        // Cenário 1: Gastou mais do que ganhou
+        if ($this->expenses > $this->income && $this->income > 0) {
+            $messages = [
+                "Parabéns! Você está oficialmente patrocinando a riqueza alheia enquanto empobrece.",
+                "Se continuar assim, o Serasa vai te mandar cartão de natal.",
+                "A conta não fecha, e a culpa não é da matemática.",
+            ];
+            $this->advice = $messages[array_rand($messages)];
+            return;
+        }
+
+        // Cenário 2: Gastou muito em uma categoria específica
+        if ($topExpense && $this->expenses > 0) {
+            $percentage = ($topExpense->total / $this->expenses) * 100;
+            if ($percentage > 40) {
+                $categoryName = $topExpense->category->name ?? 'coisas aleatórias';
+                $messages = [
+                    "Você trabalha só para pagar {$categoryName}? É o que parece.",
+                    "Se {$categoryName} fosse uma pessoa, vocês já estariam casados.",
+                    "Investir em {$categoryName} não aposenta ninguém, viu?",
+                ];
+                $this->advice = $messages[array_rand($messages)];
+                return;
+            }
+        }
+
+        // Cenário 3: Sobrou dinheiro (Milagre)
+        if ($this->balance > 0) {
+            $messages = [
+                "Sobrou dinheiro? Certeza que você não esqueceu de pagar nada?",
+                "Olha só, alguém está se sentindo o Lobo de Wall Street.",
+                "Não gaste tudo em bala, hein?",
+            ];
+            $this->advice = $messages[array_rand($messages)];
+            return;
+        }
+
+        // Default
+        $this->advice = "Sua vida financeira está tão parada que nem eu tenho o que falar.";
     }
 
     public function previousMonth()
