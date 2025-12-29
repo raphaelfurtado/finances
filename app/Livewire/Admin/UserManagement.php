@@ -52,6 +52,21 @@ class UserManagement extends Component
         $this->selectedUser = null;
     }
 
+    public function impersonate($userId)
+    {
+        if (auth()->id() === $userId) {
+            return;
+        }
+
+        // Store the original admin user ID in session
+        session()->put('impersonator_id', auth()->id());
+
+        // Login as the selected user
+        auth()->loginUsingId($userId);
+
+        return redirect()->route('dashboard');
+    }
+
     public function render()
     {
         $query = User::query();

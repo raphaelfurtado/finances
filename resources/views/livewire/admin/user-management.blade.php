@@ -136,121 +136,136 @@
 
     <!-- User Details Modal -->
     @if($showUserModal && $selectedUser)
-        <div class="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50" wire:click="closeModal">
-            <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md max-h-[90vh] overflow-y-auto" wire:click.stop>
-                <!-- Modal Header -->
-                <div class="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 rounded-t-3xl">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-bold text-gray-900">Detalhes do Usuário</h2>
-                        <button wire:click="closeModal" class="p-2 text-gray-400 hover:text-gray-600">
-                            <i data-lucide="x" class="w-6 h-6"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Modal Content -->
-                <div class="p-6 space-y-4">
-                    <!-- User Info -->
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-2xl">
-                            {{ substr($selectedUser->name, 0, 1) }}
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-gray-900 text-lg">{{ $selectedUser->name }}</h3>
-                            <p class="text-sm text-gray-500">{{ $selectedUser->email }}</p>
+            <div class="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50" wire:click="closeModal">
+                <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md max-h-[90vh] overflow-y-auto" wire:click.stop>
+                    <!-- Modal Header -->
+                    <div class="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 rounded-t-3xl">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-bold text-gray-900">Detalhes do Usuário</h2>
+                            <button wire:click="closeModal" class="p-2 text-gray-400 hover:text-gray-600">
+                                <i data-lucide="x" class="w-6 h-6"></i>
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Status Badges -->
-                    <div class="flex gap-2">
-                        @if($selectedUser->isPremium())
-                            <span
-                                class="px-3 py-1 bg-yellow-100 text-yellow-700 text-sm font-semibold rounded-full flex items-center gap-1">
-                                <i data-lucide="crown" class="w-4 h-4"></i>
-                                Premium
-                            </span>
-                        @endif
-                        @if($selectedUser->isAdmin())
-                            <span class="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-semibold rounded-full">
-                                Administrador
-                            </span>
-                        @endif
-                    </div>
-
-                    <!-- Premium Info -->
-                    @if($selectedUser->isPremium())
-                        <div class="bg-yellow-50 rounded-xl p-4">
-                            <h4 class="font-semibold text-yellow-900 mb-2">Informações Premium</h4>
-                            <div class="space-y-1 text-sm">
-                                <p class="text-yellow-700">
-                                    Ativado em:
-                                    {{ $selectedUser->premium_activated_at->locale('pt_BR')->isoFormat('DD/MM/YYYY') }}
-                                </p>
-                                @if($selectedUser->premium_expires_at)
-                                    <p class="text-yellow-700">
-                                        Expira em: {{ $selectedUser->premium_expires_at->locale('pt_BR')->isoFormat('DD/MM/YYYY') }}
-                                    </p>
-                                    <p class="text-yellow-700 font-semibold">
-                                        {{ $selectedUser->premiumDaysRemaining() }} dias restantes
-                                    </p>
-                                @endif
+                    <!-- Modal Content -->
+                    <div class="p-6 space-y-4">
+                        <!-- User Info -->
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-2xl">
+                                {{ substr($selectedUser->name, 0, 1) }}
                             </div>
+                            <div>
+                                <h3 class="font-bold text-gray-900 text-lg">{{ $selectedUser->name }}</h3>
+                                <p class="text-sm text-gray-500">{{ $selectedUser->email }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Status Badges -->
+                        <div class="flex gap-2">
+                            @if($selectedUser->isPremium())
+                                <span
+                                    class="px-3 py-1 bg-yellow-100 text-yellow-700 text-sm font-semibold rounded-full flex items-center gap-1">
+                                    <i data-lucide="crown" class="w-4 h-4"></i>
+                                    Premium
+                                </span>
+                            @endif
+                            @if($selectedUser->isAdmin())
+                                <span class="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-semibold rounded-full">
+                                    Administrador
+                                </span>
+                            @endif
+                        </div>
+
+                        <!-- Premium Info -->
+                        @if($selectedUser->isPremium())
+                            <div class="bg-yellow-50 rounded-xl p-4">
+                                <h4 class="font-semibold text-yellow-900 mb-2">Informações Premium</h4>
+                                <div class="space-y-1 text-sm">
+                                    <p class="text-yellow-700">
+                                        Ativado em:
+                                        {{ $selectedUser->premium_activated_at->locale('pt_BR')->isoFormat('DD/MM/YYYY') }}
+                                    </p>
+                                    @if($selectedUser->premium_expires_at)
+                                        <p class="text-yellow-700">
+                                            Expira em: {{ $selectedUser->premium_expires_at->locale('pt_BR')->isoFormat('DD/MM/YYYY') }}
+                                        </p>
+                                        <p class="text-yellow-700 font-semibold">
+                                            {{ $selectedUser->premiumDaysRemaining() }} dias restantes
+                                        </p>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Stats -->
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <h4 class="font-semibold text-gray-900 mb-3">Estatísticas</h4>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Total de Transações</span>
+                                    <span class="font-bold text-gray-900">{{ $selectedUser->transactions->count() }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Receitas</span>
+                                    <span
+                                        class="font-bold text-green-600">{{ $selectedUser->transactions->where('type', 'income')->count() }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Despesas</span>
+                                    <span
+                                        class="font-bold text-red-600">{{ $selectedUser->transactions->where('type', 'expense')->count() }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Categorias Criadas</span>
+                                    <span class="font-bold text-gray-900">{{ $selectedUser->categories->count() }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Membro há</span>
+                                    <span
+                                        class="font-bold text-gray-900">{{ $selectedUser->created_at->locale('pt_BR')->diffForHumans(null, true) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Impersonate Action -->
+                    @if(auth()->id() !== $selectedUser->id)
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                            <button wire:click="impersonate({{ $selectedUser->id }})"
+                                class="w-full w-full px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-indigo-200">
+                                <i data-lucide="log-in" class="w-5 h-5"></i>
+                                Entrar como este Usuário
+                            </button>
+                            <p class="text-xs text-center text-gray-400 mt-2">
+                                Você navegará no sistema como se fosse este usuário.
+                            </p>
                         </div>
                     @endif
-
-                    <!-- Stats -->
-                    <div class="bg-gray-50 rounded-xl p-4">
-                        <h4 class="font-semibold text-gray-900 mb-3">Estatísticas</h4>
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Total de Transações</span>
-                                <span class="font-bold text-gray-900">{{ $selectedUser->transactions->count() }}</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Receitas</span>
-                                <span
-                                    class="font-bold text-green-600">{{ $selectedUser->transactions->where('type', 'income')->count() }}</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Despesas</span>
-                                <span
-                                    class="font-bold text-red-600">{{ $selectedUser->transactions->where('type', 'expense')->count() }}</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Categorias Criadas</span>
-                                <span class="font-bold text-gray-900">{{ $selectedUser->categories->count() }}</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Membro há</span>
-                                <span
-                                    class="font-bold text-gray-900">{{ $selectedUser->created_at->locale('pt_BR')->diffForHumans(null, true) }}</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     @endif
 
-    <!-- Bottom Nav -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4"
-        style="max-width: 448px; margin: 0 auto;">
-        <div class="flex items-center justify-around">
-            <a href="/admin" wire:navigate class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600">
-                <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
-                <span class="text-xs font-medium">Dashboard</span>
-            </a>
-            <a href="/admin/users" wire:navigate class="flex flex-col items-center gap-1 text-blue-600">
-                <i data-lucide="users" class="w-6 h-6"></i>
-                <span class="text-xs font-medium">Usuários</span>
-            </a>
-            <a href="/" wire:navigate class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600">
-                <i data-lucide="home" class="w-6 h-6"></i>
-                <span class="text-xs font-medium">App</span>
-            </a>
-        </div>
+<!-- Bottom Nav -->
+<div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4"
+    style="max-width: 448px; margin: 0 auto;">
+    <div class="flex items-center justify-around">
+        <a href="/admin" wire:navigate class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600">
+            <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+            <span class="text-xs font-medium">Dashboard</span>
+        </a>
+        <a href="/admin/users" wire:navigate class="flex flex-col items-center gap-1 text-blue-600">
+            <i data-lucide="users" class="w-6 h-6"></i>
+            <span class="text-xs font-medium">Usuários</span>
+        </a>
+        <a href="/" wire:navigate class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600">
+            <i data-lucide="home" class="w-6 h-6"></i>
+            <span class="text-xs font-medium">App</span>
+        </a>
     </div>
+</div>
 </div>
 
 <script>

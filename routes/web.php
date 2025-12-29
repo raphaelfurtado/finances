@@ -43,7 +43,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', AdminDashboard::class)->name('admin.dashboard');
     Route::get('/users', UserManagement::class)->name('admin.users');
     Route::get('/settings', AppSettings::class)->name('admin.settings');
+    Route::get('/settings', AppSettings::class)->name('admin.settings');
 });
+
+Route::get('/admin/stop-impersonating', function () {
+    if (session()->has('impersonator_id')) {
+        auth()->loginUsingId(session('impersonator_id'));
+        session()->forget('impersonator_id');
+        return redirect()->route('admin.users');
+    }
+    return redirect()->route('dashboard');
+})->name('admin.stop-impersonating');
 
 // Auth
 Route::get('/login', function () {
