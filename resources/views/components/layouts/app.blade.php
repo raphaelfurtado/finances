@@ -7,6 +7,9 @@
 
     <title>{{ $title ?? 'Finanças App' }}</title>
 
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="manifest" href="/manifest.json">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -57,17 +60,26 @@
                             {{ substr(auth()->user()->name, 0, 1) }}
                         </div>
                     @endif
-                    <div>
-                        <p class="text-sm font-semibold text-gray-900 leading-none">{{ auth()->user()->name }}</p>
+                    <div class="hidden md:block">
+                        <p class="text-sm font-semibold text-gray-700">{{ auth()->user()->name }}</p>
                         <p class="text-xs text-gray-500">{{ auth()->user()->email }}</p>
                     </div>
                 </div>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="p-2 text-gray-400 hover:text-red-500 transition-colors">
-                        <i data-lucide="log-out" class="w-5 h-5"></i>
+
+                <div class="flex items-center">
+                    <button id="installAppBtn"
+                        class="hidden px-3 py-1.5 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 rounded-lg text-xs font-bold transition-colors mr-2 flex items-center gap-1">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        Instalar
                     </button>
-                </form>
+
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="p-2 text-gray-400 hover:text-red-500 transition-colors">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                        </button>
+                    </form>
+                </div>
             </header>
         @endauth
 
@@ -79,9 +91,44 @@
     <script>
         lucide.createIcons();
 
+        document.addEventListener('livewire:init', () => {
+            Livewire.hook('morph.updated', ({ component, cleanup }) => {
+                lucide.createIcons();
+            });
+        });
+
         // Configurar Axios para Laravel
         window.axios = axios;
         window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+        // PWA Install Logic
+        let deferredPrompt;
+        const installBtn = document.getElementById('installAppBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            // Update UI notify the user they can install the PWA
+            if (installBtn) installBtn.classList.remove('hidden');
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+                // Show the install prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                // Optionally, send analytics event with outcome of user choice
+                console.log(`User response to the install prompt: ${outcome}`);
+                // We've used the prompt, and can't use it again, throw it away
+                deferredPrompt = null;
+                // Hide the button
+                installBtn.classList.add('hidden');
+            });
+        }
     </script>
 </body>
 

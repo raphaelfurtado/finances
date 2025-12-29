@@ -15,8 +15,19 @@ use App\Livewire\Admin\AppSettings;
 use App\Http\Controllers\Auth\SocialiteController;
 use Illuminate\Support\Facades\Auth;
 
+// Landing Page
+// Landing Page
+Route::get('/', function () {
+    $testimonials = App\Models\Testimonial::with('user')
+        ->where('is_approved', true)
+        ->latest()
+        ->take(3)
+        ->get();
+    return view('landing', compact('testimonials'));
+})->name('landing');
+
 // Dashboard (Home)
-Route::get('/', Dashboard::class)->middleware('auth')->name('dashboard');
+Route::get('/dashboard', Dashboard::class)->middleware('auth')->name('dashboard');
 
 // Categories
 Route::get('/categories', ManageCategories::class)->middleware('auth')->name('categories');
@@ -36,6 +47,7 @@ Route::get('/upgrade', UpgradePlan::class)->middleware('auth')->name('upgrade');
 
 // Other Screens
 Route::get('/perfil', Perfil::class)->middleware('auth')->name('perfil');
+Route::get('/meu-depoimento', App\Livewire\User\MyTestimonial::class)->middleware('auth')->name('my-testimonial');
 Route::get('/configuracoes', Configuracoes::class)->middleware('auth')->name('configuracoes');
 
 // Admin Area (protected by admin middleware)
@@ -43,7 +55,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', AdminDashboard::class)->name('admin.dashboard');
     Route::get('/users', UserManagement::class)->name('admin.users');
     Route::get('/settings', AppSettings::class)->name('admin.settings');
-    Route::get('/settings', AppSettings::class)->name('admin.settings');
+    Route::get('/testimonials', App\Livewire\Admin\ManageTestimonials::class)->name('admin.testimonials');
 });
 
 Route::middleware(['auth', App\Http\Middleware\EnsureUserIsPremium::class])->group(function () {

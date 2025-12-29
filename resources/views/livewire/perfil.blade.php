@@ -84,7 +84,7 @@
             </a>
 
             <a href="/configuracoes"
-                class="flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors">
+                class="flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors border-b border-gray-100">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
                         <i data-lucide="settings" class="w-5 h-5 text-blue-600"></i>
@@ -92,6 +92,20 @@
                     <div>
                         <p class="font-semibold text-gray-900">Configurações</p>
                         <p class="text-xs text-gray-500">Preferências do app</p>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+            </a>
+
+            <a href="{{ route('my-testimonial') }}"
+                class="flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-yellow-50 rounded-lg flex items-center justify-center">
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-600"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">Meu Depoimento</p>
+                        <p class="text-xs text-gray-500">Avalie nossa plataforma</p>
                     </div>
                 </div>
                 <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>

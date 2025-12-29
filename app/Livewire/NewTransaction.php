@@ -81,7 +81,7 @@ class NewTransaction extends Component
             ]);
 
             session()->flash('message', 'Transação criada com sucesso!');
-            return $this->redirect('/', navigate: true);
+            return $this->redirect('/dashboard', navigate: true);
         } catch (\Exception $e) {
             $this->addError('save', 'Erro ao salvar a transação. Tente novamente.');
         }

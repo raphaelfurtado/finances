@@ -19,7 +19,7 @@ class TransactionDetails extends Component
     public function delete()
     {
         $this->transaction->delete();
-        return redirect('/')->with('message', 'Transação excluída com sucesso!');
+        return redirect('/dashboard')->with('message', 'Transação excluída com sucesso!');
     }
 
     public function render()

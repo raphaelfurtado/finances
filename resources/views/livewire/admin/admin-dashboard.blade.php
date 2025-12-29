@@ -66,12 +66,11 @@
                     <span class="font-semibold text-blue-700 text-sm">Gerenciar Usuários</span>
                 </a>
 
-
-                <button
-                    class="flex items-center justify-center gap-2 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors">
-                    <i data-lucide="refresh-cw" class="w-5 h-5 text-gray-600"></i>
-                    <span class="font-semibold text-gray-700 text-sm">Atualizar Stats</span>
-                </button>
+                <a href="{{ route('admin.testimonials') }}" wire:navigate
+                    class="flex items-center justify-center gap-2 p-4 bg-yellow-50 hover:bg-yellow-100 rounded-xl transition-colors">
+                    <i data-lucide="star" class="w-5 h-5 text-yellow-600"></i>
+                    <span class="font-semibold text-yellow-700 text-sm">Depoimentos</span>
+                </a>
             </div>
         </div>
 

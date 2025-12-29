@@ -12,7 +12,7 @@ class UpgradePlan extends Component
         auth()->user()->activatePremium(1); // 1 month premium
 
         session()->flash('message', 'Premium ativado com sucesso! Aproveite os recursos exclusivos.');
-        return $this->redirect('/', navigate: true);
+        return $this->redirect('/dashboard', navigate: true);
     }
 
     public function render()
