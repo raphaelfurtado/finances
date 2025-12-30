@@ -12,6 +12,7 @@ class AppSettings extends Component
     public $global_banner_active;
     public $global_banner_message;
     public $global_banner_type;
+    public $plan_price;
 
     public function mount()
     {
@@ -25,6 +26,7 @@ class AppSettings extends Component
         $this->global_banner_active = AppSetting::get('global_banner_active', 'false') === 'true';
         $this->global_banner_message = AppSetting::get('global_banner_message', '');
         $this->global_banner_type = AppSetting::get('global_banner_type', 'info');
+        $this->plan_price = AppSetting::getPlanPrice();
     }
 
     public function toggleMaintenanceMode()
@@ -53,11 +55,13 @@ class AppSettings extends Component
             'maintenance_message' => 'required|string|max:500',
             'global_banner_message' => 'nullable|string|max:500',
             'global_banner_type' => 'required|in:info,warning,error,success',
+            'plan_price' => 'required|string|max:20',
         ]);
 
         AppSetting::set('maintenance_message', $this->maintenance_message);
         AppSetting::set('global_banner_message', $this->global_banner_message);
         AppSetting::set('global_banner_type', $this->global_banner_type);
+        AppSetting::set('plan_price', $this->plan_price);
 
         session()->flash('message', '✅ Configurações salvas com sucesso!');
     }

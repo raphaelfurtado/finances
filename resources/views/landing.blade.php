@@ -329,7 +329,8 @@
                         <div class="mb-6">
                             <h3 class="text-2xl font-bold text-white mb-2">Premium</h3>
                             <div class="flex items-baseline gap-1">
-                                <span class="text-4xl font-extrabold text-white">R$ 9,90</span>
+                                <span class="text-4xl font-extrabold text-white">R$
+                                    {{ \App\Models\AppSetting::getPlanPrice() }}</span>
                                 <span class="text-slate-400">/mês</span>
                             </div>
                             <p class="mt-4 text-indigo-200">Para quem quer controle absoluto e análises profundas.</p>

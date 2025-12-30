@@ -53,4 +53,10 @@ class AppSetting extends Model
             'type' => self::get('global_banner_type', 'info'),
         ];
     }
+
+    // Get plan price
+    public static function getPlanPrice(): string
+    {
+        return self::get('plan_price', '9,90');
+    }
 }

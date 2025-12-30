@@ -64,7 +64,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-bold">Premium</h3>
                     <div class="text-right">
-                        <div class="text-3xl font-bold">R$ 9,90</div>
+                        <div class="text-3xl font-bold">R$ {{ \App\Models\AppSetting::getPlanPrice() }}</div>
                         <div class="text-xs opacity-75">/mês</div>
                     </div>
                 </div>

@@ -128,6 +128,30 @@
             </div>
         </div>
 
+        <!-- Plan Settings Section -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
+                    <i data-lucide="credit-card" class="w-6 h-6 text-purple-600"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-gray-900">Configuração do Plano</h2>
+                    <p class="text-xs text-gray-500">Altere o preço do plano premium</p>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Preço do Plano (Premium)</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">R$</span>
+                    <input type="text" wire:model="plan_price"
+                        class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        placeholder="Ex: 9,90">
+                </div>
+                @error('plan_price') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
+            </div>
+        </div>
+
         <!-- Save Button -->
         <button wire:click="saveSettings" wire:loading.attr="disabled"
             class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-4 rounded-2xl transition-all active:scale-95 shadow-lg">
