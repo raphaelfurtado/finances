@@ -2,7 +2,7 @@
     <!-- Header -->
     <div class="bg-white px-6 py-4 border-b border-gray-100">
         <div class="flex items-center justify-between">
-            <a href="/" wire:navigate class="p-2 text-gray-800 hover:text-gray-600">
+            <a href="/perfil" wire:navigate class="p-2 text-gray-800 hover:text-gray-600">
                 <i data-lucide="chevron-left" class="w-6 h-6"></i>
             </a>
             <h1 class="text-xl font-bold text-gray-900">Desbloquear Premium</h1>

@@ -2,7 +2,7 @@
     <!-- Header -->
     <div class="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
         <div class="flex items-center gap-3">
-            <a href="/" class="p-2 -ml-2 text-gray-800 hover:text-gray-600">
+            <a href="/dashboard" class="p-2 -ml-2 text-gray-800 hover:text-gray-600">
                 <i data-lucide="chevron-left" class="w-6 h-6"></i>
             </a>
             <h1 class="text-xl font-bold text-gray-900">Detalhes</h1>
@@ -31,7 +31,8 @@
             <p class="text-lg text-gray-600 mb-1">{{ $transaction->category->name ?? 'Sem categoria' }}</p>
             <p class="text-sm text-gray-400">{{ $transaction->date->format('d') }}
                 {{ $transaction->date->locale('pt_BR')->isoFormat('MMM, YYYY') }} •
-                {{ $transaction->date->format('H:i') }}</p>
+                {{ $transaction->date->format('H:i') }}
+            </p>
         </div>
 
         <!-- Transaction Information -->
@@ -39,35 +40,38 @@
             <h3 class="text-sm font-bold text-gray-900 mb-4">Informações da Transação</h3>
 
             <div class="grid grid-cols-2 gap-4">
-                <!-- Account -->
-                <div>
-                    <span class="text-xs font-medium text-gray-400 uppercase block mb-2">Conta</span>
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="credit-card" class="w-4 h-4 text-gray-600"></i>
-                        <span class="text-sm font-medium text-gray-900">Nubank ****1234</span>
-                    </div>
-                </div>
-
                 <!-- Status -->
                 <div>
                     <span class="text-xs font-medium text-gray-400 uppercase block mb-2">Status</span>
                     <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span class="text-sm font-medium text-gray-900">{{ ucfirst($transaction->status) }}</span>
+                        <div class="w-2 h-2 {{ $transaction->status === 'paid' ? 'bg-green-500' : 'bg-yellow-500' }} rounded-full"></div>
+                        <span class="text-sm font-medium text-gray-900">
+                            @if($transaction->status === 'paid') Pago
+                            @elseif($transaction->status === 'pending') Pendente
+                            @else Cancelado
+                            @endif
+                        </span>
                     </div>
                 </div>
 
                 <!-- Payment Method -->
                 <div>
                     <span class="text-xs font-medium text-gray-400 uppercase block mb-2">Método</span>
-                    <span class="text-sm font-medium text-gray-900">{{ ucfirst($transaction->payment_method) }}</span>
+                    <span class="text-sm font-medium text-gray-900">
+                        @switch($transaction->payment_method)
+                            @case('credit') Cartão de Crédito @break
+                            @case('debit') Cartão de Débito @break
+                            @case('cash') Dinheiro @break
+                            @case('pix') PIX @break
+                            @default {{ ucfirst($transaction->payment_method) }}
+                        @endswitch
+                    </span>
                 </div>
 
                 <!-- Recurring -->
                 <div>
                     <span class="text-xs font-medium text-gray-400 uppercase block mb-2">Recorrente</span>
-                    <span
-                        class="text-sm font-medium text-gray-900">{{ $transaction->is_recurring ? 'Sim' : 'Não' }}</span>
+                    <span class="text-sm font-medium text-gray-900">{{ $transaction->is_recurring ? 'Sim' : 'Não' }}</span>
                 </div>
             </div>
         </div>

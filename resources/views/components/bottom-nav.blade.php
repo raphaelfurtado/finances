@@ -4,7 +4,7 @@
     style="max-width: 448px; margin: 0 auto;">
     <div class="grid grid-cols-5 gap-1 px-4 py-2">
         <!-- Painel -->
-        <a href="/"
+        <a href="/dashboard"
             class="flex flex-col items-center justify-center py-2 {{ $active === 'painel' ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-600 transition-colors">
             <i data-lucide="layout-grid" class="w-6 h-6 mb-1"></i>
             <span class="text-xs font-medium">Painel</span>

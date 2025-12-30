@@ -6,7 +6,7 @@
                 <h1 class="text-2xl font-bold">Admin Dashboard</h1>
                 <p class="text-indigo-100 text-sm">Painel de controle administrativo</p>
             </div>
-            <a href="/" wire:navigate class="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors">
+            <a href="/perfil" wire:navigate class="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </a>
         </div>

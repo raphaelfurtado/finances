@@ -1,10 +1,12 @@
 <div class="flex flex-col h-full bg-white">
     <!-- Header -->
     <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-        <a href="/" class="text-sm font-semibold text-blue-600 hover:text-blue-700">
+        <a href="/dashboard" class="text-sm font-semibold text-blue-600 hover:text-blue-700">
             Cancelar
         </a>
-        <h1 class="text-lg font-bold text-gray-900">Nova {{ $type === 'expense' ? 'Despesa' : 'Receita' }}</h1>
+        <h1 class="text-lg font-bold text-gray-900">{{ $transaction_id ? 'Editar' : 'Nova' }}
+            {{ $type === 'expense' ? 'Despesa' : 'Receita' }}
+        </h1>
         <button wire:click="save" wire:loading.attr="disabled"
             class="text-sm font-semibold text-blue-600 hover:text-blue-700 disabled:opacity-50">
             <span wire:loading.remove wire:target="save">Salvar</span>
@@ -169,7 +171,7 @@
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                 </path>
             </svg>
-            <span wire:loading.remove wire:target="save">Adicionar
+            <span wire:loading.remove wire:target="save">{{ $transaction_id ? 'Salvar Alterações' : 'Adicionar' }}
                 {{ $type === 'expense' ? 'Despesa' : 'Receita' }}</span>
             <span wire:loading wire:target="save">Salvando...</span>
         </button>

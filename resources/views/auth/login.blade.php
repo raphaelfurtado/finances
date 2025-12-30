@@ -121,8 +121,9 @@
             <div class="mt-8 pt-8 border-t border-slate-800">
                 <p class="text-slate-500 text-sm">
                     Ao entrar, você concorda com nossos <br>
-                    <a href="#" class="text-blue-400 hover:text-blue-300 transition-colors">Termos de Uso</a> e <a
-                        href="#" class="text-blue-400 hover:text-blue-300 transition-colors">Privacidade</a>.
+                    <a href="{{ route('terms') }}" class="text-blue-400 hover:text-blue-300 transition-colors">Termos de
+                        Uso</a> e <a href="{{ route('privacy') }}"
+                        class="text-blue-400 hover:text-blue-300 transition-colors">Privacidade</a>.
                 </p>
             </div>
         </div>

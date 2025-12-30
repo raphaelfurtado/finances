@@ -1,7 +1,7 @@
 <div class="flex flex-col h-full bg-gray-50">
     <!-- Header -->
     <div class="flex items-center px-6 py-4 bg-white border-b border-gray-100">
-        <a href="/" wire:navigate class="p-2 -ml-2 text-gray-800 hover:text-gray-600">
+        <a href="/perfil" wire:navigate class="p-2 -ml-2 text-gray-800 hover:text-gray-600">
             <i data-lucide="chevron-left" class="w-6 h-6"></i>
         </a>
         <h1 class="flex-1 text-center text-xl font-bold text-gray-900 pr-8">Gerenciar Categorias</h1>

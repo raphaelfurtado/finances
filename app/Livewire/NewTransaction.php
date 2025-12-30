@@ -19,13 +19,30 @@ class NewTransaction extends Component
     public $observation = '';
     public $categories = [];
 
-    public function mount($type = 'expense')
+    public $transaction_id;
+    public $editingTransaction = null;
+
+    public function mount($type = 'expense', $id = null)
     {
-        $this->type = $type;
-        $this->date = Carbon::now()->format('Y-m-d');
+        if ($id) {
+            $this->editingTransaction = Transaction::where('user_id', auth()->id())->findOrFail($id);
+            $this->transaction_id = $id;
+            $this->type = $this->editingTransaction->type;
+            $this->amount = number_format($this->editingTransaction->amount, 2, ',', '.');
+            $this->description = $this->editingTransaction->description;
+            $this->category_id = $this->editingTransaction->category_id;
+            $this->date = $this->editingTransaction->date->format('Y-m-d');
+            $this->payment_method = $this->editingTransaction->payment_method;
+            $this->is_recurring = $this->editingTransaction->is_recurring;
+            $this->observation = $this->editingTransaction->observation;
+        } else {
+            $this->type = $type;
+            $this->date = Carbon::now()->format('Y-m-d');
+        }
+
         $this->categories = Category::where('user_id', auth()->id())->get();
 
-        if ($this->categories->isNotEmpty()) {
+        if (!$id && $this->categories->isNotEmpty() && !$this->category_id) {
             $this->category_id = $this->categories->first()->id;
         }
     }
@@ -67,20 +84,35 @@ class NewTransaction extends Component
         }
 
         try {
-            Transaction::create([
-                'user_id' => auth()->id(),
-                'category_id' => $this->category_id,
-                'type' => $this->type,
-                'amount' => (float) $amount,
-                'description' => $this->description,
-                'date' => $this->date,
-                'payment_method' => $this->payment_method,
-                'status' => 'paid',
-                'is_recurring' => $this->is_recurring,
-                'observation' => $this->observation,
-            ]);
+            if ($this->transaction_id) {
+                $transaction = Transaction::where('user_id', auth()->id())->findOrFail($this->transaction_id);
+                $transaction->update([
+                    'category_id' => $this->category_id,
+                    'type' => $this->type,
+                    'amount' => (float) $amount,
+                    'description' => $this->description,
+                    'date' => $this->date,
+                    'payment_method' => $this->payment_method,
+                    'is_recurring' => $this->is_recurring,
+                    'observation' => $this->observation,
+                ]);
+                session()->flash('message', 'Transação atualizada com sucesso!');
+            } else {
+                Transaction::create([
+                    'user_id' => auth()->id(),
+                    'category_id' => $this->category_id,
+                    'type' => $this->type,
+                    'amount' => (float) $amount,
+                    'description' => $this->description,
+                    'date' => $this->date,
+                    'payment_method' => $this->payment_method,
+                    'status' => 'paid',
+                    'is_recurring' => $this->is_recurring,
+                    'observation' => $this->observation,
+                ]);
+                session()->flash('message', 'Transação criada com sucesso!');
+            }
 
-            session()->flash('message', 'Transação criada com sucesso!');
             return $this->redirect('/dashboard', navigate: true);
         } catch (\Exception $e) {
             $this->addError('save', 'Erro ao salvar a transação. Tente novamente.');

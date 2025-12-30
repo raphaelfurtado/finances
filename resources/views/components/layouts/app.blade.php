@@ -60,7 +60,7 @@
                             {{ substr(auth()->user()->name, 0, 1) }}
                         </div>
                     @endif
-                    <div class="hidden md:block">
+                    <div class="block">
                         <p class="text-sm font-semibold text-gray-700">{{ auth()->user()->name }}</p>
                         <p class="text-xs text-gray-500">{{ auth()->user()->email }}</p>
                     </div>

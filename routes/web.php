@@ -33,7 +33,9 @@ Route::get('/dashboard', Dashboard::class)->middleware('auth')->name('dashboard'
 Route::get('/categories', ManageCategories::class)->middleware('auth')->name('categories');
 
 // Transactions (specific routes BEFORE parameterized routes)
+Route::get('/transactions', App\Livewire\Transactions::class)->middleware('auth')->name('transactions.index');
 Route::get('/transactions/new', NewTransaction::class)->middleware('auth')->name('transactions.new');
+Route::get('/transactions/{id}/edit', NewTransaction::class)->middleware('auth')->name('transactions.edit');
 Route::get('/transactions/{id}', TransactionDetails::class)->middleware('auth')->name('transactions.show');
 
 // Premium Features (protected by premium middleware)
@@ -87,3 +89,8 @@ Route::post('/logout', function () {
     Auth::logout();
     return redirect('/login');
 })->name('logout');
+
+// Static Pages
+Route::view('/terms', 'static.terms')->name('terms');
+Route::view('/privacy', 'static.privacy')->name('privacy');
+Route::view('/help', 'static.help')->name('help');

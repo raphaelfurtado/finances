@@ -19,7 +19,7 @@
                         <span class="font-medium text-gray-900">Notificações</span>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" checked class="sr-only peer">
+                        <input type="checkbox" wire:model.live="notifications_enabled" class="sr-only peer">
                         <div
                             class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600">
                         </div>
@@ -32,7 +32,7 @@
                         <span class="font-medium text-gray-900">Modo Escuro</span>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" class="sr-only peer">
+                        <input type="checkbox" wire:model.live="dark_mode" class="sr-only peer">
                         <div
                             class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600">
                         </div>
@@ -58,7 +58,12 @@
                         <i data-lucide="dollar-sign" class="w-5 h-5 text-gray-600"></i>
                         <span class="font-medium text-gray-900">Moeda</span>
                     </div>
-                    <span class="text-sm text-gray-500">BRL (R$)</span>
+                    <select wire:model.live="currency"
+                        class="text-sm text-gray-500 bg-transparent border-none outline-none text-right">
+                        <option value="BRL">BRL (R$)</option>
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                    </select>
                 </div>
 
                 <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
@@ -66,7 +71,12 @@
                         <i data-lucide="calendar" class="w-5 h-5 text-gray-600"></i>
                         <span class="font-medium text-gray-900">Início do Mês</span>
                     </div>
-                    <span class="text-sm text-gray-500">Dia 1</span>
+                    <select wire:model.live="start_of_month"
+                        class="text-sm text-gray-500 bg-transparent border-none outline-none text-right">
+                        @foreach(range(1, 31) as $day)
+                            <option value="{{ $day }}">Dia {{ $day }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <div class="flex items-center justify-between px-5 py-4">
@@ -88,23 +98,26 @@
         <div class="mb-6">
             <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Dados e Privacidade</h2>
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <button
+                <button wire:click="exportData"
                     class="w-full flex items-center justify-between px-5 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center gap-3">
                         <i data-lucide="download" class="w-5 h-5 text-gray-600"></i>
                         <span class="font-medium text-gray-900">Exportar Dados</span>
                     </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                    <div wire:loading wire:target="exportData"
+                        class="animate-spin h-5 w-5 border-2 border-blue-500 rounded-full border-t-transparent"></div>
+                    <i wire:loading.remove wire:target="exportData" data-lucide="chevron-right"
+                        class="w-5 h-5 text-gray-400"></i>
                 </button>
 
-                <button
+                <a href="/privacy"
                     class="w-full flex items-center justify-between px-5 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center gap-3">
                         <i data-lucide="shield" class="w-5 h-5 text-gray-600"></i>
                         <span class="font-medium text-gray-900">Privacidade</span>
                     </div>
                     <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-                </button>
+                </a>
 
                 <button class="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center gap-3">
@@ -129,22 +142,23 @@
                     <span class="text-sm text-gray-500">v1.0.0</span>
                 </button>
 
-                <button
+                <a href="/terms"
                     class="w-full flex items-center justify-between px-5 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center gap-3">
                         <i data-lucide="file-text" class="w-5 h-5 text-gray-600"></i>
                         <span class="font-medium text-gray-900">Termos de Uso</span>
                     </div>
                     <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-                </button>
+                </a>
 
-                <button class="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors">
+                <a href="/help"
+                    class="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center gap-3">
                         <i data-lucide="help-circle" class="w-5 h-5 text-gray-600"></i>
                         <span class="font-medium text-gray-900">Ajuda e Suporte</span>
                     </div>
                     <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-                </button>
+                </a>
             </div>
         </div>
     </div>
