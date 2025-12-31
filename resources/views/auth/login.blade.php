@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Finanças App</title>
+    <title>Login | Minhas Finanças</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -90,17 +90,18 @@
         <div class="glass-card rounded-3xl p-10 text-center">
             <div class="mb-8">
                 <div
-                    class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4 shadow-lg shadow-blue-500/50">
+                    class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl mb-4 shadow-xl shadow-blue-500/40">
                     <i data-lucide="wallet" class="w-8 h-8 text-white"></i>
                 </div>
-                <h1 class="text-3xl font-bold text-white mb-2">Bem-vindo ao Finanças</h1>
+                <h1 class="text-3xl font-black text-white mb-2 tracking-tight uppercase italic">Minhas<span
+                        class="text-blue-400">Finanças</span></h1>
                 <p class="text-slate-400">Gerencie seu dinheiro de forma inteligente e rápida.</p>
             </div>
 
             <div class="space-y-4">
                 <a href="{{ route('auth.google') }}"
-                    class="google-btn w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-semibold text-lg">
-                    <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                    class="google-btn w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-bold text-lg shadow-xl shadow-white/5 border border-white/10">
+                    <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg" class="shrink-0">
                         <path
                             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                             fill="#4285F4" />
@@ -118,12 +119,16 @@
                 </a>
             </div>
 
-            <div class="mt-8 pt-8 border-t border-slate-800">
-                <p class="text-slate-500 text-sm">
+            <div class="mt-8 pt-6 border-t border-slate-800">
+                <p class="text-slate-500 text-[11px] leading-relaxed">
+                    Protegemos seus dados conforme a LGPD brasileira. <br>
                     Ao entrar, você concorda com nossos <br>
-                    <a href="{{ route('terms') }}" class="text-blue-400 hover:text-blue-300 transition-colors">Termos de
-                        Uso</a> e <a href="{{ route('privacy') }}"
-                        class="text-blue-400 hover:text-blue-300 transition-colors">Privacidade</a>.
+                    <a href="{{ route('legal') }}#termos"
+                        class="text-blue-400 font-bold hover:text-blue-300 transition-colors">Termos de Uso</a>
+                    e
+                    <a href="{{ route('legal') }}#privacidade"
+                        class="text-blue-400 font-bold hover:text-blue-300 transition-colors">Política de
+                        Privacidade</a>.
                 </p>
             </div>
         </div>

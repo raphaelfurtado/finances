@@ -1,7 +1,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-32" x-data="{ openUpsell: false }">
     <div class="mb-8 flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 leading-tight">Gestão de Empréstimos</h1>
+            <h1 class="text-3xl font-bold text-gray-900 leading-tight">Organizador de dívidas pessoais</h1>
             <p class="text-xs font-semibold text-gray-500 flex items-center gap-1 mt-1">
                 @if($isPremium)
                     <span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[10px] uppercase">Premium</span>
@@ -99,10 +99,10 @@
                         </p>
                     </div>
                     <span class="px-3 py-1 rounded-full text-xs font-medium
-                                                    @if($loan->status === 'active') bg-blue-100 text-blue-700
-                                                    @elseif($loan->status === 'paid') bg-green-100 text-green-700
-                                                    @else bg-red-100 text-red-700
-                                                    @endif">
+                                                        @if($loan->status === 'active') bg-blue-100 text-blue-700
+                                                        @elseif($loan->status === 'paid') bg-green-100 text-green-700
+                                                        @else bg-red-100 text-red-700
+                                                        @endif">
                         @if($loan->status === 'active') Ativo
                         @elseif($loan->status === 'paid') Pago
                         @else {{ ucfirst($loan->status) }}

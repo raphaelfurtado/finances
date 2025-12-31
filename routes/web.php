@@ -73,6 +73,8 @@ Route::middleware(['auth', App\Http\Middleware\EnsureUserIsPremium::class])->gro
     // Rotas estritamente premium (nenhuma por enquanto, pois budgets terá paywall visual)
 });
 
+Route::get('/politica-de-privacidade', App\Livewire\Legal::class)->name('legal');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/orcamentos', App\Livewire\Budgets::class)->name('budgets');
 });
@@ -99,7 +101,5 @@ Route::post('/logout', function () {
     return redirect('/login');
 })->name('logout');
 
-// Static Pages
-Route::view('/terms', 'static.terms')->name('terms');
-Route::view('/privacy', 'static.privacy')->name('privacy');
+// Static Pages Help
 Route::view('/help', 'static.help')->name('help');

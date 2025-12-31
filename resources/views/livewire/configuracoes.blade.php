@@ -110,7 +110,7 @@
                         class="w-5 h-5 text-gray-400"></i>
                 </button>
 
-                <a href="/privacy"
+                <a href="{{ route('legal') }}#privacidade"
                     class="w-full flex items-center justify-between px-5 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center gap-3">
                         <i data-lucide="shield" class="w-5 h-5 text-gray-600"></i>
@@ -142,7 +142,7 @@
                     <span class="text-sm text-gray-500">v1.0.0</span>
                 </button>
 
-                <a href="/terms"
+                <a href="{{ route('legal') }}#termos"
                     class="w-full flex items-center justify-between px-5 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center gap-3">
                         <i data-lucide="file-text" class="w-5 h-5 text-gray-600"></i>
@@ -151,7 +151,7 @@
                     <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
                 </a>
 
-                <a href="/help"
+                <a href="mailto:suporte@minhasfinancas.com"
                     class="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center gap-3">
                         <i data-lucide="help-circle" class="w-5 h-5 text-gray-600"></i>

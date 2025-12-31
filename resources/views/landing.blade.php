@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finanças App - Controle Financeiro Inteligente</title>
+    <title>Minhas Finanças - Controle Financeiro Inteligente</title>
 
     <link rel="manifest" href="/manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,11 +35,12 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center gap-2">
-                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
+                    <div
+                        class="w-9 h-9 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
                         <i data-lucide="wallet" class="w-5 h-5"></i>
                     </div>
-                    <span class="font-bold text-xl tracking-tight text-slate-900">Finanças<span
-                            class="text-indigo-600">App</span></span>
+                    <span class="font-black text-xl tracking-tighter text-slate-900 italic uppercase">Minhas<span
+                            class="text-indigo-600">Finanças</span></span>
                 </div>
 
                 <!-- Desktop Menu -->
@@ -405,15 +406,17 @@
                     <div class="w-8 h-8 bg-indigo-600/20 rounded-lg flex items-center justify-center text-indigo-400">
                         <i data-lucide="wallet" class="w-5 h-5"></i>
                     </div>
-                    <span class="font-bold text-xl text-white">Finanças App</span>
+                    <span class="font-bold text-xl text-white">Minhas Finanças</span>
                 </div>
                 <div class="flex gap-6 text-sm">
-                    <a href="#" class="hover:text-white transition-colors">Termos</a>
-                    <a href="#" class="hover:text-white transition-colors">Privacidade</a>
-                    <a href="#" class="hover:text-white transition-colors">Contato</a>
+                    <a href="{{ route('legal') }}#termos" class="hover:text-white transition-colors">Termos de Uso</a>
+                    <a href="{{ route('legal') }}#privacidade" class="hover:text-white transition-colors">Privacidade
+                        (LGPD)</a>
+                    <a href="mailto:suporte@minhasfinancas.com" class="hover:text-white transition-colors">Suporte</a>
                 </div>
                 <div class="mt-8 md:mt-0 text-sm">
-                    &copy; {{ date('Y') }} Finanças App. Todos os direitos reservados.
+                    &copy; {{ date('Y') }} Minhas Finanças. <span class="text-slate-600 ml-2">Não somos uma instituição
+                        financeira.</span>
                 </div>
             </div>
         </div>
