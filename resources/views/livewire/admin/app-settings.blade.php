@@ -152,6 +152,31 @@
             </div>
         </div>
 
+        <!-- Freemium Settings Section -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center">
+                    <i data-lucide="banknote" class="w-6 h-6 text-orange-600"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-gray-900">Limites Freemium</h2>
+                    <p class="text-xs text-gray-500">Configure os limites para usuários gratuitos</p>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Limite de Empréstimos (Grátis)</label>
+                <div class="relative">
+                    <input type="number" wire:model="free_loan_limit" min="1" max="100"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        placeholder="Ex: 2">
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Usuários gratuitos poderão ter no máximo este número de
+                    empréstimos ativos.</p>
+                @error('free_loan_limit') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
+            </div>
+        </div>
+
         <!-- Save Button -->
         <button wire:click="saveSettings" wire:loading.attr="disabled"
             class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-4 rounded-2xl transition-all active:scale-95 shadow-lg">

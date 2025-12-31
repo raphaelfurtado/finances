@@ -14,14 +14,16 @@
             <!-- PAYWALL -->
             <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 text-center relative overflow-hidden">
                 <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-400 to-yellow-500"></div>
-                
-                <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4">
+
+                <div
+                    class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i data-lucide="lock" class="w-8 h-8"></i>
                 </div>
-                
+
                 <h2 class="text-2xl font-bold text-gray-900 mb-2">Recurso Premium</h2>
                 <p class="text-gray-500 mb-6">
-                    Tenha controle total com Alertas de Limites. Defina tetos de gastos e nunca mais gaste mais do que planejou.
+                    Tenha controle total com Alertas de Limites. Defina tetos de gastos e nunca mais gaste mais do que
+                    planejou.
                 </p>
 
                 <div class="space-y-3 mb-8">
@@ -33,26 +35,27 @@
                     </div>
                 </div>
 
-                <a href="#" class="block w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-amber-200">
+                <a href="#"
+                    class="block w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-amber-200">
                     Desbloquear Premium Agora
                 </a>
             </div>
 
             <!-- Blurred Background (Preview) -->
             <div class="opacity-30 blur-sm pointer-events-none mt-4 select-none" aria-hidden="true">
-                 <div class="space-y-4">
+                <div class="space-y-4">
                     <div class="bg-white rounded-2xl p-4 border border-gray-100">
                         <div class="flex items-center justify-between mb-2">
-                             <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-blue-100 rounded-xl"></div>
                                 <div class="w-32 h-4 bg-gray-200 rounded"></div>
-                             </div>
+                            </div>
                         </div>
                         <div class="w-full bg-gray-100 rounded-full h-2.5">
-                             <div class="w-3/4 h-2.5 bg-blue-500 rounded-full"></div>
+                            <div class="w-3/4 h-2.5 bg-blue-500 rounded-full"></div>
                         </div>
                     </div>
-                 </div>
+                </div>
             </div>
 
         @else
@@ -64,6 +67,42 @@
                     <span class="text-sm font-medium">{{ session('message') }}</span>
                 </div>
             @endif
+
+            <!-- Summary Card -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 mb-6 transition-all hover:shadow-md">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-gray-500 text-xs font-bold uppercase tracking-wider">Orçamento Mensal</h2>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-2xl font-black text-gray-900">R$
+                                {{ number_format($totalSpent, 2, ',', '.') }}</span>
+                            <span class="text-gray-400 text-sm font-medium">/ R$
+                                {{ number_format($totalBudget, 2, ',', '.') }}</span>
+                        </div>
+                    </div>
+                    <div
+                        class="w-12 h-12 rounded-2xl flex items-center justify-center {{ $totalPercentage >= 100 ? 'bg-red-50 text-red-600' : 'bg-indigo-50 text-indigo-600' }}">
+                        <i data-lucide="{{ $totalPercentage >= 100 ? 'alert-circle' : 'trending-down' }}"
+                            class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                        <div class="h-3 rounded-full transition-all duration-700 ease-out {{ $totalPercentage >= 100 ? 'bg-red-500' : ($totalPercentage >= 80 ? 'bg-amber-500' : 'bg-indigo-600') }}"
+                            style="width: {{ min($totalPercentage, 100) }}%">
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold {{ $totalPercentage >= 100 ? 'text-red-600' : 'text-indigo-600' }}">
+                            {{ number_format($totalPercentage, 1) }}% consumido
+                        </span>
+                        <span class="text-xs text-gray-400 font-medium tracking-tight">
+                            Restante: R$ {{ number_format(max(0, $totalBudget - $totalSpent), 2, ',', '.') }}
+                        </span>
+                    </div>
+                </div>
+            </div>
 
             <div class="space-y-4">
                 @forelse($budgetItems as $item)

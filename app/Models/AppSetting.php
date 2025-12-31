@@ -59,4 +59,10 @@ class AppSetting extends Model
     {
         return self::get('plan_price', '9,90');
     }
+
+    // Get free user loan limit
+    public static function getFreeLoanLimit(): int
+    {
+        return (int) self::get('free_loan_limit', '2');
+    }
 }

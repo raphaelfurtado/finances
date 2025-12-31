@@ -14,6 +14,9 @@ class Budgets extends Component
     public $budgetItems = [];
     public $editingCategoryId = null;
     public $editingAmount = '';
+    public $totalBudget = 0;
+    public $totalSpent = 0;
+    public $totalPercentage = 0;
 
     protected $listeners = ['budgetUpdated' => 'loadData'];
 
@@ -48,6 +51,10 @@ class Budgets extends Component
                 'percentage' => $budget && $budget->amount > 0 ? ($spent / $budget->amount) * 100 : 0
             ];
         })->values(); // Reset keys for array
+
+        $this->totalBudget = $this->budgetItems->sum('limit');
+        $this->totalSpent = $this->budgetItems->sum('spent');
+        $this->totalPercentage = $this->totalBudget > 0 ? ($this->totalSpent / $this->totalBudget) * 100 : 0;
     }
 
     public function editBudget($categoryId, $currentAmount)

@@ -52,6 +52,14 @@ Route::get('/perfil', Perfil::class)->middleware('auth')->name('perfil');
 Route::get('/meu-depoimento', App\Livewire\User\MyTestimonial::class)->middleware('auth')->name('my-testimonial');
 Route::get('/configuracoes', Configuracoes::class)->middleware('auth')->name('configuracoes');
 
+// Loans Management
+Route::middleware(['auth'])->prefix('loans')->group(function () {
+    Route::get('/', App\Livewire\Loans\Index::class)->name('loans.index');
+    Route::get('/create', App\Livewire\Loans\Create::class)->name('loans.create');
+    Route::get('/{loan}', App\Livewire\Loans\Show::class)->name('loans.show');
+    Route::get('/{loan}/edit', App\Livewire\Loans\Edit::class)->name('loans.edit');
+});
+
 // Admin Area (protected by admin middleware)
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', AdminDashboard::class)->name('admin.dashboard');

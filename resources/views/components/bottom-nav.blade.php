@@ -24,11 +24,11 @@
             <span class="text-xs font-medium">Relatórios</span>
         </a>
 
-        <!-- Limites -->
-        <a href="/orcamentos"
-            class="flex flex-col items-center justify-center py-2 {{ $active === 'budgets' ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-600 transition-colors">
-            <i data-lucide="target" class="w-6 h-6 mb-1"></i>
-            <span class="text-xs font-medium">Limites</span>
+        <!-- Empréstimos -->
+        <a href="/loans"
+            class="flex flex-col items-center justify-center py-2 {{ $active === 'loans' ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-600 transition-colors">
+            <i data-lucide="banknote" class="w-6 h-6 mb-1"></i>
+            <span class="text-xs font-medium">Empréstimos</span>
         </a>
 
         <!-- Perfil -->
