@@ -117,7 +117,7 @@ class Dashboard extends Component
             $messages = [
                 "Sobrou dinheiro? Certeza que você não esqueceu de pagar nada?",
                 "Olha só, alguém está se sentindo o Lobo de Wall Street.",
-                "Não gaste tudo em bala, hein?",
+                "Não gaste tudo em negócio de Tigrinho, hein?",
             ];
             $this->advice = $messages[array_rand($messages)];
             return;
