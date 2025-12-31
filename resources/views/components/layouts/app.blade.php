@@ -134,21 +134,24 @@
         if (isIos() && !isInStandaloneMode()) {
             const iosHint = document.createElement('div');
             iosHint.id = 'ios-pwa-hint';
-            iosHint.className = 'fixed bottom-4 left-4 right-4 z-[100] bg-white rounded-2xl shadow-2xl border border-blue-100 p-5 animate-bounce-slow';
+            iosHint.className = 'fixed bottom-8 left-4 right-4 z-[100] bg-white rounded-3xl shadow-2xl border-2 border-blue-500 p-6 animate-prompt';
             iosHint.innerHTML = `
-                <div class="flex items-start gap-4">
-                    <div class="bg-blue-600 p-3 rounded-xl">
-                        <i data-lucide="share" class="w-6 h-6 text-white text-blue-100"></i>
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="text-sm font-bold text-gray-900">Instalar no iPhone</h4>
-                        <p class="text-xs text-gray-500 mt-1 leading-relaxed">
-                            Toque no ícone de <b>compartilhar</b> <span class="inline-block px-1 bg-gray-100 rounded"></span> e selecione <b>"Adicionar à Tela de Início"</b> para uma melhor experiência.
-                        </p>
-                    </div>
-                    <button onclick="document.getElementById('ios-pwa-hint').remove()" class="text-gray-400">
-                        <i data-lucide="x" class="w-5 h-5"></i>
+                <div class="relative">
+                    <button onclick="document.getElementById('ios-pwa-hint').remove()" class="absolute -top-3 -right-3 p-1.5 bg-white border border-gray-100 rounded-full text-gray-400 shadow-md">
+                        <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
+                    <div class="text-center">
+                        <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="smartphone" class="w-8 h-8 text-blue-600"></i>
+                        </div>
+                        <h4 class="text-lg font-black text-gray-900 mb-1">Dica de Especialista 💡</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                            Para usar como um <b>Aplicativo</b>: toque no ícone de <span class="inline-flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded font-bold text-blue-600"><i data-lucide="share" class="w-3.5 h-3.5"></i> Compartilhar</span> na <u>barra de ferramentas do seu Safari</u> (lá embaixo) e escolha <b>"Adicionar à Tela de Início"</b>.
+                        </p>
+                        <div class="flex justify-center animate-bounce mt-2 text-blue-600">
+                            <i data-lucide="chevron-down" class="w-8 h-8"></i>
+                        </div>
+                    </div>
                 </div>
             `;
             document.body.appendChild(iosHint);
@@ -156,20 +159,12 @@
         }
     </script>
     <style>
-        @keyframes bounce-slow {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-10px);
-            }
+        @keyframes prompt-in {
+            0% { transform: translateY(100px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
         }
-
-        .animate-bounce-slow {
-            animation: bounce-slow 3s infinite ease-in-out;
+        .animate-prompt {
+            animation: prompt-in 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
     </style>
 </body>
