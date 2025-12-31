@@ -18,8 +18,22 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(append: [
             \App\Http\Middleware\CheckMaintenanceMode::class,
+            \App\Http\Middleware\LogUserActivity::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->reportable(function (Throwable $e) {
+            try {
+                \App\Models\SystemError::create([
+                    'message' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                    'file' => str_replace(base_path(), '', $e->getFile()),
+                    'line' => $e->getLine(),
+                    'url' => request()->fullUrl(),
+                    'user_id' => auth()->id(),
+                ]);
+            } catch (\Exception $ex) {
+                // Fail silently to avoid infinite loops if DB fails
+            }
+        });
     })->create();

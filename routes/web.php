@@ -65,6 +65,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', AdminDashboard::class)->name('admin.dashboard');
     Route::get('/users', UserManagement::class)->name('admin.users');
     Route::get('/settings', AppSettings::class)->name('admin.settings');
+    Route::get('/monitoring', App\Livewire\Admin\Monitoring::class)->name('admin.monitoring');
     Route::get('/testimonials', App\Livewire\Admin\ManageTestimonials::class)->name('admin.testimonials');
 });
 

@@ -71,6 +71,12 @@
                     <i data-lucide="star" class="w-5 h-5 text-yellow-600"></i>
                     <span class="font-semibold text-yellow-700 text-sm">Depoimentos</span>
                 </a>
+
+                <a href="{{ route('admin.monitoring') }}" wire:navigate
+                    class="flex items-center justify-center gap-2 p-4 bg-green-50 hover:bg-green-100 rounded-xl transition-colors col-span-2">
+                    <i data-lucide="activity" class="w-5 h-5 text-green-600"></i>
+                    <span class="font-semibold text-green-700 text-sm">Monitoramento de Uso</span>
+                </a>
             </div>
         </div>
 
@@ -142,6 +148,11 @@
                 class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600">
                 <i data-lucide="settings" class="w-6 h-6"></i>
                 <span class="text-xs font-medium">Config</span>
+            </a>
+            <a href="{{ route('admin.monitoring') }}" wire:navigate
+                class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600">
+                <i data-lucide="activity" class="w-6 h-6"></i>
+                <span class="text-xs font-medium">Monitor</span>
             </a>
             <a href="/dashboard" wire:navigate
                 class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600">
