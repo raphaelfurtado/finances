@@ -31,8 +31,16 @@ class Index extends Component
                 return $loan->total_amount - $loan->paid_amount;
             });
 
-        $monthReceipts = \App\Models\LoanInstallment::whereHas('loan', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
+        $monthlyPaid = \App\Models\LoanInstallment::whereHas('loan', function ($query) use ($user) {
+            $query->where('user_id', $user->id)->where('type', 'payable');
+        })
+            ->where('status', 'paid')
+            ->whereMonth('paid_at', now()->month)
+            ->whereYear('paid_at', now()->year)
+            ->sum('paid_amount');
+
+        $monthlyReceived = \App\Models\LoanInstallment::whereHas('loan', function ($query) use ($user) {
+            $query->where('user_id', $user->id)->where('type', 'receivable');
         })
             ->where('status', 'paid')
             ->whereMonth('paid_at', now()->month)
@@ -43,7 +51,8 @@ class Index extends Component
             'loans' => $loans,
             'totalPayable' => $totalPayable,
             'totalReceivable' => $totalReceivable,
-            'monthReceipts' => $monthReceipts,
+            'monthlyPaid' => $monthlyPaid,
+            'monthlyReceived' => $monthlyReceived,
             'totalLoansCount' => $totalLoansCount,
             'loanLimit' => $loanLimit,
             'isPremium' => $isPremium,

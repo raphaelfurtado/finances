@@ -57,16 +57,26 @@
             </div>
         </div>
 
-        <div
-            class="bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 rounded-xl p-6 shadow-sm transition hover:shadow-md">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-indigo-600 text-sm font-medium mb-1">💰 Recebido no Mês</p>
-                    <p class="text-3xl font-bold text-indigo-700">R$ {{ number_format($monthReceipts, 2, ',', '.') }}
-                    </p>
+        <div class="grid grid-cols-2 gap-4">
+            <div
+                class="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-xl p-4 shadow-sm transition hover:shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-orange-600 text-[10px] font-bold uppercase tracking-wider mb-1">Pago no Mês</p>
+                        <p class="text-xl font-bold text-orange-700">R$ {{ number_format($monthlyPaid, 2, ',', '.') }}
+                        </p>
+                    </div>
                 </div>
-                <div class="bg-indigo-200 p-3 rounded-full text-indigo-600">
-                    <i data-lucide="banknote" class="w-8 h-8"></i>
+            </div>
+
+            <div
+                class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-4 shadow-sm transition hover:shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-600 text-[10px] font-bold uppercase tracking-wider mb-1">Recebido no Mês</p>
+                        <p class="text-xl font-bold text-blue-700">R$ {{ number_format($monthlyReceived, 2, ',', '.') }}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -89,10 +99,10 @@
                         </p>
                     </div>
                     <span class="px-3 py-1 rounded-full text-xs font-medium
-                                                @if($loan->status === 'active') bg-blue-100 text-blue-700
-                                                @elseif($loan->status === 'paid') bg-green-100 text-green-700
-                                                @else bg-red-100 text-red-700
-                                                @endif">
+                                                    @if($loan->status === 'active') bg-blue-100 text-blue-700
+                                                    @elseif($loan->status === 'paid') bg-green-100 text-green-700
+                                                    @else bg-red-100 text-red-700
+                                                    @endif">
                         @if($loan->status === 'active') Ativo
                         @elseif($loan->status === 'paid') Pago
                         @else {{ ucfirst($loan->status) }}

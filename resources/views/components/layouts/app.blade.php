@@ -117,19 +117,61 @@
         if (installBtn) {
             installBtn.addEventListener('click', async () => {
                 if (!deferredPrompt) return;
-                // Show the install prompt
                 deferredPrompt.prompt();
-                // Wait for the user to respond to the prompt
                 const { outcome } = await deferredPrompt.userChoice;
-                // Optionally, send analytics event with outcome of user choice
-                console.log(`User response to the install prompt: ${outcome}`);
-                // We've used the prompt, and can't use it again, throw it away
                 deferredPrompt = null;
-                // Hide the button
                 installBtn.classList.add('hidden');
             });
         }
+
+        // iOS PWA Guidance Logic
+        const isIos = () => {
+            const userAgent = window.navigator.userAgent.toLowerCase();
+            return /iphone|ipad|ipod/.test(userAgent);
+        };
+        const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+        if (isIos() && !isInStandaloneMode()) {
+            const iosHint = document.createElement('div');
+            iosHint.id = 'ios-pwa-hint';
+            iosHint.className = 'fixed bottom-4 left-4 right-4 z-[100] bg-white rounded-2xl shadow-2xl border border-blue-100 p-5 animate-bounce-slow';
+            iosHint.innerHTML = `
+                <div class="flex items-start gap-4">
+                    <div class="bg-blue-600 p-3 rounded-xl">
+                        <i data-lucide="share" class="w-6 h-6 text-white text-blue-100"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-sm font-bold text-gray-900">Instalar no iPhone</h4>
+                        <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+                            Toque no ícone de <b>compartilhar</b> <span class="inline-block px-1 bg-gray-100 rounded"></span> e selecione <b>"Adicionar à Tela de Início"</b> para uma melhor experiência.
+                        </p>
+                    </div>
+                    <button onclick="document.getElementById('ios-pwa-hint').remove()" class="text-gray-400">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(iosHint);
+            setTimeout(() => lucide.createIcons(), 100);
+        }
     </script>
+    <style>
+        @keyframes bounce-slow {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .animate-bounce-slow {
+            animation: bounce-slow 3s infinite ease-in-out;
+        }
+    </style>
 </body>
 
 </html>

@@ -118,6 +118,7 @@ class Dashboard extends Component
                 "Sobrou dinheiro? Certeza que você não esqueceu de pagar nada?",
                 "Olha só, alguém está se sentindo o Lobo de Wall Street.",
                 "Não gaste tudo em negócio de Tigrinho, hein?",
+                "Milagre! Tá sobrando dinheiro.."
             ];
             $this->advice = $messages[array_rand($messages)];
             return;
