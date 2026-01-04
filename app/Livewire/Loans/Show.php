@@ -253,6 +253,11 @@ class Show extends Component
 
     public function deleteLoan()
     {
+        if (!auth()->user()->isPremium()) {
+            session()->flash('error', 'A exclusão de registros é uma função exclusiva para usuários Premium.');
+            return;
+        }
+
         $this->loan->delete();
         session()->flash('success', 'Empréstimo excluído com sucesso!');
         return redirect()->route('loans.index');
