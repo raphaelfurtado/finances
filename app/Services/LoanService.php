@@ -71,8 +71,8 @@ class LoanService
      */
     public function updateLoanContract(Loan $loan, array $data): Loan
     {
-        if ($loan->installments()->where('status', 'paid')->exists() || $loan->paid_amount > 0) {
-            throw new \Exception("Não é possível alterar valores ou parcelas de um empréstimo com pagamentos já realizados.");
+        if ($loan->installments()->whereIn('status', ['paid', 'refinanced'])->exists() || $loan->paid_amount > 0) {
+            throw new \Exception("Não é possível alterar valores ou parcelas de um empréstimo com pagamentos ou renegociações já realizados.");
         }
 
         return DB::transaction(function () use ($loan, $data) {
@@ -179,5 +179,55 @@ class LoanService
             'installment_amount' => round($totalAmount / $installmentsCount, 2),
             'interest_amount' => round($interest, 2),
         ];
+    }
+    /**
+     * Rollover an installment (refinance the debt).
+     */
+    /**
+     * Rollover an installment (refinance the debt).
+     */
+    public function rolloverInstallment(LoanInstallment $installment, float $newInterestRate, ?string $newDueDate, float $upfrontPayment = 0): LoanInstallment
+    {
+        if (in_array($installment->status, ['paid', 'refinanced'])) {
+            throw new \Exception("Não é possível rolar uma parcela paga ou já renegociada.");
+        }
+
+        return DB::transaction(function () use ($installment, $newInterestRate, $newDueDate, $upfrontPayment) {
+            // 1. Process upfront payment if any
+            if ($upfrontPayment > 0) {
+                if ($upfrontPayment > $installment->current_amount) {
+                    throw new \Exception("O pagamento parcial não pode ser maior que o valor da dívida.");
+                }
+
+                $installment->update([
+                    'paid_amount' => $installment->paid_amount + $upfrontPayment,
+                    'paid_at' => now(), // Record payment date
+                ]);
+                $installment->refresh(); // getting updated paid_amount
+            }
+
+            // 2. Calculate remaining balance (Principal for new debt)
+            $remainingPrincipal = $installment->current_amount - $installment->paid_amount; // Debt minus what was already paid
+
+            // 3. Mark old as refinanced
+            $installment->update(['status' => 'refinanced']);
+
+            // 4. Calculate new interest
+            $interestAmount = $remainingPrincipal * ($newInterestRate / 100);
+            $newTotal = $remainingPrincipal + $interestAmount;
+
+            // 5. Create new installment
+            $nextNumber = $installment->loan->installments()->max('installment_number') + 1;
+
+            $newInstallment = $installment->loan->installments()->create([
+                'installment_number' => $nextNumber,
+                'due_date' => Carbon::parse($newDueDate),
+                'amount' => round($newTotal, 2),
+                'status' => 'pending',
+                'paid_amount' => 0,
+            ]);
+
+            return $newInstallment;
+        });
     }
 }

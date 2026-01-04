@@ -7,14 +7,19 @@
 
         <div class="flex gap-2">
             <button wire:click="openBulkModal"
-                class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-100 transition flex items-center gap-2">
-                <i data-lucide="calendar-range" class="w-4 h-4"></i>
-                Alterar dia de vencimento
+                class="bg-gray-100 p-2 rounded-lg text-gray-500 hover:text-blue-600 transition"
+                title="Alterar dia de vencimento">
+                <i data-lucide="calendar-range" class="w-5 h-5"></i>
             </button>
             <button wire:click="$set('showInfoModal', true)"
-                class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-200 transition flex items-center gap-2">
-                <i data-lucide="edit-3" class="w-4 h-4"></i>
-                Editar Informações
+                class="bg-gray-100 p-2 rounded-lg text-gray-500 hover:text-blue-600 transition"
+                title="Editar Informações">
+                <i data-lucide="edit-3" class="w-5 h-5"></i>
+            </button>
+            <button wire:confirm="Tem certeza que deseja excluir este empréstimo? Esta ação não pode ser desfeita."
+                wire:click="deleteLoan" class="bg-gray-100 p-2 rounded-lg text-gray-500 hover:text-red-600 transition"
+                title="Excluir Empréstimo">
+                <i data-lucide="trash-2" class="w-5 h-5"></i>
             </button>
         </div>
     </div>
@@ -64,11 +69,13 @@
                     @else {{ ucfirst($loan->status) }}
                     @endif
                 </span>
-                <a href="{{ route('loans.edit', $loan) }}"
-                    class="bg-gray-100 p-2 rounded-lg text-gray-500 hover:text-blue-600 transition"
-                    title="Configurações Contratuais">
-                    <i data-lucide="settings" class="w-5 h-5"></i>
-                </a>
+                @if(!$loan->installments()->whereIn('status', ['paid', 'refinanced'])->exists() && $loan->paid_amount == 0)
+                    <a href="{{ route('loans.edit', $loan) }}"
+                        class="bg-gray-100 p-2 rounded-lg text-gray-500 hover:text-blue-600 transition"
+                        title="Configurações Contratuais">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                    </a>
+                @endif
             </div>
         </div>
 
@@ -135,18 +142,20 @@
         <div class="space-y-4">
             @foreach($loan->installments as $installment)
                 <div class="group relative bg-white border border-gray-200 rounded-2xl p-4 transition-all hover:border-blue-400 hover:shadow-xl shadow-blue-100/20
-                            @if($installment->status === 'paid') bg-green-50/30 border-green-100
-                            @elseif($installment->isOverdue()) bg-red-50/30 border-red-100
-                            @endif">
+                                            @if($installment->status === 'paid') bg-green-50/30 border-green-100
+                                            @elseif($installment->status === 'refinanced') bg-purple-50/30 border-purple-100
+                                            @elseif($installment->isOverdue()) bg-red-50/30 border-red-100
+                                            @endif">
 
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <!-- Left Side: Basic Info -->
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm
-                                        @if($installment->status === 'paid') bg-green-100 text-green-700
-                                        @elseif($installment->isOverdue()) bg-red-100 text-red-700
-                                        @else bg-gray-100 text-gray-600
-                                        @endif">
+                                                        @if($installment->status === 'paid') bg-green-100 text-green-700
+                                                        @elseif($installment->status === 'refinanced') bg-purple-100 text-purple-700
+                                                        @elseif($installment->isOverdue()) bg-red-100 text-red-700
+                                                        @else bg-gray-100 text-gray-600
+                                                    @endif">
                                 {{ $installment->installment_number }}
                             </div>
                             <div>
@@ -154,12 +163,13 @@
                                     <span class="font-bold text-gray-900">R$
                                         {{ number_format((float) $installment->amount, 2, ',', '.') }}</span>
                                     <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase
-                                                @if($installment->status === 'paid') bg-green-100 text-green-700
-                                                @elseif($installment->isOverdue()) bg-red-100 text-red-700
-                                                @elseif($installment->status === 'partial') bg-yellow-100 text-yellow-700
-                                                @else bg-gray-100 text-gray-700
-                                                @endif">
+                                                                @if($installment->status === 'paid') bg-green-100 text-green-700
+                                                                @elseif($installment->isOverdue()) bg-red-100 text-red-700
+                                                                @elseif($installment->status === 'partial') bg-yellow-100 text-yellow-700
+                                                                @else bg-gray-100 text-gray-700
+                                                                @endif">
                                         @if($installment->status === 'paid') Pago
+                                        @elseif($installment->status === 'refinanced') Renegociada
                                         @elseif($installment->isOverdue()) Atrasada
                                         @elseif($installment->status === 'partial') Parcial
                                         @else Pendente
@@ -172,7 +182,7 @@
                                         Vencimento:
                                         {{ \Illuminate\Support\Carbon::parse($installment->due_date)->format('d/m/Y') }}
                                     </span>
-                                    @if($installment->status !== 'paid')
+                                    @if($installment->status !== 'paid' && $installment->status !== 'refinanced')
                                         <button wire:click="editInstallment({{ $installment->id }})"
                                             class="p-1 text-gray-300 hover:text-blue-600 transition-colors">
                                             <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
@@ -195,7 +205,7 @@
                             @endif
 
                             <div class="flex gap-2">
-                                @if($installment->status !== 'paid')
+                                @if($installment->status !== 'paid' && $installment->status !== 'refinanced')
                                     @if($loan->type === 'receivable' && $loan->counterparty_phone)
                                         <a href="{{ $this->getWhatsAppLink($installment) }}" target="_blank"
                                             class="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition shadow-sm border border-green-100 flex items-center justify-center">
@@ -207,12 +217,25 @@
                                             </svg>
 
                                         </a>
+                                        </a>
                                     @endif
+
+                                    <button wire:click="openRolloverModal({{ $installment->id }})"
+                                        class="p-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition shadow-sm border border-purple-100 flex items-center justify-center"
+                                        title="Rolar Dívida">
+                                        <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                                    </button>
+
                                     <button
                                         wire:click="recordPayment({{ $installment->id }}, {{ $installment->current_amount - $installment->paid_amount }})"
                                         class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-xl font-bold transition shadow-lg shadow-blue-100">
                                         Baixar
                                     </button>
+                                @elseif($installment->status === 'refinanced')
+                                    <div
+                                        class="px-3 py-1.5 bg-purple-50 rounded-xl border border-purple-100 text-purple-600 text-xs font-bold text-center">
+                                        Renegociada
+                                    </div>
                                 @else
                                     <div
                                         class="flex items-center gap-3 bg-green-50 px-3 py-1.5 rounded-xl border border-green-100">
@@ -358,5 +381,75 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal: Rolar Dívida -->
+    @if($showRolloverModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
+            <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden border border-purple-100">
+                <div class="bg-purple-600 px-6 py-4 flex justify-between items-center text-white">
+                    <h3 class="font-bold flex items-center gap-2">
+                        <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                        Rolar Dívida
+                    </h3>
+                    <button wire:click="$set('showRolloverModal', false)" class="text-purple-100 hover:text-white">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 text-sm mb-4">
+                        <p class="text-purple-900 mb-2 font-medium">Resumo da Operação:</p>
+                        <ul class="space-y-1 text-purple-700">
+                            <li>• A parcela atual será marcada como <span class="font-bold">Renegociada</span>.</li>
+                            <li>• Uma nova parcela será criada com o saldo devedor atualizado + juros.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Entrada (Pagamento
+                            Parcial)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2 text-gray-400 text-sm">R$</span>
+                            <input type="number" step="0.01" wire:model.live.debounce.500ms="rolloverUpfrontPayment"
+                                class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-1">Opcional. Este valor será abatido antes do novo cálculo.
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Novo Vencimento</label>
+                        <input type="date" wire:model="rolloverNewDate"
+                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Taxa de Juros (%)</label>
+                        <input type="number" step="0.01" wire:model.live.debounce.500ms="rolloverNewRate"
+                            class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Simulação Nova Parcela</p>
+                        <p class="text-2xl font-black text-gray-900">R$
+                            {{ number_format($rolloverPreviewAmount, 2, ',', '.') }}
+                        </p>
+                        <p class="text-xs text-gray-400 mt-1">
+                            (Saldo Atualizado + {{ $rolloverNewRate }}% Juros)
+                        </p>
+                    </div>
+
+                    <div class="pt-2 flex flex-col gap-2">
+                        <button wire:click="confirmRollover"
+                            class="w-full py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition shadow-lg shadow-purple-100">
+                            Confirmar Rolagem
+                        </button>
+                        <button wire:click="$set('showRolloverModal', false)"
+                            class="w-full py-2 text-gray-400 text-sm font-medium">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
 
 </div>

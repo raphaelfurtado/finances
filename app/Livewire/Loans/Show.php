@@ -23,6 +23,14 @@ class Show extends Component
     public $showBulkModal = false;
     public $newInstallmentDay;
 
+    // Rollover Modal
+    public $showRolloverModal = false;
+    public $rolloverInstallmentId;
+    public $rolloverNewRate;
+    public $rolloverNewDate;
+    public $rolloverUpfrontPayment = 0; // New Upfront Payment
+    public $rolloverPreviewAmount = 0;
+
     public function mount(Loan $loan)
     {
         $this->loan = $loan;
@@ -113,6 +121,75 @@ class Show extends Component
         session()->flash('success', 'Vencimentos em massa atualizados!');
     }
 
+    public function openRolloverModal($installmentId)
+    {
+        $installment = LoanInstallment::findOrFail($installmentId);
+        $this->rolloverInstallmentId = $installmentId;
+        // Default values: Same rate as loan, Next month same day
+        $this->rolloverNewRate = $this->loan->interest_rate;
+        $this->rolloverNewDate = \Illuminate\Support\Carbon::parse($installment->due_date)->addMonth()->format('Y-m-d');
+        $this->rolloverUpfrontPayment = 0; // Reset upfront
+        $this->showRolloverModal = true;
+        $this->calculateRolloverPreview();
+    }
+
+    public function updatedRolloverNewRate()
+    {
+        $this->calculateRolloverPreview();
+    }
+
+    public function updatedRolloverUpfrontPayment()
+    {
+        $this->calculateRolloverPreview();
+    }
+
+    public function calculateRolloverPreview()
+    {
+        if (!$this->rolloverInstallmentId)
+            return;
+        $installment = LoanInstallment::find($this->rolloverInstallmentId);
+        if (!$installment)
+            return;
+
+        // Use real remaining balance: (Total with penalties) - (Already paid in DB) - (Upfront in modal)
+        $principal = $installment->current_amount - $installment->paid_amount;
+
+        // Subtract upfront payment first
+        $principal -= (float) $this->rolloverUpfrontPayment;
+        if ($principal < 0)
+            $principal = 0;
+
+        $interest = $principal * (floatval($this->rolloverNewRate) / 100);
+        $this->rolloverPreviewAmount = $principal + $interest;
+    }
+
+    public function confirmRollover()
+    {
+        $this->validate([
+            'rolloverNewRate' => 'required|numeric|min:0',
+            'rolloverNewDate' => 'required|date',
+        ]);
+
+        $service = new LoanService();
+        try {
+            $installment = LoanInstallment::findOrFail($this->rolloverInstallmentId);
+            $installment = LoanInstallment::findOrFail($this->rolloverInstallmentId);
+            $service->rolloverInstallment(
+                $installment,
+                (float) $this->rolloverNewRate,
+                $this->rolloverNewDate,
+                (float) $this->rolloverUpfrontPayment
+            );
+
+            $this->showRolloverModal = false;
+            $this->rolloverInstallmentId = null;
+            $this->loan->refresh();
+            session()->flash('success', 'Dívida rolada com sucesso!');
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+        }
+    }
+
     public function recordPayment($installmentId, $amount)
     {
         $installment = LoanInstallment::findOrFail($installmentId);
@@ -172,6 +249,13 @@ class Show extends Component
         }
 
         return "https://wa.me/55{$phone}?text=" . urlencode($message);
+    }
+
+    public function deleteLoan()
+    {
+        $this->loan->delete();
+        session()->flash('success', 'Empréstimo excluído com sucesso!');
+        return redirect()->route('loans.index');
     }
 
     public function render()
