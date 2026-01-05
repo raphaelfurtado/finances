@@ -80,6 +80,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orcamentos', App\Livewire\Budgets::class)->name('budgets');
     Route::get('/configuracoes', \App\Livewire\Perfil::class)->name('profile');
     Route::get('/configuracoes/notificacoes', \App\Livewire\NotificationSettings::class)->name('settings.notifications');
+    Route::get('/configuracoes/assinatura', \App\Livewire\ManageSubscription::class)->name('settings.subscription');
 });
 
 Route::get('/admin/stop-impersonating', function () {
@@ -106,3 +107,6 @@ Route::post('/logout', function () {
 
 // Static Pages Help
 Route::view('/help', 'static.help')->name('help');
+
+// Stripe Webhook (must be POST and exclude from CSRF protection)
+Route::post('/webhook/stripe', [App\Http\Controllers\StripeWebhookController::class, 'handleWebhook'])->name('stripe.webhook');

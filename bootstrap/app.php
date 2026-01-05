@@ -20,6 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\CheckMaintenanceMode::class,
             \App\Http\Middleware\LogUserActivity::class,
         ]);
+
+        // Exclude Stripe webhook from CSRF protection
+        $middleware->validateCsrfTokens(except: [
+            'webhook/stripe',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->reportable(function (Throwable $e) {

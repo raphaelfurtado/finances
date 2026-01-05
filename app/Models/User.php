@@ -27,6 +27,8 @@ class User extends Authenticatable
         'is_admin',
         'premium_activated_at',
         'premium_expires_at',
+        'stripe_customer_id',
+        'stripe_subscription_id',
     ];
 
     /**
