@@ -54,11 +54,11 @@
                 <h1 class="text-3xl font-bold text-gray-900">{{ $loan->counterparty_name }}</h1>
                 <p class="text-gray-500 mt-1 flex items-center gap-2">
                     @if($loan->type === 'receivable')
-                        <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase">A
-                            Receber</span>
+                        <span
+                            class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Crédito</span>
                     @else
-                        <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase">A
-                            Pagar</span>
+                        <span
+                            class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Débito</span>
                     @endif
                     @if($loan->counterparty_phone)
                         <span class="text-gray-400">•</span>
@@ -161,20 +161,20 @@
         <div class="space-y-4">
             @foreach($loan->installments as $installment)
                 <div class="group relative bg-white border border-gray-200 rounded-2xl p-4 transition-all hover:border-blue-400 hover:shadow-xl shadow-blue-100/20
-                                                    @if($installment->status === 'paid') bg-green-50/30 border-green-100
-                                                    @elseif($installment->status === 'refinanced') bg-purple-50/30 border-purple-100
-                                                    @elseif($installment->isOverdue()) bg-red-50/30 border-red-100
-                                                    @endif">
+                                                        @if($installment->status === 'paid') bg-green-50/30 border-green-100
+                                                        @elseif($installment->status === 'refinanced') bg-purple-50/30 border-purple-100
+                                                        @elseif($installment->isOverdue()) bg-red-50/30 border-red-100
+                                                        @endif">
 
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <!-- Left Side: Basic Info -->
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm
-                                                                @if($installment->status === 'paid') bg-green-100 text-green-700
-                                                                @elseif($installment->status === 'refinanced') bg-purple-100 text-purple-700
-                                                                @elseif($installment->isOverdue()) bg-red-100 text-red-700
-                                                                @else bg-gray-100 text-gray-600
-                                                                @endif">
+                                                                    @if($installment->status === 'paid') bg-green-100 text-green-700
+                                                                    @elseif($installment->status === 'refinanced') bg-purple-100 text-purple-700
+                                                                    @elseif($installment->isOverdue()) bg-red-100 text-red-700
+                                                                    @else bg-gray-100 text-gray-600
+                                                                    @endif">
                                 {{ $installment->installment_number }}
                             </div>
                             <div>
@@ -182,11 +182,11 @@
                                     <span class="font-bold text-gray-900">R$
                                         {{ number_format((float) $installment->amount, 2, ',', '.') }}</span>
                                     <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase
-                                                                        @if($installment->status === 'paid') bg-green-100 text-green-700
-                                                                        @elseif($installment->isOverdue()) bg-red-100 text-red-700
-                                                                        @elseif($installment->status === 'partial') bg-yellow-100 text-yellow-700
-                                                                        @else bg-gray-100 text-gray-700
-                                                                        @endif">
+                                                                            @if($installment->status === 'paid') bg-green-100 text-green-700
+                                                                            @elseif($installment->isOverdue()) bg-red-100 text-red-700
+                                                                            @elseif($installment->status === 'partial') bg-yellow-100 text-yellow-700
+                                                                            @else bg-gray-100 text-gray-700
+                                                                            @endif">
                                         @if($installment->status === 'paid') Pago
                                         @elseif($installment->status === 'refinanced') Renegociada
                                         @elseif($installment->isOverdue()) Atrasada
@@ -316,8 +316,21 @@
                     <button type="button" x-on:click="openInfo = false"
                         class="flex-1 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl transition">Cancelar</button>
                     <button type="submit"
-                        class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 transition">Salvar
-                        Alterações</button>
+                        class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 transition flex items-center justify-center gap-2"
+                        wire:loading.attr="disabled">
+                        <span wire:loading.remove>Salvar Alterações</span>
+                        <span wire:loading class="flex items-center gap-2">
+                            <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                            Salvando...
+                        </span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -359,8 +372,21 @@
 
                     <div class="pt-2 flex flex-col gap-2">
                         <button type="submit"
-                            class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition">Salvar
-                            Alteração</button>
+                            class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-2"
+                            wire:loading.attr="disabled">
+                            <span wire:loading.remove>Salvar Alteração</span>
+                            <span wire:loading class="flex items-center gap-2">
+                                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
+                                Salvando...
+                            </span>
+                        </button>
                         <button type="button" wire:click="cancelInstallmentEdit"
                             class="w-full py-2 text-gray-400 text-sm font-medium">Cancelar</button>
                     </div>
@@ -391,8 +417,21 @@
 
                 <div class="flex flex-col gap-3">
                     <button wire:click="applyBulkUpdate"
-                        class="w-full py-4 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-100 hover:bg-blue-700 transition">Atualizar
-                        Pendentes</button>
+                        class="w-full py-4 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-100 hover:bg-blue-700 transition flex items-center justify-center gap-2"
+                        wire:loading.attr="disabled">
+                        <span wire:loading.remove>Atualizar Pendentes</span>
+                        <span wire:loading class="flex items-center gap-2">
+                            <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                            Atualizando...
+                        </span>
+                    </button>
                     <button x-on:click="openBulk = false"
                         class="w-full py-2 text-gray-400 font-medium">Descartar</button>
                 </div>
@@ -458,8 +497,20 @@
 
                     <div class="pt-2 flex flex-col gap-2">
                         <button wire:click="confirmRollover"
-                            class="w-full py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition shadow-lg shadow-purple-100">
-                            Confirmar Rolagem
+                            class="w-full py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition shadow-lg shadow-purple-100 flex items-center justify-center gap-2"
+                            wire:loading.attr="disabled">
+                            <span wire:loading.remove>Confirmar Rolagem</span>
+                            <span wire:loading class="flex items-center gap-2">
+                                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
+                                Processando...
+                            </span>
                         </button>
                         <button wire:click="$set('showRolloverModal', false)"
                             class="w-full py-2 text-gray-400 text-sm font-medium">Cancelar</button>

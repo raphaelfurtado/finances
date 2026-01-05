@@ -59,4 +59,14 @@ class Loan extends Model
             return 0;
         return round(($this->paid_amount / $this->total_amount) * 100);
     }
+
+    public function getPaidInstallmentsCountAttribute()
+    {
+        return $this->installments()->where('status', 'paid')->count();
+    }
+
+    public function getRemainingInstallmentsCountAttribute()
+    {
+        return $this->installments_count - $this->paid_installments_count;
+    }
 }

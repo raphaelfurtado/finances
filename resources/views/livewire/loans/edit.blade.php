@@ -5,7 +5,7 @@
                 class="text-blue-600 hover:text-blue-700 font-medium text-sm mb-4 inline-block">
                 ← Voltar para Detalhes
             </a>
-            <h1 class="text-3xl font-bold text-gray-900">Editar Empréstimo</h1>
+            <h1 class="text-3xl font-bold text-gray-900">Editar Registro</h1>
         </div>
 
         @can('delete', $loan)
@@ -56,8 +56,8 @@
                     {{ $type === 'receivable' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300' }}">
                     <input type="radio" wire:model.live="type" value="receivable" class="sr-only">
                     <div class="text-center">
-                        <span class="text-2xl mb-2 block">🟢</span>
-                        <span class="font-medium text-gray-900">A Receber</span>
+                        <span class="text-2xl mb-2 block">📈</span>
+                        <span class="font-medium text-gray-900">Crédito</span>
                     </div>
                 </label>
 
@@ -65,8 +65,8 @@
                     {{ $type === 'payable' ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-gray-300' }}">
                     <input type="radio" wire:model.live="type" value="payable" class="sr-only">
                     <div class="text-center">
-                        <span class="text-2xl mb-2 block">🔴</span>
-                        <span class="font-medium text-gray-900">A Pagar</span>
+                        <span class="text-2xl mb-2 block">📉</span>
+                        <span class="font-medium text-gray-900">Débito</span>
                     </div>
                 </label>
             </div>
@@ -197,8 +197,20 @@
                 Cancelar
             </a>
             <button type="submit"
-                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition shadow-lg shadow-blue-200">
-                Salvar Alterações
+                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition shadow-lg shadow-blue-200 flex items-center gap-2"
+                wire:loading.attr="disabled">
+                <span wire:loading.remove>Salvar Alterações</span>
+                <span wire:loading class="flex items-center gap-2">
+                    <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    Salvando...
+                </span>
             </button>
         </div>
     </form>

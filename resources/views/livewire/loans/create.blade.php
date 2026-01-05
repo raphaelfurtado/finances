@@ -4,7 +4,7 @@
             class="text-blue-600 hover:text-blue-700 font-medium text-sm mb-4 inline-block">
             ← Voltar para Empréstimos
         </a>
-        <h1 class="text-3xl font-bold text-gray-900">Novo Empréstimo</h1>
+        <h1 class="text-3xl font-bold text-gray-900">Novo Registro</h1>
     </div>
 
     @if (session()->has('error'))
@@ -23,9 +23,9 @@
                     {{ $type === 'receivable' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300' }}">
                     <input type="radio" wire:model.live="type" value="receivable" class="sr-only">
                     <div class="text-center">
-                        <span class="text-2xl mb-2 block">🟢</span>
-                        <span class="font-medium text-gray-900">A Receber</span>
-                        <p class="text-xs text-gray-500 mt-1">Você emprestou</p>
+                        <span class="text-2xl mb-2 block">📈</span>
+                        <span class="font-medium text-gray-900">Crédito</span>
+                        <p class="text-xs text-gray-500 mt-1">Contas a receber</p>
                     </div>
                 </label>
 
@@ -33,9 +33,9 @@
                     {{ $type === 'payable' ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-gray-300' }}">
                     <input type="radio" wire:model.live="type" value="payable" class="sr-only">
                     <div class="text-center">
-                        <span class="text-2xl mb-2 block">🔴</span>
-                        <span class="font-medium text-gray-900">A Pagar</span>
-                        <p class="text-xs text-gray-500 mt-1">Você pegou emprestado</p>
+                        <span class="text-2xl mb-2 block">📉</span>
+                        <span class="font-medium text-gray-900">Débito</span>
+                        <p class="text-xs text-gray-500 mt-1">Contas a pagar</p>
                     </div>
                 </label>
             </div>
@@ -44,9 +44,7 @@
 
         <!-- Counterparty Information -->
         <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-4">
-            <h3 class="font-semibold text-gray-900 mb-4">Informações da
-                {{ $type === 'receivable' ? 'Pessoa que Deve' : 'Pessoa/Instituição' }}
-            </h3>
+            <h3 class="font-semibold text-gray-900 mb-4">Informações do Contato</h3>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Nome *</label>
@@ -107,7 +105,7 @@
 
         <!-- Loan Details -->
         <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-4">
-            <h3 class="font-semibold text-gray-900 mb-4">Detalhes do Empréstimo</h3>
+            <h3 class="font-semibold text-gray-900 mb-4">Detalhes do Registro</h3>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -239,8 +237,20 @@
                 Cancelar
             </a>
             <button type="submit"
-                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition">
-                Criar Empréstimo
+                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition flex items-center gap-2"
+                wire:loading.attr="disabled">
+                <span wire:loading.remove>Salvar Registro</span>
+                <span wire:loading class="flex items-center gap-2">
+                    <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    Salvando...
+                </span>
             </button>
         </div>
     </form>

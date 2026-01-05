@@ -30,11 +30,11 @@
 
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div
-            class="bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-xl p-6 shadow-sm transition hover:shadow-md">
+        <div class="bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-xl p-6 shadow-sm transition hover:shadow-md cursor-pointer"
+            onclick="document.getElementById('loans-list').scrollIntoView({ behavior: 'smooth' })">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-red-600 text-sm font-medium mb-1">🔴 Você Deve</p>
+                    <p class="text-red-600 text-sm font-medium mb-1">📉 Contas a Pagar</p>
                     <p class="text-3xl font-bold text-red-700">R$ {{ number_format($totalPayable, 2, ',', '.') }}</p>
                 </div>
                 <div class="bg-red-200 p-3 rounded-full text-red-600">
@@ -43,11 +43,11 @@
             </div>
         </div>
 
-        <div
-            class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-6 shadow-sm transition hover:shadow-md">
+        <div class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-6 shadow-sm transition hover:shadow-md cursor-pointer"
+            onclick="document.getElementById('loans-list').scrollIntoView({ behavior: 'smooth' })">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-green-600 text-sm font-medium mb-1">🟢 Devem a Você</p>
+                    <p class="text-green-600 text-sm font-medium mb-1">📈 Contas a Receber</p>
                     <p class="text-3xl font-bold text-green-700">R$ {{ number_format($totalReceivable, 2, ',', '.') }}
                     </p>
                 </div>
@@ -83,26 +83,27 @@
     </div>
 
     <!-- Loans List -->
-    <div class="space-y-4">
+    <div class="space-y-4" id="loans-list">
         @forelse($loans as $loan)
-            <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition">
+            <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition cursor-pointer relative group"
+                onclick="window.location.href = '{{ route('loans.show', $loan) }}'">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900">{{ $loan->counterparty_name }}</h3>
                         <p class="text-sm text-gray-500">
                             @if($loan->type === 'receivable')
-                                <span class="text-green-600 font-medium">A Receber</span>
+                                <span class="text-green-600 font-medium">Crédito</span>
                             @else
-                                <span class="text-red-600 font-medium">A Pagar</span>
+                                <span class="text-red-600 font-medium">Débito</span>
                             @endif
-                            • {{ $loan->installments_count }} parcelas
+                            • Faltam {{ $loan->remaining_installments_count }}/{{ $loan->installments_count }} parcelas
                         </p>
                     </div>
                     <span class="px-3 py-1 rounded-full text-xs font-medium
-                                                        @if($loan->status === 'active') bg-blue-100 text-blue-700
-                                                        @elseif($loan->status === 'paid') bg-green-100 text-green-700
-                                                        @else bg-red-100 text-red-700
-                                                        @endif">
+                                                            @if($loan->status === 'active') bg-blue-100 text-blue-700
+                                                            @elseif($loan->status === 'paid') bg-green-100 text-green-700
+                                                            @else bg-red-100 text-red-700
+                                                            @endif">
                         @if($loan->status === 'active') Ativo
                         @elseif($loan->status === 'paid') Pago
                         @else {{ ucfirst($loan->status) }}
@@ -138,10 +139,10 @@
                 </div>
 
                 <div class="flex justify-end">
-                    <a href="{{ route('loans.show', $loan) }}"
-                        class="text-blue-600 hover:text-blue-700 font-medium text-sm">
-                        Ver Detalhes →
-                    </a>
+                    <span
+                        class="text-blue-600 group-hover:text-blue-700 font-medium text-sm flex items-center gap-1 transition-colors">
+                        Ver Detalhes <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </span>
                 </div>
             </div>
         @empty
