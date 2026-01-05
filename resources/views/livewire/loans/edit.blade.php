@@ -173,6 +173,21 @@
                     <p class="text-2xl font-bold">R$ {{ number_format($preview_interest, 2, ',', '.') }}</p>
                 </div>
             </div>
+            @if($interest_rate > 0)
+                <div class="mt-4 bg-white/20 rounded-lg p-3">
+                    <p class="text-xs text-blue-100">
+                        💡 <strong>Cálculo:</strong>
+                        @if($interest_calculation_type === 'fixed_on_total')
+                            Taxa fixa de {{ number_format($interest_rate, 2, ',', '.') }}% aplicada uma vez sobre R$
+                            {{ number_format((float) ($principal_amount ?: 0), 2, ',', '.') }}
+                        @else
+                            Taxa de {{ number_format($interest_rate, 2, ',', '.') }}% por intervalo × {{ $installments_count }}
+                            parcelas
+                            sobre R$ {{ number_format((float) ($principal_amount ?: 0), 2, ',', '.') }}
+                        @endif
+                    </p>
+                </div>
+            @endif
         </div>
 
         <!-- Submit Button -->

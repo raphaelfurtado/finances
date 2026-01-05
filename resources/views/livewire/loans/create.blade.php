@@ -223,7 +223,8 @@
                             Taxa fixa de {{ number_format($interest_rate, 2, ',', '.') }}% aplicada uma vez sobre R$
                             {{ number_format((float) ($principal_amount ?: 0), 2, ',', '.') }}
                         @else
-                            Taxa de {{ number_format($interest_rate, 2, ',', '.') }}% ao mês × {{ $installments_count }} meses
+                            Taxa de {{ number_format($interest_rate, 2, ',', '.') }}% por intervalo × {{ $installments_count }}
+                            parcelas
                             sobre R$ {{ number_format((float) ($principal_amount ?: 0), 2, ',', '.') }}
                         @endif
                     </p>
