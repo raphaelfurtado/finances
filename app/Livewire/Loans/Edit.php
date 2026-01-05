@@ -18,6 +18,7 @@ class Edit extends Component
     public $daily_interest_rate;
     public $interest_calculation_type;
     public $installments_count;
+    public $installment_frequency;
     public $start_date;
 
     // Preview
@@ -35,6 +36,7 @@ class Edit extends Component
         'daily_interest_rate' => 'nullable|numeric|min:0',
         'interest_calculation_type' => 'required|in:fixed_on_total,simple_monthly',
         'installments_count' => 'required|integer|min:1',
+        'installment_frequency' => 'required|in:weekly,biweekly,monthly,bimonthly,quarterly,yearly',
         'start_date' => 'required|date',
     ];
 
@@ -50,6 +52,7 @@ class Edit extends Component
         $this->daily_interest_rate = $loan->daily_interest_rate;
         $this->interest_calculation_type = $loan->interest_calculation_type;
         $this->installments_count = $loan->installments_count;
+        $this->installment_frequency = $loan->installment_frequency ?? 'monthly';
         $this->start_date = \Illuminate\Support\Carbon::parse($loan->start_date)->format('Y-m-d');
 
         $this->updatePreview();
@@ -103,6 +106,7 @@ class Edit extends Component
                     (int) $this->installments_count != (int) $this->loan->installments_count ||
                     (float) $this->interest_rate != (float) $this->loan->interest_rate ||
                     $this->interest_calculation_type != $this->loan->interest_calculation_type ||
+                    $this->installment_frequency != $this->loan->installment_frequency ||
                     \Illuminate\Support\Carbon::parse($this->start_date)->format('Y-m-d') != \Illuminate\Support\Carbon::parse($this->loan->start_date)->format('Y-m-d')
                 ) {
                     throw new \Exception("Dados do contrato (valor, parcelas, taxa, data início) não podem ser alterados pois já existem pagamentos registrados.");
@@ -123,6 +127,7 @@ class Edit extends Component
                     'daily_interest_rate' => $this->daily_interest_rate,
                     'interest_calculation_type' => $this->interest_calculation_type,
                     'installments_count' => $this->installments_count,
+                    'installment_frequency' => $this->installment_frequency,
                     'start_date' => $this->start_date,
                 ]);
             }

@@ -135,6 +135,21 @@
                 </div>
 
                 <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Frequência de Pagamento *</label>
+                    <select wire:model.live="installment_frequency"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="weekly">Semanal (7 dias)</option>
+                        <option value="biweekly">Quinzenal (14 dias)</option>
+                        <option value="monthly">Mensal (30 dias)</option>
+                        <option value="bimonthly">Bimestral (60 dias)</option>
+                        <option value="quarterly">Trimestral (90 dias)</option>
+                        <option value="yearly">Anual (365 dias)</option>
+                    </select>
+                    @error('installment_frequency') <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Data de Início *</label>
                     <input type="date" wire:model="start_date"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">

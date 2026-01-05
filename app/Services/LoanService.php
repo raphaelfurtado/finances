@@ -34,6 +34,7 @@ class LoanService
                 'interest_calculation_type' => $data['interest_calculation_type'] ?? 'simple_monthly',
                 'total_amount' => $calc['total_amount'],
                 'installments_count' => (int) $data['installments_count'],
+                'installment_frequency' => $data['installment_frequency'] ?? 'monthly',
                 'start_date' => Carbon::parse($data['start_date']),
                 'status' => 'active',
             ]);
@@ -41,7 +42,7 @@ class LoanService
             for ($i = 1; $i <= $loan->installments_count; $i++) {
                 $loan->installments()->create([
                     'installment_number' => $i,
-                    'due_date' => Carbon::parse($loan->start_date)->copy()->addMonths($i - 1),
+                    'due_date' => $this->calculateDueDate($loan->start_date, $i, $loan->installment_frequency),
                     'amount' => $calc['installment_amount'],
                     'status' => 'pending',
                 ]);
@@ -91,6 +92,7 @@ class LoanService
                 'interest_calculation_type' => $data['interest_calculation_type'] ?? 'simple_monthly',
                 'total_amount' => $calc['total_amount'],
                 'installments_count' => (int) $data['installments_count'],
+                'installment_frequency' => $data['installment_frequency'] ?? 'monthly',
                 'start_date' => Carbon::parse($data['start_date']),
             ]);
 
@@ -98,7 +100,7 @@ class LoanService
             for ($i = 1; $i <= $loan->installments_count; $i++) {
                 $loan->installments()->create([
                     'installment_number' => $i,
-                    'due_date' => Carbon::parse($loan->start_date)->copy()->addMonths($i - 1),
+                    'due_date' => $this->calculateDueDate($loan->start_date, $i, $loan->installment_frequency),
                     'amount' => $calc['installment_amount'],
                     'status' => 'pending',
                 ]);
@@ -229,5 +231,22 @@ class LoanService
 
             return $newInstallment;
         });
+    }
+    /**
+     * Calculate due date based on frequency.
+     */
+    private function calculateDueDate($startDate, int $installmentNumber, string $frequency): Carbon
+    {
+        $date = Carbon::parse($startDate)->copy();
+        $offset = $installmentNumber - 1;
+
+        return match ($frequency) {
+            'weekly' => $date->addWeeks($offset),
+            'biweekly' => $date->addWeeks($offset * 2),
+            'bimonthly' => $date->addMonths($offset * 2),
+            'quarterly' => $date->addMonths($offset * 3),
+            'yearly' => $date->addYears($offset),
+            default => $date->addMonths($offset), // 'monthly'
+        };
     }
 }

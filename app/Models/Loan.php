@@ -26,6 +26,7 @@ class Loan extends Model
         'installments_count',
         'start_date',
         'status',
+        'installment_frequency',
     ];
 
     protected $casts = [

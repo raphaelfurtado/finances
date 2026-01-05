@@ -16,6 +16,7 @@ class Create extends Component
     public $installments_count = 1;
     public $late_fee_percentage = 0;
     public $daily_interest_rate = 0;
+    public $installment_frequency = 'monthly';
     public $start_date;
 
     // Live Preview
@@ -33,6 +34,7 @@ class Create extends Component
         'installments_count' => 'required|integer|min:1|max:360',
         'late_fee_percentage' => 'nullable|numeric|min:0|max:100',
         'daily_interest_rate' => 'nullable|numeric|min:0|max:100',
+        'installment_frequency' => 'required|in:weekly,biweekly,monthly,bimonthly,quarterly,yearly',
         'start_date' => 'required|date',
     ];
 
@@ -81,6 +83,7 @@ class Create extends Component
             'installments_count' => $this->installments_count,
             'late_fee_percentage' => $this->late_fee_percentage,
             'daily_interest_rate' => $this->daily_interest_rate,
+            'installment_frequency' => $this->installment_frequency,
             'start_date' => $this->start_date,
         ]);
 

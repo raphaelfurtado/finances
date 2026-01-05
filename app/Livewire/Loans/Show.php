@@ -127,7 +127,34 @@ class Show extends Component
         $this->rolloverInstallmentId = $installmentId;
         // Default values: Same rate as loan, Next month same day
         $this->rolloverNewRate = $this->loan->interest_rate;
-        $this->rolloverNewDate = \Illuminate\Support\Carbon::parse($installment->due_date)->addMonth()->format('Y-m-d');
+
+        // Suggest next date based on frequency
+        $date = \Illuminate\Support\Carbon::parse($installment->due_date);
+
+        switch ($this->loan->installment_frequency) {
+            case 'weekly':
+                $date->addWeek();
+                break;
+            case 'biweekly':
+                $date->addWeeks(2);
+                break;
+            case 'monthly':
+                $date->addMonth();
+                break;
+            case 'bimonthly':
+                $date->addMonths(2);
+                break;
+            case 'quarterly':
+                $date->addMonths(3);
+                break;
+            case 'yearly':
+                $date->addYear();
+                break;
+            default:
+                $date->addMonth();
+        }
+
+        $this->rolloverNewDate = $date->format('Y-m-d');
         $this->rolloverUpfrontPayment = 0; // Reset upfront
         $this->showRolloverModal = true;
         $this->calculateRolloverPreview();

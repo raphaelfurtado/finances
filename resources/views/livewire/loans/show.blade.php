@@ -110,6 +110,17 @@
                 <p class="text-2xl font-black text-gray-900">R$
                     {{ number_format($loan->principal_amount, 2, ',', '.') }}
                 </p>
+                <p class="text-[10px] text-gray-400 font-bold uppercase mt-1">
+                    {{ match ($loan->installment_frequency) {
+    'weekly' => 'Semanal',
+    'biweekly' => 'Quinzenal',
+    'monthly' => 'Mensal',
+    'bimonthly' => 'Bimestral',
+    'quarterly' => 'Trimestral',
+    'yearly' => 'Anual',
+    default => 'Mensal'
+} }}
+                </p>
             </div>
             <div class="bg-blue-50 rounded-lg p-4 border border-blue-100 shadow-sm">
                 <div class="flex justify-between items-center mb-1">
@@ -150,20 +161,20 @@
         <div class="space-y-4">
             @foreach($loan->installments as $installment)
                 <div class="group relative bg-white border border-gray-200 rounded-2xl p-4 transition-all hover:border-blue-400 hover:shadow-xl shadow-blue-100/20
-                                                @if($installment->status === 'paid') bg-green-50/30 border-green-100
-                                                @elseif($installment->status === 'refinanced') bg-purple-50/30 border-purple-100
-                                                @elseif($installment->isOverdue()) bg-red-50/30 border-red-100
-                                                @endif">
+                                                    @if($installment->status === 'paid') bg-green-50/30 border-green-100
+                                                    @elseif($installment->status === 'refinanced') bg-purple-50/30 border-purple-100
+                                                    @elseif($installment->isOverdue()) bg-red-50/30 border-red-100
+                                                    @endif">
 
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <!-- Left Side: Basic Info -->
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm
-                                                            @if($installment->status === 'paid') bg-green-100 text-green-700
-                                                            @elseif($installment->status === 'refinanced') bg-purple-100 text-purple-700
-                                                            @elseif($installment->isOverdue()) bg-red-100 text-red-700
-                                                            @else bg-gray-100 text-gray-600
-                                                            @endif">
+                                                                @if($installment->status === 'paid') bg-green-100 text-green-700
+                                                                @elseif($installment->status === 'refinanced') bg-purple-100 text-purple-700
+                                                                @elseif($installment->isOverdue()) bg-red-100 text-red-700
+                                                                @else bg-gray-100 text-gray-600
+                                                                @endif">
                                 {{ $installment->installment_number }}
                             </div>
                             <div>
@@ -171,11 +182,11 @@
                                     <span class="font-bold text-gray-900">R$
                                         {{ number_format((float) $installment->amount, 2, ',', '.') }}</span>
                                     <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase
-                                                                    @if($installment->status === 'paid') bg-green-100 text-green-700
-                                                                    @elseif($installment->isOverdue()) bg-red-100 text-red-700
-                                                                    @elseif($installment->status === 'partial') bg-yellow-100 text-yellow-700
-                                                                    @else bg-gray-100 text-gray-700
-                                                                    @endif">
+                                                                        @if($installment->status === 'paid') bg-green-100 text-green-700
+                                                                        @elseif($installment->isOverdue()) bg-red-100 text-red-700
+                                                                        @elseif($installment->status === 'partial') bg-yellow-100 text-yellow-700
+                                                                        @else bg-gray-100 text-gray-700
+                                                                        @endif">
                                         @if($installment->status === 'paid') Pago
                                         @elseif($installment->status === 'refinanced') Renegociada
                                         @elseif($installment->isOverdue()) Atrasada
