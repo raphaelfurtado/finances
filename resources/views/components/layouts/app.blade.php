@@ -108,45 +108,81 @@
                     <span class="font-black text-indigo-900 tracking-tight">Minhas Finanças</span>
                 </div>
 
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mb-4">Menu Principal</p>
+                @if(!request()->is('admin*'))
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mb-4">Menu Principal</p>
 
-                <div class="space-y-1">
-                    <a href="/dashboard"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('dashboard*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
-                        <i data-lucide="layout-grid" class="w-5 h-5"></i>
-                        Dashboard
-                    </a>
+                    <div class="space-y-1">
+                        <a href="/dashboard"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('dashboard*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                            <i data-lucide="layout-grid" class="w-5 h-5"></i>
+                            Dashboard
+                        </a>
 
-                    <a href="/planilhas"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('planilhas*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
-                        <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
-                        Planilhas
-                    </a>
+                        <a href="/planilhas"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('planilhas*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                            <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+                            Planilhas
+                        </a>
 
-                    <a href="/loans"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('loans*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
-                        <i data-lucide="banknote" class="w-5 h-5"></i>
-                        Crédito
-                    </a>
+                        <a href="/loans"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('loans*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                            <i data-lucide="banknote" class="w-5 h-5"></i>
+                            Crédito
+                        </a>
 
-                    <a href="/gastos-fixos"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('gastos-fixos*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
-                        <i data-lucide="calendar-clock" class="w-5 h-5"></i>
-                        Gastos Fixos
-                    </a>
+                        <a href="/gastos-fixos"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('gastos-fixos*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                            <i data-lucide="calendar-clock" class="w-5 h-5"></i>
+                            Gastos Fixos
+                        </a>
 
-                    <a href="/orcamentos"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('orcamentos*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
-                        <i data-lucide="target" class="w-5 h-5"></i>
-                        Limites
-                    </a>
+                        <a href="/orcamentos"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('orcamentos*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                            <i data-lucide="target" class="w-5 h-5"></i>
+                            Limites
+                        </a>
 
-                    <a href="/relatorios"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('relatorios*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
-                        <i data-lucide="pie-chart" class="w-5 h-5"></i>
-                        Relatórios
-                    </a>
-                </div>
+                        <a href="/relatorios"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('relatorios*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                            <i data-lucide="pie-chart" class="w-5 h-5"></i>
+                            Relatórios
+                        </a>
+                    </div>
+                @else
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mb-4">Administração</p>
+
+                    <div class="space-y-1">
+                        <a href="/admin"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('admin') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                            <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                            Painel Admin
+                        </a>
+
+                        <a href="/admin/users"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('admin/users*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                            Usuários
+                        </a>
+
+                        <a href="/admin/settings"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('admin/settings*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                            <i data-lucide="settings" class="w-5 h-5"></i>
+                            Configurações
+                        </a>
+
+                        <a href="{{ route('admin.monitoring') }}"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('admin/monitoring*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                            <i data-lucide="activity" class="w-5 h-5"></i>
+                            Monitoramento
+                        </a>
+
+                        <a href="/dashboard"
+                            class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-indigo-600 hover:bg-indigo-50 transition-all border border-indigo-100 border-dashed">
+                            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                            Voltar para o App
+                        </a>
+                    </div>
+                @endif
 
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mt-8 mb-4">Minha Conta</p>
 
@@ -220,22 +256,22 @@
         });
 
         // PWA Install Logic
-        let deferredPrompt;
+        window.deferredPrompt = window.deferredPrompt || null;
         const installBtn = document.getElementById('pwa-install-btn');
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
-            deferredPrompt = e;
+            window.deferredPrompt = e;
             if (installBtn) installBtn.classList.remove('hidden');
         });
 
         if (installBtn) {
             installBtn.addEventListener('click', async () => {
-                if (!deferredPrompt) return;
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
+                if (!window.deferredPrompt) return;
+                window.deferredPrompt.prompt();
+                const { outcome } = await window.deferredPrompt.userChoice;
                 if (outcome === 'accepted') {
-                    deferredPrompt = null;
+                    window.deferredPrompt = null;
                     installBtn.classList.add('hidden');
                 }
             });
@@ -244,6 +280,15 @@
         // Configurar Axios para Laravel
         window.axios = axios;
         window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+        // Register Service Worker for Push Notifications
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registrado!', reg))
+                    .catch(err => console.error('Erro ao registrar Service Worker:', err));
+            });
+        }
     </script>
 </body>
 

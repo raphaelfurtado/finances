@@ -97,6 +97,20 @@
                 <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
             </a>
 
+            <a href="{{ route('settings.notifications') }}" wire:navigate
+                class="flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                        <i data-lucide="bell" class="w-5 h-5 text-green-600"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">Notificações</p>
+                        <p class="text-xs text-gray-500">Alertas e avisos push</p>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+            </a>
+
             <a href="{{ route('my-testimonial') }}"
                 class="flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors">
                 <div class="flex items-center gap-3">

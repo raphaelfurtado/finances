@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, \Laravel\Cashier\Billable;
+    use HasFactory, Notifiable, \Laravel\Cashier\Billable, \NotificationChannels\WebPush\HasPushSubscriptions;
 
     /**
      * The attributes that are mass assignable.

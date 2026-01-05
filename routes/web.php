@@ -78,6 +78,8 @@ Route::get('/politica-de-privacidade', App\Livewire\Legal::class)->name('legal')
 Route::middleware(['auth'])->group(function () {
     Route::get('/gastos-fixos', App\Livewire\FixedExpenses::class)->name('fixed-expenses');
     Route::get('/orcamentos', App\Livewire\Budgets::class)->name('budgets');
+    Route::get('/configuracoes', \App\Livewire\Perfil::class)->name('profile');
+    Route::get('/configuracoes/notificacoes', \App\Livewire\NotificationSettings::class)->name('settings.notifications');
 });
 
 Route::get('/admin/stop-impersonating', function () {

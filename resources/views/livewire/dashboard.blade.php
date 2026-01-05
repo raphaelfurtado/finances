@@ -28,6 +28,9 @@
 
     <!-- Content -->
     <div class="flex-1 overflow-y-auto px-6 py-4">
+        <!-- Notification Banner (WhatsApp style) -->
+        <livewire:notification-banner />
+
         <!-- Income/Expense Cards -->
         <div class="grid grid-cols-2 gap-3 mb-4">
             <!-- Income Card -->
