@@ -40,30 +40,33 @@ jobs:
       # PARTE 1: Envia o BACKEND (App, Vendor, Config)
       # ----------------------------------------------------------------
       - name: 📂 Deploy Backend (App Core)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           
           # Destino: Pasta protegida do sistema
-          server-dir: finances/
+          server-dir: /finances/
+          
+          # Rastreamento de estado
+          state-name: backend-sync-state.json
           
           # Exclui a pasta public daqui (pois ela vai para outro lugar no passo seguinte)
           exclude: |
-            public/**
-            .git*
-            .github/**
-            tests/**
-            storage/*.key
-            .env
-            /README.md
+            **/.git*
+            **/.github/**
+            **/tests/**
+            **/storage/*.key
+            **/.env
+            **/README.md
+            **/public/**
 
       # ----------------------------------------------------------------
       # PARTE 2: Envia o FRONTEND (CSS, JS, Assets)
       # ----------------------------------------------------------------
       - name: 📂 Deploy Frontend (Public Folder)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
@@ -73,14 +76,14 @@ jobs:
           local-dir: public/
           
           # Destino: Sua pasta pública no servidor (Subdomínio)
-          server-dir: finances.websiteponto.com.br/
+          server-dir: /finances.websiteponto.com.br/
           
-          # IMPORTANTE: 
-          # Geralmente excluímos o index.php se o do servidor já estiver 
-          # configurado com os caminhos corretos (../repertorio-app/...).
-          # Se o index.php do seu git já estiver certo, pode remover essa linha de exclude.
+          # Rastreamento de estado
+          state-name: frontend-sync-state.json
+          
+          # Não excluir index.php - ele precisa ser atualizado
           exclude: |
-            index.php
+            **/.gitkeep
 
       # ----------------------------------------------------------------
       # PARTE 3: Roda as Migrations (Gatilho via URL)
