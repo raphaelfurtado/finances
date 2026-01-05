@@ -17,7 +17,8 @@ class Transaction extends Model
         'status',
         'is_recurring',
         'observation',
-        'receipt_path'
+        'receipt_path',
+        'fixed_expense_id'
     ];
 
     protected $casts = [
@@ -25,6 +26,11 @@ class Transaction extends Model
         'date' => 'immutable_datetime',
         'is_recurring' => 'boolean'
     ];
+
+    public function fixedExpense()
+    {
+        return $this->belongsTo(FixedExpense::class);
+    }
 
     public function user()
     {

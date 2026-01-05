@@ -76,6 +76,7 @@ Route::middleware(['auth', App\Http\Middleware\EnsureUserIsPremium::class])->gro
 Route::get('/politica-de-privacidade', App\Livewire\Legal::class)->name('legal');
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/gastos-fixos', App\Livewire\FixedExpenses::class)->name('fixed-expenses');
     Route::get('/orcamentos', App\Livewire\Budgets::class)->name('budgets');
 });
 

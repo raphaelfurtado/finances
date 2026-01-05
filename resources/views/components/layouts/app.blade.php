@@ -129,6 +129,12 @@
                         Crédito
                     </a>
 
+                    <a href="/gastos-fixos"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('gastos-fixos*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                        <i data-lucide="calendar-clock" class="w-5 h-5"></i>
+                        Gastos Fixos
+                    </a>
+
                     <a href="/orcamentos"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('orcamentos*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
                         <i data-lucide="target" class="w-5 h-5"></i>

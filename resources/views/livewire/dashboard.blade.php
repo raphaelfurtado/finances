@@ -78,6 +78,9 @@
             </button>
         </div>
 
+        <!-- Monthly Bills -->
+        <livewire:monthly-bills />
+
         <!-- Consultor Sincero -->
         <div class="mb-6">
             <div

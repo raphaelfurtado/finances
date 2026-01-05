@@ -17,6 +17,8 @@
                     return request()->is('loans*');
                 case 'relatorios':
                     return request()->is('relatorios*');
+                case 'gastos-fixos':
+                    return request()->is('gastos-fixos*');
                 case 'perfil':
                     return request()->is('perfil*') || request()->is('configuracoes*') || request()->is('meu-depoimento*');
                 default:
@@ -27,8 +29,8 @@
 @endphp
 
 <nav
-    class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-40 lg:hidden">
-    <div class="grid grid-cols-6 gap-1 px-1 py-2">
+    class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-40 lg:hidden text-center overflow-x-auto">
+    <div class="grid grid-cols-7 gap-0 px-1 py-2 min-w-[360px]">
         <!-- Dashboard -->
         <a href="/dashboard"
             class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'painel') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
@@ -55,6 +57,13 @@
             class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'loans') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
             <i data-lucide="banknote" class="w-6 h-6 mb-0.5"></i>
             <span class="text-[9px] font-bold leading-none tracking-tighter">Crédito</span>
+        </a>
+
+        <!-- Gastos Fixos -->
+        <a href="/gastos-fixos"
+            class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'gastos-fixos') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
+            <i data-lucide="calendar-clock" class="w-6 h-6 mb-0.5"></i>
+            <span class="text-[9px] font-bold leading-none tracking-tighter">Fixo</span>
         </a>
 
         <!-- Relatórios -->

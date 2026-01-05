@@ -17,6 +17,8 @@ class Dashboard extends Component
     public $expenseChange = 0;
     public $recentTransactions = [];
 
+    protected $listeners = ['transaction-created' => 'loadData'];
+
     public function mount()
     {
         $this->selectedMonth = Carbon::now()->month;
