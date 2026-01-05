@@ -20,6 +20,7 @@ class UpgradePlan extends Component
             ->checkout([
                 'success_url' => route('dashboard', ['checkout' => 'success']),
                 'cancel_url' => route('upgrade'),
+                'client_reference_id' => auth()->id(),
             ]);
 
         return $this->redirect($checkout->url, navigate: false);

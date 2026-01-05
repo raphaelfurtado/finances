@@ -79,15 +79,26 @@ class StripeWebhookController extends Controller
     {
         Log::info('Processing checkout.session.completed', [
             'session_id' => $session->id,
-            'customer_email' => $session->customer_email ?? 'N/A'
+            'customer_email' => $session->customer_email ?? 'N/A',
+            'client_reference_id' => $session->client_reference_id ?? 'N/A',
         ]);
 
-        // Find user by email
-        $user = User::where('email', $session->customer_email)->first();
+        $user = null;
+
+        // 1. Try to find by client_reference_id (most reliable)
+        if (isset($session->client_reference_id)) {
+            $user = User::find($session->client_reference_id);
+        }
+
+        // 2. Fallback to email
+        if (!$user && isset($session->customer_email)) {
+            $user = User::where('email', $session->customer_email)->first();
+        }
 
         if (!$user) {
             Log::warning('User not found for checkout session', [
-                'email' => $session->customer_email
+                'email' => $session->customer_email ?? 'N/A',
+                'client_reference_id' => $session->client_reference_id ?? 'N/A'
             ]);
             return;
         }
