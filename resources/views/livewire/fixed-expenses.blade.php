@@ -20,6 +20,13 @@
             </div>
         @endif
 
+        @if (session()->has('error'))
+            <div class="mb-4 p-3 bg-red-50 text-red-700 text-sm rounded-xl border border-red-100 flex items-center gap-2">
+                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                {{ session('error') }}
+            </div>
+        @endif
+
         <div class="space-y-4">
             @forelse($fixedExpenses as $expense)
                 @php
@@ -229,6 +236,21 @@
                         </label>
                         <span class="text-sm font-medium text-gray-700">Ativo</span>
                     </div>
+
+                    @if(!$editingId)
+                        <div class="flex items-center gap-3 py-2 bg-blue-50 px-4 rounded-2xl border border-blue-100">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" wire:model="mark_as_paid_now" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600">
+                                </div>
+                            </label>
+                            <div class="flex-1">
+                                <span class="text-sm font-bold text-gray-900 block">Já paguei este mês</span>
+                                <span class="text-xs text-gray-600">Vincular transação existente</span>
+                            </div>
+                        </div>
+                    @endif
 
                     <div class="pt-4">
                         <button type="submit"

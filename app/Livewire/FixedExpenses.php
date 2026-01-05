@@ -27,6 +27,7 @@ class FixedExpenses extends Component
     public $due_day = '';
     public $category_id = '';
     public $is_active = true;
+    public $mark_as_paid_now = false;
 
     protected function rules()
     {
@@ -61,6 +62,7 @@ class FixedExpenses extends Component
         $this->due_day = '';
         $this->category_id = '';
         $this->is_active = true;
+        $this->mark_as_paid_now = false;
         $this->resetErrorBag();
     }
 
@@ -79,6 +81,15 @@ class FixedExpenses extends Component
 
     public function save()
     {
+        // Freemium check: limit to 1 fixed expense for free users
+        if (!$this->editingId && !auth()->user()->is_premium) {
+            $currentCount = FixedExpense::where('user_id', auth()->id())->count();
+            if ($currentCount >= 1) {
+                session()->flash('error', 'Usuários gratuitos podem cadastrar apenas 1 gasto fixo. Faça upgrade para Premium para adicionar mais!');
+                return;
+            }
+        }
+
         $this->validate();
 
         $data = [
@@ -95,11 +106,38 @@ class FixedExpenses extends Component
             FixedExpense::where('user_id', auth()->id())->findOrFail($this->editingId)->update($data);
             session()->flash('message', 'Gasto fixo atualizado com sucesso!');
         } else {
-            FixedExpense::create($data);
+            $expense = FixedExpense::create($data);
+
+            // If user marked as already paid, create the transaction to mark as paid
+            if ($this->mark_as_paid_now) {
+                $now = Carbon::now();
+
+                // Check if payment already exists for this month (safety)
+                $exists = Transaction::where('fixed_expense_id', $expense->id)
+                    ->whereMonth('date', $now->month)
+                    ->whereYear('date', $now->year)
+                    ->exists();
+
+                if (!$exists) {
+                    Transaction::create([
+                        'user_id' => auth()->id(),
+                        'category_id' => $expense->category_id,
+                        'type' => 'expense',
+                        'amount' => $this->amount,
+                        'description' => 'Pgto: ' . $expense->title,
+                        'date' => $now,
+                        'payment_method' => 'other',
+                        'status' => 'paid',
+                        'fixed_expense_id' => $expense->id,
+                    ]);
+                }
+            }
+
             session()->flash('message', 'Gasto fixo criado com sucesso!');
         }
 
         $this->closeModal();
+        $this->dispatch('transaction-created');
     }
 
     public function delete($id)
