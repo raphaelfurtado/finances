@@ -110,7 +110,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Valor Emprestado (Principal) *</label>
-                    <input type="number" step="0.01" wire:model.live="principal_amount"
+                    <input type="number" step="0.01" inputmode="decimal" wire:model.live="principal_amount"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="1000.00">
                     @error('principal_amount') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
@@ -118,7 +118,7 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Taxa de Juros (% ao mês)</label>
-                    <input type="number" step="0.01" wire:model.live="interest_rate"
+                    <input type="number" step="0.01" inputmode="decimal" wire:model.live="interest_rate"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="0 (sem juros)">
                     @error('interest_rate') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
@@ -126,7 +126,7 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Número de Parcelas *</label>
-                    <input type="number" wire:model.live="installments_count"
+                    <input type="number" inputmode="numeric" pattern="[0-9]*" wire:model.live="installments_count"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="12">
                     @error('installments_count') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
@@ -163,7 +163,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Multa Fixa (%)</label>
-                        <input type="number" step="0.01" wire:model="late_fee_percentage"
+                        <input type="number" step="0.01" inputmode="decimal" wire:model="late_fee_percentage"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="Ex: 2.00">
                         <p class="text-[10px] text-gray-500 mt-1">Aplicada uma única vez no primeiro dia de atraso.</p>
@@ -173,7 +173,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Juros Diários (%)</label>
-                        <input type="number" step="0.01" wire:model="daily_interest_rate"
+                        <input type="number" step="0.01" inputmode="decimal" wire:model="daily_interest_rate"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="Ex: 0.10">
                         <p class="text-[10px] text-gray-500 mt-1">Aplicado sobre o valor original por dia de atraso.</p>

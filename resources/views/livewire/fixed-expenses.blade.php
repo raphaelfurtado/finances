@@ -146,7 +146,7 @@
                         <label class="block text-sm font-bold text-gray-700 mb-2">Valor Pago (R$)</label>
                         <div class="relative">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">R$</span>
-                            <input type="number" step="0.01" wire:model="paymentAmount"
+                            <input type="number" step="0.01" inputmode="decimal" wire:model="paymentAmount"
                                 class="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 transition-all font-mono text-xl font-bold text-gray-900 text-center"
                                 autofocus>
                         </div>
@@ -194,14 +194,14 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Valor (R$)</label>
-                            <input type="number" step="0.01" wire:model="amount"
+                            <input type="number" step="0.01" inputmode="decimal" wire:model="amount"
                                 class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 transition-all font-mono"
                                 placeholder="0,00">
                             @error('amount') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Dia Vencimento</label>
-                            <input type="number" wire:model="due_day"
+                            <input type="number" inputmode="numeric" pattern="[0-9]*" wire:model="due_day"
                                 class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 transition-all"
                                 placeholder="1 a 31">
                             @error('due_day') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror

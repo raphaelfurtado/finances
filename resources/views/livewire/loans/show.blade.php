@@ -161,20 +161,20 @@
         <div class="space-y-4">
             @foreach($loan->installments as $installment)
                 <div class="group relative bg-white border border-gray-200 rounded-2xl p-4 transition-all hover:border-blue-400 hover:shadow-xl shadow-blue-100/20
-                                                        @if($installment->status === 'paid') bg-green-50/30 border-green-100
-                                                        @elseif($installment->status === 'refinanced') bg-purple-50/30 border-purple-100
-                                                        @elseif($installment->isOverdue()) bg-red-50/30 border-red-100
-                                                        @endif">
+                                                            @if($installment->status === 'paid') bg-green-50/30 border-green-100
+                                                            @elseif($installment->status === 'refinanced') bg-purple-50/30 border-purple-100
+                                                            @elseif($installment->isOverdue()) bg-red-50/30 border-red-100
+                                                            @endif">
 
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <!-- Left Side: Basic Info -->
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm
-                                                                    @if($installment->status === 'paid') bg-green-100 text-green-700
-                                                                    @elseif($installment->status === 'refinanced') bg-purple-100 text-purple-700
-                                                                    @elseif($installment->isOverdue()) bg-red-100 text-red-700
-                                                                    @else bg-gray-100 text-gray-600
-                                                                    @endif">
+                                                                        @if($installment->status === 'paid') bg-green-100 text-green-700
+                                                                        @elseif($installment->status === 'refinanced') bg-purple-100 text-purple-700
+                                                                        @elseif($installment->isOverdue()) bg-red-100 text-red-700
+                                                                        @else bg-gray-100 text-gray-600
+                                                                        @endif">
                                 {{ $installment->installment_number }}
                             </div>
                             <div>
@@ -182,11 +182,11 @@
                                     <span class="font-bold text-gray-900">R$
                                         {{ number_format((float) $installment->amount, 2, ',', '.') }}</span>
                                     <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase
-                                                                            @if($installment->status === 'paid') bg-green-100 text-green-700
-                                                                            @elseif($installment->isOverdue()) bg-red-100 text-red-700
-                                                                            @elseif($installment->status === 'partial') bg-yellow-100 text-yellow-700
-                                                                            @else bg-gray-100 text-gray-700
-                                                                            @endif">
+                                                                                @if($installment->status === 'paid') bg-green-100 text-green-700
+                                                                                @elseif($installment->isOverdue()) bg-red-100 text-red-700
+                                                                                @elseif($installment->status === 'partial') bg-yellow-100 text-yellow-700
+                                                                                @else bg-gray-100 text-gray-700
+                                                                                @endif">
                                         @if($installment->status === 'paid') Pago
                                         @elseif($installment->status === 'refinanced') Renegociada
                                         @elseif($installment->isOverdue()) Atrasada
@@ -356,7 +356,7 @@
                         <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Valor da Parcela</label>
                         <div class="relative">
                             <span class="absolute left-3 top-2 text-gray-400 text-sm">R$</span>
-                            <input type="number" step="0.01" wire:model="instAmount"
+                            <input type="number" step="0.01" inputmode="decimal" wire:model="instAmount"
                                 class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg font-bold">
                         </div>
                     </div>
@@ -411,7 +411,8 @@
 
                 <div class="flex items-center justify-center gap-4 mb-8">
                     <span class="text-sm font-bold text-gray-400 uppercase">Todo Dia</span>
-                    <input type="number" wire:model="newInstallmentDay" min="1" max="31"
+                    <input type="number" inputmode="numeric" pattern="[0-9]*" wire:model="newInstallmentDay" min="1"
+                        max="31"
                         class="w-20 text-center text-2xl font-black text-blue-600 bg-blue-50 border-2 border-blue-200 rounded-2xl py-3 focus:ring-0">
                 </div>
 
@@ -466,7 +467,8 @@
                             Parcial)</label>
                         <div class="relative">
                             <span class="absolute left-3 top-2 text-gray-400 text-sm">R$</span>
-                            <input type="number" step="0.01" wire:model.live.debounce.500ms="rolloverUpfrontPayment"
+                            <input type="number" step="0.01" inputmode="decimal"
+                                wire:model.live.debounce.500ms="rolloverUpfrontPayment"
                                 class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg">
                         </div>
                         <p class="text-[10px] text-gray-400 mt-1">Opcional. Este valor será abatido antes do novo cálculo.
@@ -481,7 +483,8 @@
 
                     <div>
                         <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Taxa de Juros (%)</label>
-                        <input type="number" step="0.01" wire:model.live.debounce.500ms="rolloverNewRate"
+                        <input type="number" step="0.01" inputmode="decimal"
+                            wire:model.live.debounce.500ms="rolloverNewRate"
                             class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg">
                     </div>
 

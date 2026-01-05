@@ -163,7 +163,7 @@
                                             class="block text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Novo
                                             Limite (R$)</label>
                                         <div class="flex items-center gap-2">
-                                            <input type="number" step="0.01" wire:model="editingAmount"
+                                            <input type="number" step="0.01" inputmode="decimal" wire:model="editingAmount"
                                                 class="flex-1 w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 font-bold"
                                                 placeholder="0,00" autofocus>
 

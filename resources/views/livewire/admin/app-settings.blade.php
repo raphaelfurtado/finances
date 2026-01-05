@@ -167,7 +167,8 @@
             <div class="mt-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Limite de Empréstimos (Grátis)</label>
                 <div class="relative">
-                    <input type="number" wire:model="free_loan_limit" min="1" max="100"
+                    <input type="number" inputmode="numeric" pattern="[0-9]*" wire:model="free_loan_limit" min="1"
+                        max="100"
                         class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                         placeholder="Ex: 2">
                 </div>

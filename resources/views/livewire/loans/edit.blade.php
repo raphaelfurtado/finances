@@ -93,19 +93,19 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Valor Principal *</label>
-                    <input type="number" step="0.01" wire:model.live="principal_amount"
+                    <input type="number" step="0.01" inputmode="decimal" wire:model.live="principal_amount"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Taxa de Juros (%)</label>
-                    <input type="number" step="0.01" wire:model.live="interest_rate"
+                    <input type="number" step="0.01" inputmode="decimal" wire:model.live="interest_rate"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Nº de Parcelas *</label>
-                    <input type="number" wire:model.live="installments_count"
+                    <input type="number" inputmode="numeric" pattern="[0-9]*" wire:model.live="installments_count"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
 
@@ -141,13 +141,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Multa Fixa (%) por Atraso</label>
-                    <input type="number" step="0.01" wire:model="late_fee_percentage"
+                    <input type="number" step="0.01" inputmode="decimal" wire:model="late_fee_percentage"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Juros Diários (%)</label>
-                    <input type="number" step="0.01" wire:model="daily_interest_rate"
+                    <input type="number" step="0.01" inputmode="decimal" wire:model="daily_interest_rate"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
             </div>

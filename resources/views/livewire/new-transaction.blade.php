@@ -59,7 +59,7 @@
                 {{ $type === 'expense' ? 'Despesa' : 'Receita' }}</label>
             <div class="flex items-center justify-center gap-2">
                 <span class="text-3xl font-medium text-gray-400">R$</span>
-                <input type="text" wire:model="amount"
+                <input type="text" inputmode="decimal" wire:model="amount"
                     class="text-5xl font-bold text-blue-600 bg-transparent border-none outline-none text-center w-auto"
                     style="max-width: 300px;" placeholder="0,00">
             </div>
