@@ -1,48 +1,74 @@
-@props(['active' => 'painel'])
+@props(['active' => null])
+@php
+    if (!function_exists('isActive')) {
+        function isActive($active, $current)
+        {
+            if ($active === $current)
+                return true;
 
-<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-lg"
-    style="max-width: 448px; margin: 0 auto;">
-    <div class="grid grid-cols-6 gap-1 px-2 py-2">
-        <!-- Painel -->
+            switch ($current) {
+                case 'painel':
+                    return request()->is('dashboard*');
+                case 'planilhas':
+                    return request()->is('planilhas*');
+                case 'budgets':
+                    return request()->is('orcamentos*');
+                case 'loans':
+                    return request()->is('loans*');
+                case 'relatorios':
+                    return request()->is('relatorios*');
+                case 'perfil':
+                    return request()->is('perfil*') || request()->is('configuracoes*') || request()->is('meu-depoimento*');
+                default:
+                    return false;
+            }
+        }
+    }
+@endphp
+
+<nav
+    class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-40 lg:hidden">
+    <div class="grid grid-cols-6 gap-1 px-1 py-2">
+        <!-- Dashboard -->
         <a href="/dashboard"
-            class="flex flex-col items-center justify-center py-2 {{ $active === 'painel' ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-600 transition-colors">
-            <i data-lucide="layout-grid" class="w-5 h-5 mb-1"></i>
-            <span class="text-[10px] font-medium leading-none">Painel</span>
+            class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'painel') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
+            <i data-lucide="layout-grid" class="w-6 h-6 mb-0.5"></i>
+            <span class="text-[9px] font-bold leading-none tracking-tighter">Painel</span>
         </a>
 
         <!-- Planilhas -->
         <a href="/planilhas"
-            class="flex flex-col items-center justify-center py-2 {{ $active === 'planilhas' ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-600 transition-colors">
-            <i data-lucide="file-spreadsheet" class="w-5 h-5 mb-1"></i>
-            <span class="text-[10px] font-medium leading-none">Planilhas</span>
+            class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'planilhas') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
+            <i data-lucide="file-spreadsheet" class="w-6 h-6 mb-0.5"></i>
+            <span class="text-[9px] font-bold leading-none tracking-tighter">Planilhas</span>
         </a>
 
         <!-- Limites -->
         <a href="/orcamentos"
-            class="flex flex-col items-center justify-center py-2 {{ $active === 'budgets' ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-600 transition-colors">
-            <i data-lucide="target" class="w-5 h-5 mb-1"></i>
-            <span class="text-[10px] font-medium leading-none">Limites</span>
+            class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'budgets') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
+            <i data-lucide="target" class="w-6 h-6 mb-0.5"></i>
+            <span class="text-[9px] font-bold leading-none tracking-tighter">Limites</span>
         </a>
 
-        <!-- Empréstimos -->
+        <!-- Crédito -->
         <a href="/loans"
-            class="flex flex-col items-center justify-center py-2 {{ $active === 'loans' ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-600 transition-colors">
-            <i data-lucide="banknote" class="w-5 h-5 mb-1"></i>
-            <span class="text-[10px] font-medium leading-none">Crédito</span>
+            class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'loans') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
+            <i data-lucide="banknote" class="w-6 h-6 mb-0.5"></i>
+            <span class="text-[9px] font-bold leading-none tracking-tighter">Crédito</span>
         </a>
 
         <!-- Relatórios -->
         <a href="/relatorios"
-            class="flex flex-col items-center justify-center py-2 {{ $active === 'relatorios' ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-600 transition-colors">
-            <i data-lucide="pie-chart" class="w-5 h-5 mb-1"></i>
-            <span class="text-[10px] font-medium leading-none">Relat.</span>
+            class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'relatorios') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
+            <i data-lucide="pie-chart" class="w-6 h-6 mb-0.5"></i>
+            <span class="text-[9px] font-bold leading-none tracking-tighter">Relat.</span>
         </a>
 
-        <!-- Perfil -->
+        <!-- Perfil/Config -->
         <a href="/perfil"
-            class="flex flex-col items-center justify-center py-2 {{ $active === 'perfil' ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-600 transition-colors">
-            <i data-lucide="user" class="w-5 h-5 mb-1"></i>
-            <span class="text-[10px] font-medium leading-none">Perfil</span>
+            class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'perfil') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
+            <i data-lucide="user" class="w-6 h-6 mb-0.5"></i>
+            <span class="text-[9px] font-bold leading-none tracking-tighter">Perfil</span>
         </a>
     </div>
 </nav>

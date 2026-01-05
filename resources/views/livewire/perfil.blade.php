@@ -144,8 +144,6 @@
         </form>
     </div>
 
-    <!-- Bottom Navigation -->
-    <x-bottom-nav active="perfil" />
 </div>
 
 <script>

@@ -22,7 +22,7 @@ class Transaction extends Model
 
     protected $casts = [
         'amount' => 'decimal:2',
-        'date' => 'date',
+        'date' => 'immutable_datetime',
         'is_recurring' => 'boolean'
     ];
 

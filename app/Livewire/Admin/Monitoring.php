@@ -47,6 +47,22 @@ class Monitoring extends Component
         // Recent Users
         $recentUsers = \App\Models\User::latest()->take(5)->get();
 
+        // Device Stats
+        $deviceStats = ActivityLog::where('created_at', '>=', $startDate)
+            ->select('device', DB::raw('count(*) as total'))
+            ->whereNotNull('device')
+            ->groupBy('device')
+            ->orderByDesc('total')
+            ->get();
+
+        // Browser Stats
+        $browserStats = ActivityLog::where('created_at', '>=', $startDate)
+            ->select('browser', DB::raw('count(*) as total'))
+            ->whereNotNull('browser')
+            ->groupBy('browser')
+            ->orderByDesc('total')
+            ->get();
+
         // Critical Errors (last 24h)
         $criticalErrors = \App\Models\SystemError::latest()
             ->where('created_at', '>=', now()->subDay())
@@ -61,6 +77,8 @@ class Monitoring extends Component
             'dailyInteractions' => $dailyInteractions,
             'recentUsers' => $recentUsers,
             'criticalErrors' => $criticalErrors,
+            'deviceStats' => $deviceStats,
+            'browserStats' => $browserStats,
         ])->layout('components.layouts.app');
     }
 }

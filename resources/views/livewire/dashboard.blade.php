@@ -147,11 +147,7 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <x-bottom-nav active="painel" />
 
-    <!-- Floating Action Button -->
-    <x-fab-button />
 </div>
 
 <script>

@@ -53,7 +53,8 @@
             <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
                 <p class="text-xs text-gray-500 font-medium uppercase mb-1">Saldo</p>
                 <p class="text-lg font-bold {{ $balance >= 0 ? 'text-blue-600' : 'text-red-500' }}">R$
-                    {{ number_format($balance, 2, ',', '.') }}</p>
+                    {{ number_format($balance, 2, ',', '.') }}
+                </p>
             </div>
         </div>
 
@@ -110,8 +111,6 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <x-bottom-nav active="planilhas" />
 </div>
 
 <script>

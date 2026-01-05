@@ -36,25 +36,85 @@
     </div>
 
     <!-- Features Usage -->
-    <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 mb-8">
-        <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest mb-6">Uso por Funcionalidade</h3>
-        <div class="space-y-6">
-            @foreach($topFeatures as $feature)
-                @php
-                    $percentage = $totalInteractions > 0 ? ($feature->total / $totalInteractions) * 100 : 0;
-                @endphp
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+            <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest mb-6">Uso por Funcionalidade</h3>
+            <div class="space-y-4">
+                @foreach($topFeatures as $feature)
+                    @php
+                        $percentage = $totalInteractions > 0 ? ($feature->total / $totalInteractions) * 100 : 0;
+                    @endphp
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs font-bold text-gray-700">{{ $feature->feature_area }}</span>
+                            <span class="text-[10px] font-black text-blue-600">{{ number_format($percentage, 1) }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-50 rounded-full h-2 overflow-hidden">
+                            <div class="bg-blue-600 h-full rounded-full transition-all duration-1000"
+                                style="width: {{ $percentage }}%"></div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- Device & Browser Stats -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+            <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest mb-6 px-1">Dispositivos & Navegadores</h3>
+            
+            <div class="grid grid-cols-2 gap-8">
+                <!-- Devices -->
                 <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-bold text-gray-700">{{ $feature->feature_area }}</span>
-                        <span class="text-xs font-black text-blue-600">{{ number_format($percentage, 1) }}%</span>
+                    <p class="text-[10px] font-black text-gray-400 uppercase mb-4 text-center">Dispositivos</p>
+                    <div class="space-y-3">
+                        @foreach($deviceStats as $stat)
+                            @php
+                                $percentage = $totalInteractions > 0 ? ($stat->total / $totalInteractions) * 100 : 0;
+                                $icon = match($stat->device) {
+                                    'Mobile' => 'smartphone',
+                                    'Tablet' => 'tablet',
+                                    default => 'monitor',
+                                };
+                            @endphp
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="{{ $icon }}" class="w-3 h-3 text-gray-400"></i>
+                                <div class="flex-1">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-[10px] font-bold text-gray-700">{{ $stat->device }}</span>
+                                        <span class="text-[10px] font-black text-gray-900">{{ round($percentage) }}%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-50 rounded-full h-1">
+                                        <div class="bg-indigo-500 h-full rounded-full" style="width: {{ $percentage }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                    <div class="w-full bg-gray-50 rounded-full h-3 overflow-hidden">
-                        <div class="bg-blue-600 h-full rounded-full transition-all duration-1000"
-                            style="width: {{ $percentage }}%"></div>
-                    </div>
-                    <p class="text-[10px] text-gray-400 mt-1 font-medium">{{ $feature->total }} interações</p>
                 </div>
-            @endforeach
+
+                <!-- Browsers -->
+                <div>
+                    <p class="text-[10px] font-black text-gray-400 uppercase mb-4 text-center">Navegadores</p>
+                    <div class="space-y-3">
+                        @foreach($browserStats->take(3) as $stat)
+                            @php
+                                $percentage = $totalInteractions > 0 ? ($stat->total / $totalInteractions) * 100 : 0;
+                            @endphp
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-[10px] font-bold text-gray-700">{{ $stat->browser }}</span>
+                                        <span class="text-[10px] font-black text-gray-900">{{ round($percentage) }}%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-50 rounded-full h-1">
+                                        <div class="bg-blue-400 h-full rounded-full" style="width: {{ $percentage }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

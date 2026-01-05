@@ -18,6 +18,10 @@ class Budgets extends Component
     public $totalSpent = 0;
     public $totalPercentage = 0;
 
+    public $selectedCategoryId = null;
+    public $selectedCategory = null;
+    public $categoryTransactions = [];
+
     protected $listeners = ['budgetUpdated' => 'loadData'];
 
     public function mount()
@@ -45,20 +49,57 @@ class Budgets extends Component
                 ->sum('amount');
 
             return [
+                'category_id' => $category->id,
                 'category' => $category,
                 'limit' => $budget ? $budget->amount : 0,
                 'spent' => $spent,
                 'percentage' => $budget && $budget->amount > 0 ? ($spent / $budget->amount) * 100 : 0
             ];
-        })->values(); // Reset keys for array
+        })->values();
 
         $this->totalBudget = $this->budgetItems->sum('limit');
         $this->totalSpent = $this->budgetItems->sum('spent');
         $this->totalPercentage = $this->totalBudget > 0 ? ($this->totalSpent / $this->totalBudget) * 100 : 0;
+
+        if ($this->selectedCategoryId) {
+            $this->showCategoryDetails($this->selectedCategoryId);
+        }
+    }
+
+    public function showCategoryDetails($categoryId)
+    {
+        // Only show details if we are NOT editing
+        if ($this->editingCategoryId)
+            return;
+
+        $this->selectedCategoryId = $categoryId;
+
+        $item = $this->budgetItems->firstWhere('category_id', $categoryId);
+        if ($item) {
+            $this->selectedCategory = $item['category'];
+
+            $currentMonthStart = Carbon::now()->startOfMonth();
+            $currentMonthEnd = Carbon::now()->endOfMonth();
+
+            $this->categoryTransactions = Transaction::where('user_id', Auth::id())
+                ->where('category_id', $categoryId)
+                ->expense()
+                ->whereBetween('date', [$currentMonthStart, $currentMonthEnd])
+                ->orderBy('date', 'desc')
+                ->get();
+        }
+    }
+
+    public function closeCategoryDetails()
+    {
+        $this->selectedCategoryId = null;
+        $this->selectedCategory = null;
+        $this->categoryTransactions = [];
     }
 
     public function editBudget($categoryId, $currentAmount)
     {
+        $this->closeCategoryDetails();
         $this->editingCategoryId = $categoryId;
         $this->editingAmount = $currentAmount > 0 ? $currentAmount : '';
     }

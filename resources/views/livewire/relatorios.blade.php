@@ -56,8 +56,10 @@
                     @foreach($categoryExpenses as $item)
                         @php
                             $percentage = $totalExpenses > 0 ? ($item['total'] / $totalExpenses) * 100 : 0;
+                            $isSelected = $selectedCategoryId == $item['category_id'];
                         @endphp
-                        <div>
+                        <div wire:click="showCategoryDetails({{ $item['category_id'] }})"
+                            class="cursor-pointer group p-2 rounded-xl transition-all {{ $isSelected ? 'bg-indigo-50 border border-indigo-100' : 'hover:bg-gray-50' }}">
                             <div class="flex items-center justify-between mb-2">
                                 <div class="flex items-center gap-2">
                                     <div class="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -67,22 +69,60 @@
                                     </div>
                                     <div>
                                         <p class="font-semibold text-gray-900 text-sm">
-                                            {{ $item['category']->name ?? 'Sem categoria' }}</p>
+                                            {{ $item['category']->name ?? 'Sem categoria' }}
+                                        </p>
                                         <p class="text-xs text-gray-400">{{ $item['count'] }} transações</p>
                                     </div>
                                 </div>
                                 <div class="text-right">
                                     <p class="font-bold text-gray-900 text-sm">R$
-                                        {{ number_format($item['total'], 2, ',', '.') }}</p>
+                                        {{ number_format($item['total'], 2, ',', '.') }}
+                                    </p>
                                     <p class="text-xs text-gray-500">{{ number_format($percentage, 1) }}%</p>
                                 </div>
                             </div>
-                            <div class="w-full bg-gray-100 rounded-full h-2">
-                                <div class="h-2 rounded-full transition-all"
+                            <div class="w-full bg-gray-100 rounded-full h-1.5">
+                                <div class="h-1.5 rounded-full transition-all"
                                     style="width: {{ $percentage }}%; background-color: {{ $item['category']->color ?? '#3B82F6' }};">
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Category Details (Accordion Style) -->
+                        @if($isSelected)
+                            <div class="mt-2 ml-10 space-y-2 pb-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                @forelse($categoryTransactions as $transaction)
+                                    <div
+                                        class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-xl shadow-sm text-xs">
+                                        <div class="flex items-center gap-3">
+                                            <div class="text-center font-bold text-gray-400">
+                                                {{ $transaction->date->format('d') }}<br>
+                                                <span
+                                                    class="text-[8px] uppercase tracking-tighter">{{ $transaction->date->locale('pt_BR')->isoFormat('MMM') }}</span>
+                                            </div>
+                                            <div class="border-l border-gray-100 h-6 mx-1"></div>
+                                            <div>
+                                                <p class="font-bold text-gray-800">{{ $transaction->description }}</p>
+                                                <p class="text-[9px] text-gray-400 uppercase font-medium">
+                                                    {{ $transaction->payment_method ?? 'N/A' }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="font-bold text-red-600">R$ {{ number_format($transaction->amount, 2, ',', '.') }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-[10px] text-gray-400 italic text-center">Nenhuma transação listada.</p>
+                                @endforelse
+                                <div class="text-center">
+                                    <button wire:click.stop="closeCategoryDetails"
+                                        class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest hover:underline">Fechar
+                                        Detalhes</button>
+                                </div>
+                            </div>
+                        @endif
                     @endforeach
                 </div>
             @endif
@@ -152,7 +192,7 @@
         }
 
         function updateChart(data) {
-             if (chartInstance) {
+            if (chartInstance) {
                 chartInstance.data = data;
                 chartInstance.update();
             } else {
@@ -160,19 +200,17 @@
             }
         }
     </script>
-    
+
     <!-- Fix for first load -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            if(typeof Chart !== 'undefined') {
-                 initChart(@json($chartData));
+            if (typeof Chart !== 'undefined') {
+                initChart(@json($chartData));
             }
         });
     </script>
 
 
-    <!-- Bottom Navigation -->
-    <x-bottom-nav active="relatorios" />
 
     <script>
         document.addEventListener('livewire:navigated', () => {

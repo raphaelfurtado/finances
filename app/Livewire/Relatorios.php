@@ -18,6 +18,10 @@ class Relatorios extends Component
         'datasets' => []
     ];
 
+    public $selectedCategoryId = null;
+    public $selectedCategory = null;
+    public $categoryTransactions = [];
+
     public function mount()
     {
         $this->selectedMonth = Carbon::now()->month;
@@ -39,13 +43,35 @@ class Relatorios extends Component
 
         $this->categoryExpenses = $expensesByCategory->map(function ($transactions) {
             return [
+                'category_id' => $transactions->first()->category_id,
                 'category' => $transactions->first()->category,
                 'total' => $transactions->sum('amount'),
                 'count' => $transactions->count()
             ];
         })->sortByDesc('total')->values();
 
-        // Prepare Chart Data
+        // ... rest of loadData ...
+        $this->prepareChart();
+
+        $this->totalIncome = Transaction::where('user_id', $userId)
+            ->income()
+            ->byMonth($this->selectedMonth, $this->selectedYear)
+            ->sum('amount');
+
+        $this->totalExpenses = Transaction::where('user_id', $userId)
+            ->expense()
+            ->byMonth($this->selectedMonth, $this->selectedYear)
+            ->sum('amount');
+
+        if ($this->selectedCategoryId) {
+            $this->showCategoryDetails($this->selectedCategoryId);
+        }
+
+        $this->dispatch('update-chart', data: $this->chartData);
+    }
+
+    private function prepareChart()
+    {
         $labels = [];
         $data = [];
         $colors = [];
@@ -66,18 +92,29 @@ class Relatorios extends Component
                 ]
             ]
         ];
+    }
 
-        $this->totalIncome = Transaction::where('user_id', $userId)
-            ->income()
-            ->byMonth($this->selectedMonth, $this->selectedYear)
-            ->sum('amount');
+    public function showCategoryDetails($categoryId)
+    {
+        $this->selectedCategoryId = $categoryId;
 
-        $this->totalExpenses = Transaction::where('user_id', $userId)
-            ->expense()
-            ->byMonth($this->selectedMonth, $this->selectedYear)
-            ->sum('amount');
+        $item = $this->categoryExpenses->firstWhere('category_id', $categoryId);
+        if ($item) {
+            $this->selectedCategory = $item['category'];
+            $this->categoryTransactions = Transaction::where('user_id', auth()->id())
+                ->where('category_id', $categoryId)
+                ->expense()
+                ->byMonth($this->selectedMonth, $this->selectedYear)
+                ->orderBy('date', 'desc')
+                ->get();
+        }
+    }
 
-        $this->dispatch('update-chart', data: $this->chartData);
+    public function closeCategoryDetails()
+    {
+        $this->selectedCategoryId = null;
+        $this->selectedCategory = null;
+        $this->categoryTransactions = [];
     }
 
     public function previousMonth()
@@ -85,6 +122,7 @@ class Relatorios extends Component
         $date = Carbon::create($this->selectedYear, $this->selectedMonth, 1)->subMonth();
         $this->selectedMonth = $date->month;
         $this->selectedYear = $date->year;
+        $this->closeCategoryDetails();
         $this->loadData();
     }
 
@@ -93,6 +131,7 @@ class Relatorios extends Component
         $date = Carbon::create($this->selectedYear, $this->selectedMonth, 1)->addMonth();
         $this->selectedMonth = $date->month;
         $this->selectedYear = $date->year;
+        $this->closeCategoryDetails();
         $this->loadData();
     }
 

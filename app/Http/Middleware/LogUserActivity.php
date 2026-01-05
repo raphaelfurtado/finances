@@ -43,16 +43,46 @@ class LogUserActivity
             elseif (str_starts_with($url, '/planilhas'))
                 $featureArea = 'Planilhas';
 
+            $userAgent = $request->userAgent();
+
             \App\Models\ActivityLog::create([
                 'user_id' => $user->id,
                 'url' => $url,
                 'method' => $request->method(),
                 'feature_area' => $featureArea,
                 'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
+                'user_agent' => $userAgent,
+                'device' => $this->detectDevice($userAgent),
+                'browser' => $this->detectBrowser($userAgent),
             ]);
         }
 
         return $response;
+    }
+
+    private function detectDevice($userAgent): string
+    {
+        if (preg_match('/(Tablet|iPad|PlayBook|Silk)/i', $userAgent)) {
+            return 'Tablet';
+        }
+        if (preg_match('/(Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini))/i', $userAgent)) {
+            return 'Mobile';
+        }
+        return 'Desktop';
+    }
+
+    private function detectBrowser($userAgent): string
+    {
+        if (preg_match('/Edg/i', $userAgent))
+            return 'Edge';
+        if (preg_match('/OPR|Opera/i', $userAgent))
+            return 'Opera';
+        if (preg_match('/Chrome/i', $userAgent))
+            return 'Chrome';
+        if (preg_match('/Firefox/i', $userAgent))
+            return 'Firefox';
+        if (preg_match('/Safari/i', $userAgent))
+            return 'Safari';
+        return 'Unknown';
     }
 }

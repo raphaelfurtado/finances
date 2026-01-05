@@ -28,7 +28,7 @@ class NewTransaction extends Component
             $this->editingTransaction = Transaction::where('user_id', auth()->id())->findOrFail($id);
             $this->transaction_id = $id;
             $this->type = $this->editingTransaction->type;
-            $this->amount = number_format($this->editingTransaction->amount, 2, ',', '.');
+            $this->amount = number_format((float) $this->editingTransaction->amount, 2, ',', '.');
             $this->description = $this->editingTransaction->description;
             $this->category_id = $this->editingTransaction->category_id;
             $this->date = $this->editingTransaction->date->format('Y-m-d');
@@ -86,25 +86,42 @@ class NewTransaction extends Component
         try {
             if ($this->transaction_id) {
                 $transaction = Transaction::where('user_id', auth()->id())->findOrFail($this->transaction_id);
+
+                // Preserve the time if date hasn't changed, or set to start of day if it has
+                // Actually, let's just keep the date part since we only have a date input
+                // but we'll combine it with the original time if possible
+                $newDate = Carbon::parse($this->date)->setTime(
+                    $transaction->date->hour,
+                    $transaction->date->minute,
+                    $transaction->date->second
+                );
+
                 $transaction->update([
                     'category_id' => $this->category_id,
                     'type' => $this->type,
                     'amount' => (float) $amount,
                     'description' => $this->description,
-                    'date' => $this->date,
+                    'date' => $newDate,
                     'payment_method' => $this->payment_method,
                     'is_recurring' => $this->is_recurring,
                     'observation' => $this->observation,
                 ]);
                 session()->flash('message', 'Transação atualizada com sucesso!');
             } else {
+                // For new transactions, use the selected date at CURRENT time
+                $transactionDate = Carbon::parse($this->date);
+                $now = Carbon::now();
+
+                // If it's today, use exact current time. If not, use start of day but current time is better than 00:00:00 anyway for sorting
+                $transactionDate->setTime($now->hour, $now->minute, $now->second);
+
                 Transaction::create([
                     'user_id' => auth()->id(),
                     'category_id' => $this->category_id,
                     'type' => $this->type,
                     'amount' => (float) $amount,
                     'description' => $this->description,
-                    'date' => $this->date,
+                    'date' => $transactionDate,
                     'payment_method' => $this->payment_method,
                     'status' => 'paid',
                     'is_recurring' => $this->is_recurring,

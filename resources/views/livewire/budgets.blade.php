@@ -106,104 +106,168 @@
 
             <div class="space-y-4">
                 @forelse($budgetItems as $item)
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+                    @php
+                        $isSelected = $selectedCategoryId == $item['category_id'];
+                    @endphp
+                    <div class="group bg-white rounded-2xl shadow-sm border border-gray-100 transition-all {{ $isSelected ? 'ring-2 ring-indigo-500 bg-indigo-50/10' : '' }}"
                         wire:key="budget-item-{{ $item['category']->id }}">
-                        <div class="flex items-start justify-between mb-3">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center"
-                                    style="background-color: {{ $item['category']->color ?? '#3B82F6' }}20; color: {{ $item['category']->color ?? '#3B82F6' }}">
-                                    <i data-lucide="{{ $item['category']->icon ?? 'circle' }}" class="w-5 h-5"></i>
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-gray-900">{{ $item['category']->name }}</h3>
-                                    @if($editingCategoryId === $item['category']->id)
-                                        <span class="text-xs text-indigo-600 font-medium">Editando...</span>
-                                    @else
-                                        <span class="text-xs text-gray-400">Gasto Atual: R$
-                                            {{ number_format($item['spent'], 2, ',', '.') }}</span>
-                                    @endif
-                                </div>
-                            </div>
 
-                            <!-- Edit Action -->
-                            <div>
-                                @if($editingCategoryId === $item['category']->id)
-                                    <div class="flex gap-2">
-                                        <!-- Actions are inside form below -->
+                        <!-- Main Card Content -->
+                        <div class="p-4 cursor-pointer" wire:click="showCategoryDetails({{ $item['category_id'] }})">
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                                        style="background-color: {{ $item['category']->color ?? '#3B82F6' }}20; color: {{ $item['category']->color ?? '#3B82F6' }}">
+                                        <i data-lucide="{{ $item['category']->icon ?? 'circle' }}" class="w-5 h-5"></i>
                                     </div>
-                                @else
-                                    <button wire:click="editBudget({{ $item['category']->id }}, {{ $item['limit'] }})"
-                                        class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
-                                        <i data-lucide="pencil" class="w-4 h-4"></i>
-                                    </button>
-                                @endif
-                            </div>
-                        </div>
+                                    <div>
+                                        <h3 class="font-bold text-gray-900">{{ $item['category']->name }}</h3>
+                                        @if($editingCategoryId === $item['category']->id)
+                                            <span class="text-xs text-indigo-600 font-medium tracking-tight">Definindo novo
+                                                limite...</span>
+                                        @else
+                                            <span class="text-xs text-gray-400">Gasto Atual: R$
+                                                {{ number_format($item['spent'], 2, ',', '.') }}</span>
+                                        @endif
+                                    </div>
+                                </div>
 
-                        <!-- Edit Form or Progress -->
-                        @if($editingCategoryId === $item['category']->id)
-                            <form wire:submit.prevent="saveBudget" class="mt-2 text-left">
-                                <label class="block text-xs font-medium text-gray-700 mb-1">Novo Limite (R$)</label>
+                                <!-- Edit Action -->
                                 <div class="flex items-center gap-2">
-                                    <input type="number" step="0.01" wire:model="editingAmount"
-                                        class="flex-1 w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 font-bold"
-                                        placeholder="0,00" autofocus>
-
-                                    <button type="submit"
-                                        class="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-colors">
-                                        <i data-lucide="check" class="w-5 h-5"></i>
-                                    </button>
-                                    <button type="button" wire:click="cancelEdit"
-                                        class="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors">
-                                        <i data-lucide="x" class="w-5 h-5"></i>
-                                    </button>
-                                </div>
-                                @error('editingAmount') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
-                                @enderror
-                            </form>
-                        @else
-                            @if($item['limit'] > 0)
-                                <div class="mt-2">
-                                    <div class="flex justify-between text-xs mb-1">
-                                        <span
-                                            class="font-medium {{ $item['percentage'] >= 100 ? 'text-red-600' : ($item['percentage'] >= 80 ? 'text-yellow-600' : 'text-gray-600') }}">
-                                            {{ number_format($item['percentage'], 1) }}% usado
-                                        </span>
-                                        <span class="text-gray-500">Limite: R$ {{ number_format($item['limit'], 2, ',', '.') }}</span>
-                                    </div>
-                                    <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-                                        <div class="h-2.5 rounded-full transition-all duration-500 {{ $item['percentage'] >= 100 ? 'bg-red-500' : ($item['percentage'] >= 80 ? 'bg-yellow-500' : 'bg-green-500') }}"
-                                            style="width: {{ min($item['percentage'], 100) }}%">
+                                    @if($editingCategoryId !== $item['category']->id)
+                                        <button wire:click.stop="editBudget({{ $item['category']->id }}, {{ $item['limit'] }})"
+                                            class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-gray-100 bg-gray-50/50">
+                                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                                        </button>
+                                        <div class="text-gray-300">
+                                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
                                         </div>
-                                    </div>
-                                    @if($item['percentage'] >= 100)
-                                        <p class="text-xs text-red-500 mt-1 font-medium flex items-center gap-1">
-                                            <i data-lucide="alert-circle" class="w-3 h-3"></i> Teto estourado!
-                                        </p>
-                                    @elseif($item['percentage'] >= 80)
-                                        <p class="text-xs text-yellow-600 mt-1 font-medium flex items-center gap-1">
-                                            <i data-lucide="alert-triangle" class="w-3 h-3"></i> Atenção, perto do limite.
-                                        </p>
                                     @endif
                                 </div>
-                            @else
-                                <div class="mt-2 p-3 bg-gray-50 rounded-xl border border-dashed border-gray-200 text-center">
-                                    <span class="text-xs text-gray-400">Nenhum limite definido</span>
+                            </div>
+
+                            @if(!$isSelected && $editingCategoryId !== $item['category']->id)
+                                <div class="flex items-center justify-end -mt-1 mb-2">
+                                    <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                                        <i data-lucide="eye" class="w-3 h-3"></i> Detalhes
+                                    </span>
                                 </div>
                             @endif
+
+                            <!-- Edit Form or Progress -->
+                            @if($editingCategoryId === $item['category']->id)
+                                <div wire:click.stop="">
+                                    <form wire:submit.prevent="saveBudget"
+                                        class="mt-2 text-left bg-white p-3 rounded-xl border border-indigo-100 shadow-inner">
+                                        <label
+                                            class="block text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Novo
+                                            Limite (R$)</label>
+                                        <div class="flex items-center gap-2">
+                                            <input type="number" step="0.01" wire:model="editingAmount"
+                                                class="flex-1 w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 font-bold"
+                                                placeholder="0,00" autofocus>
+
+                                            <button type="submit"
+                                                class="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors shadow-sm">
+                                                <i data-lucide="check" class="w-5 h-5"></i>
+                                            </button>
+                                            <button type="button" wire:click="cancelEdit"
+                                                class="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors">
+                                                <i data-lucide="x" class="w-5 h-5"></i>
+                                            </button>
+                                        </div>
+                                        @error('editingAmount') <span
+                                            class="text-[10px] text-red-500 mt-1 block font-bold uppercase">{{ $message }}</span>
+                                        @enderror
+                                    </form>
+                                </div>
+                            @else
+                                @if($item['limit'] > 0)
+                                    <div class="mt-2">
+                                        <div class="flex justify-between text-[10px] mb-1 font-bold uppercase tracking-tight">
+                                            <span
+                                                class="{{ $item['percentage'] >= 100 ? 'text-red-600' : ($item['percentage'] >= 80 ? 'text-yellow-600' : 'text-indigo-600') }}">
+                                                {{ number_format($item['percentage'], 1) }}% usado
+                                            </span>
+                                            <span class="text-gray-400">Teto: R$ {{ number_format($item['limit'], 2, ',', '.') }}</span>
+                                        </div>
+                                        <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden shadow-inner">
+                                            <div class="h-2 rounded-full transition-all duration-700 ease-out {{ $item['percentage'] >= 100 ? 'bg-red-500' : ($item['percentage'] >= 80 ? 'bg-yellow-500' : 'bg-green-500') }}"
+                                                style="width: {{ min($item['percentage'], 100) }}%">
+                                            </div>
+                                        </div>
+                                        @if($item['percentage'] >= 100)
+                                            <p
+                                                class="text-[10px] text-red-600 mt-1.5 font-bold uppercase flex items-center gap-1 leading-none tracking-tight">
+                                                <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Teto estourado!
+                                            </p>
+                                        @elseif($item['percentage'] >= 80)
+                                            <p
+                                                class="text-[10px] text-yellow-600 mt-1.5 font-bold uppercase flex items-center gap-1 leading-none tracking-tight">
+                                                <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Atenção, perto do limite.
+                                            </p>
+                                        @endif
+                                    </div>
+                                @else
+                                    <div class="mt-2 p-3 bg-gray-50 rounded-xl border border-dashed border-gray-200 text-center">
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nenhum teto
+                                            definido</span>
+                                    </div>
+                                @endif
+                            @endif
+                        </div>
+
+                        <!-- Details Section (Accordion) -->
+                        @if($isSelected && !$editingCategoryId)
+                            <div class="px-4 pb-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                <div class="bg-gray-50/50 rounded-xl p-3 border border-gray-100">
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Transações deste
+                                        Mês</p>
+                                    <div class="space-y-2">
+                                        @forelse($categoryTransactions as $transaction)
+                                            <div
+                                                class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-xl shadow-sm text-xs transition-transform hover:scale-[1.01]">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="text-center font-bold text-gray-400 leading-tight">
+                                                        {{ $transaction->date->format('d') }}<br>
+                                                        <span
+                                                            class="text-[8px] uppercase tracking-tighter">{{ $transaction->date->locale('pt_BR')->isoFormat('MMM') }}</span>
+                                                    </div>
+                                                    <div class="border-l border-gray-100 h-6 mx-1"></div>
+                                                    <div>
+                                                        <p class="font-bold text-gray-800">{{ $transaction->description }}</p>
+                                                        <p class="text-[9px] text-gray-400 uppercase font-medium">
+                                                            {{ $transaction->payment_method ?? 'N/A' }}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="font-bold text-red-600 whitespace-nowrap">R$
+                                                        {{ number_format($transaction->amount, 2, ',', '.') }}</p>
+                                                </div>
+                                            </div>
+                                        @empty
+                                            <p class="text-[10px] text-gray-400 italic text-center py-4">Nenhuma transação registrada
+                                                neste mês.</p>
+                                        @endforelse
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <button wire:click.stop="closeCategoryDetails"
+                                            class="text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:underline px-4 py-2">Recolher</button>
+                                    </div>
+                                </div>
+                            </div>
                         @endif
                     </div>
                 @empty
-                    <div class="text-center py-10">
-                        <p class="text-gray-500">Nenhuma categoria encontrada.</p>
+                    <div class="text-center py-10 bg-white rounded-3xl border border-gray-100 border-dashed">
+                        <i data-lucide="inbox" class="w-12 h-12 text-gray-200 mx-auto mb-2"></i>
+                        <p class="text-gray-400 font-medium">Nenhuma categoria encontrada.</p>
                     </div>
                 @endforelse
             </div>
         @endif
     </div>
 
-    <!-- Bottom Navigation -->
-    <x-bottom-nav active="budgets" />
 
     <script>
         document.addEventListener('livewire:navigated', () => {

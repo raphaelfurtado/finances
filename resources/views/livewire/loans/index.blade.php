@@ -83,90 +83,169 @@
     </div>
 
     <!-- Loans List -->
-    <div class="space-y-4" id="loans-list">
-        @forelse($loans as $loan)
-            <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition cursor-pointer relative group"
-                onclick="window.location.href = '{{ route('loans.show', $loan) }}'">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900">{{ $loan->counterparty_name }}</h3>
-                        <p class="text-sm text-gray-500">
-                            @if($loan->type === 'receivable')
-                                <span class="text-green-600 font-medium">Crédito</span>
-                            @else
-                                <span class="text-red-600 font-medium">Débito</span>
+    <div id="loans-list">
+        <!-- Desktop View: Table -->
+        <div class="hidden md:block bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Contato / Tipo
+                        </th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Valor Total</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Pago / Pendente
+                        </th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Parcelas</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Status</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest text-right">Ações
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse($loans as $loan)
+                        <tr class="hover:bg-gray-50 transition-colors cursor-pointer"
+                            onclick="window.location.href = '{{ route('loans.show', $loan) }}'">
+                            <td class="px-6 py-4">
+                                <p class="font-bold text-gray-900">{{ $loan->counterparty_name }}</p>
+                                <p
+                                    class="text-[10px] font-bold uppercase {{ $loan->type === 'receivable' ? 'text-green-600' : 'text-red-600' }}">
+                                    {{ $loan->type === 'receivable' ? 'Crédito' : 'Débito' }}
+                                </p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <p class="font-bold text-gray-900">R$ {{ number_format($loan->total_amount, 2, ',', '.') }}
+                                </p>
+                                <p class="text-[10px] text-gray-400 font-medium">Original: R$
+                                    {{ number_format($loan->principal_amount, 2, ',', '.') }}
+                                </p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex justify-between text-[10px] font-bold uppercase text-gray-500">
+                                        <span>Pago: R$ {{ number_format($loan->paid_amount, 2, ',', '.') }}</span>
+                                        <span>{{ $loan->progress }}%</span>
+                                    </div>
+                                    <div class="w-32 bg-gray-100 rounded-full h-1.5">
+                                        <div class="bg-indigo-600 h-1.5 rounded-full" style="width: {{ $loan->progress }}%">
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-600 font-medium">
+                                Faltam {{ $loan->remaining_installments_count }}/{{ $loan->installments_count }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase
+                                            @if($loan->status === 'active') bg-blue-100 text-blue-700
+                                            @elseif($loan->status === 'paid') bg-green-100 text-green-700
+                                            @else bg-red-100 text-red-700
+                                            @endif">
+                                    {{ $loan->status === 'active' ? 'Ativo' : ($loan->status === 'paid' ? 'Liquidado' : $loan->status) }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <a href="{{ route('loans.show', $loan) }}"
+                                    class="inline-flex items-center gap-1 text-sm font-bold text-indigo-600 hover:text-indigo-700">
+                                    Detalhes <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-400">
+                                <p>Nenhum registro encontrado.</p>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile View: Cards -->
+        <div class="md:hidden space-y-4">
+            @forelse($loans as $loan)
+                <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition cursor-pointer relative group"
+                    onclick="window.location.href = '{{ route('loans.show', $loan) }}'">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">{{ $loan->counterparty_name }}</h3>
+                            <p class="text-sm text-gray-500">
+                                @if($loan->type === 'receivable')
+                                    <span class="text-green-600 font-medium">Crédito</span>
+                                @else
+                                    <span class="text-red-600 font-medium">Débito</span>
+                                @endif
+                                • Faltam {{ $loan->remaining_installments_count }}/{{ $loan->installments_count }} parcelas
+                            </p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-medium
+                                                                    @if($loan->status === 'active') bg-blue-100 text-blue-700
+                                                                    @elseif($loan->status === 'paid') bg-green-100 text-green-700
+                                                                    @else bg-red-100 text-red-700
+                                                                    @endif">
+                            @if($loan->status === 'active') Ativo
+                            @elseif($loan->status === 'paid') Pago
+                            @else {{ ucfirst($loan->status) }}
                             @endif
-                            • Faltam {{ $loan->remaining_installments_count }}/{{ $loan->installments_count }} parcelas
-                        </p>
+                        </span>
                     </div>
-                    <span class="px-3 py-1 rounded-full text-xs font-medium
-                                                            @if($loan->status === 'active') bg-blue-100 text-blue-700
-                                                            @elseif($loan->status === 'paid') bg-green-100 text-green-700
-                                                            @else bg-red-100 text-red-700
-                                                            @endif">
-                        @if($loan->status === 'active') Ativo
-                        @elseif($loan->status === 'paid') Pago
-                        @else {{ ucfirst($loan->status) }}
+
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="text-xs text-gray-500">Valor Total</p>
+                            <p class="text-lg font-semibold text-gray-900">R$
+                                {{ number_format($loan->total_amount, 2, ',', '.') }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Valor Pago</p>
+                            <p class="text-lg font-semibold text-green-600">R$
+                                {{ number_format($loan->paid_amount, 2, ',', '.') }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="mb-4">
+                        <div class="flex justify-between text-xs text-gray-600 mb-1">
+                            <span>Progresso</span>
+                            <span>{{ $loan->progress }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all"
+                                style="width: {{ $loan->progress }}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <span
+                            class="text-blue-600 group-hover:text-blue-700 font-medium text-sm flex items-center gap-1 transition-colors">
+                            Ver Detalhes <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </span>
+                    </div>
+                </div>
+            @empty
+                <div class="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="book" class="w-8 h-8 text-gray-400"></i>
+                    </div>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900">Nenhum empréstimo cadastrado</h3>
+                    <p class="mt-1 text-sm text-gray-500">Comece criando seu primeiro empréstimo.</p>
+                    <div class="mt-6">
+                        @if($canCreate)
+                            <a href="{{ route('loans.create') }}"
+                                class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                                + Novo Empréstimo
+                            </a>
+                        @else
+                            <button x-on:click="openUpsell = true"
+                                class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                                + Novo Empréstimo
+                            </button>
                         @endif
-                    </span>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <p class="text-xs text-gray-500">Valor Total</p>
-                        <p class="text-lg font-semibold text-gray-900">R$
-                            {{ number_format($loan->total_amount, 2, ',', '.') }}
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-500">Valor Pago</p>
-                        <p class="text-lg font-semibold text-green-600">R$
-                            {{ number_format($loan->paid_amount, 2, ',', '.') }}
-                        </p>
                     </div>
                 </div>
-
-                <!-- Progress Bar -->
-                <div class="mb-4">
-                    <div class="flex justify-between text-xs text-gray-600 mb-1">
-                        <span>Progresso</span>
-                        <span>{{ $loan->progress }}%</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all"
-                            style="width: {{ $loan->progress }}%"></div>
-                    </div>
-                </div>
-
-                <div class="flex justify-end">
-                    <span
-                        class="text-blue-600 group-hover:text-blue-700 font-medium text-sm flex items-center gap-1 transition-colors">
-                        Ver Detalhes <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </span>
-                </div>
-            </div>
-        @empty
-            <div class="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
-                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i data-lucide="book" class="w-8 h-8 text-gray-400"></i>
-                </div>
-                <h3 class="mt-2 text-sm font-medium text-gray-900">Nenhum empréstimo cadastrado</h3>
-                <p class="mt-1 text-sm text-gray-500">Comece criando seu primeiro empréstimo.</p>
-                <div class="mt-6">
-                    @if($canCreate)
-                        <a href="{{ route('loans.create') }}"
-                            class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                            + Novo Empréstimo
-                        </a>
-                    @else
-                        <button x-on:click="openUpsell = true"
-                            class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                            + Novo Empréstimo
-                        </button>
-                    @endif
-                </div>
-            </div>
-        @endforelse
+            @endforelse
+        </div>
     </div>
 
     <!-- Upsell Modal -->
@@ -227,6 +306,4 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <x-bottom-nav active="loans" />
 </div>
