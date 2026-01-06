@@ -141,7 +141,9 @@ class StripeWebhookController extends Controller
 
         $user->update([
             'is_premium' => $isActive,
-            'premium_expires_at' => $isActive ? \Carbon\Carbon::createFromTimestamp($subscription->current_period_end) : null,
+            'premium_expires_at' => ($isActive && isset($subscription->current_period_end))
+                ? \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)
+                : null,
             'stripe_subscription_id' => $subscription->id,
         ]);
 

@@ -22,7 +22,7 @@
 
     <!-- Subscription Status -->
     <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 mb-6">
-        @if(auth()->user()->subscribed('premium'))
+        @if(auth()->user()->isPremium())
             <div class="flex items-start gap-4">
                 <div class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center flex-shrink-0">
                     <i data-lucide="crown" class="w-6 h-6 text-green-600"></i>
@@ -34,12 +34,26 @@
                         @if($onGracePeriod)
                             <p class="text-sm text-orange-600 mt-1">
                                 <i data-lucide="alert-triangle" class="w-4 h-4 inline"></i>
-                                Cancelamento agendado - Acesso até {{ $subscription->ends_at->format('d/m/Y') }}
+                                Cancelamento agendado - Acesso até {{ $subscription->ends_at ? $subscription->ends_at->format('d/m/Y') : 'Data desconhecida' }}
                             </p>
                         @else
                             <p class="text-sm text-gray-600 mt-1">
                                 Próxima renovação:
-                                {{ $subscription->asStripeSubscription()->current_period_end ? \Carbon\Carbon::createFromTimestamp($subscription->asStripeSubscription()->current_period_end)->format('d/m/Y') : 'N/A' }}
+                                @php
+                                    $periodEnd = null;
+                                    try {
+                                        // Attempt to get subscription from Cashier or custom decorator
+                                        $stripeSub = $subscription->asStripeSubscription();
+                                        $periodEnd = $stripeSub->current_period_end;
+                                    } catch (\Throwable $e) {
+                                         // If method call fails, try closure for custom object (rare case) or direct property
+                                         if (is_callable([$subscription, 'asStripeSubscription'])) {
+                                             $stripeSub = $subscription->asStripeSubscription();
+                                             $periodEnd = $stripeSub->current_period_end;
+                                         }
+                                    }
+                                @endphp
+                                {{ $periodEnd ? \Carbon\Carbon::createFromTimestamp($periodEnd)->format('d/m/Y') : 'N/A' }}
                             </p>
                         @endif
                     @endif
