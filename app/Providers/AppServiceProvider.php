@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \App\Models\Transaction::observe(\App\Observers\TransactionObserver::class);
+
         // Fix for OpenSSL on Windows/Laragon for WebPush
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $opensslPaths = [

@@ -80,6 +80,13 @@
                 <i data-lucide="user" class="w-6 h-6 mb-0.5"></i>
                 <span class="text-[9px] font-bold leading-none tracking-tighter">Perfil</span>
             </a>
+
+            @if(auth()->user()->isAdmin())
+                <a href="/admin" class="flex flex-col items-center justify-center py-1 text-red-500 transition-colors">
+                    <i data-lucide="shield-check" class="w-6 h-6 mb-0.5"></i>
+                    <span class="text-[9px] font-bold leading-none tracking-tighter">Admin</span>
+                </a>
+            @endif
         @else
             <!-- Admin Links -->
             <a href="/admin"

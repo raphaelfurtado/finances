@@ -86,6 +86,8 @@
                 </button>
 
                 @auth
+                    <livewire:components.notification-bell />
+
                     <form action="{{ route('logout') }}" method="POST" class="ml-1">
                         @csrf
                         <button type="submit" class="p-2 text-gray-400 hover:text-red-500 transition-colors" title="Sair">
@@ -147,6 +149,14 @@
                             <i data-lucide="pie-chart" class="w-5 h-5"></i>
                             Relatórios
                         </a>
+
+                        @if(auth()->user()->isAdmin())
+                            <a href="/admin"
+                                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 transition-all border border-red-100 border-dashed mt-4">
+                                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                                Painel Admin
+                            </a>
+                        @endif
                     </div>
                 @else
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mb-4">Administração</p>
@@ -174,6 +184,12 @@
                             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('admin/monitoring*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
                             <i data-lucide="activity" class="w-5 h-5"></i>
                             Monitoramento
+                        </a>
+
+                        <a href="{{ route('admin.notifications') }}"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('admin/notifications*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                            <i data-lucide="megaphone" class="w-5 h-5"></i>
+                            Notificações
                         </a>
 
                         <a href="/dashboard"
@@ -288,7 +304,7 @@
                     .then(reg => console.log('Service Worker registrado!', reg))
                     .catch(err => console.error('Erro ao registrar Service Worker:', err));
             });
-        }
+    }
     </script>
 </body>
 

@@ -67,6 +67,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/settings', AppSettings::class)->name('admin.settings');
     Route::get('/monitoring', App\Livewire\Admin\Monitoring::class)->name('admin.monitoring');
     Route::get('/testimonials', App\Livewire\Admin\ManageTestimonials::class)->name('admin.testimonials');
+    Route::get('/notifications', App\Livewire\Admin\SendNotification::class)->name('admin.notifications');
 });
 
 Route::middleware(['auth', App\Http\Middleware\EnsureUserIsPremium::class])->group(function () {
@@ -107,6 +108,10 @@ Route::post('/logout', function () {
 
 // Static Pages Help
 Route::view('/help', 'static.help')->name('help');
+
+// Push Notifications
+Route::post('/notifications/subscribe', [App\Http\Controllers\PushSubscriptionController::class, 'update'])->name('notifications.subscribe');
+Route::post('/notifications/unsubscribe', [App\Http\Controllers\PushSubscriptionController::class, 'destroy'])->name('notifications.unsubscribe');
 
 // Stripe Webhook (must be POST and exclude from CSRF protection)
 Route::post('/webhook/stripe', [App\Http\Controllers\StripeWebhookController::class, 'handleWebhook'])->name('stripe.webhook');
