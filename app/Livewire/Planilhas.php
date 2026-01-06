@@ -32,7 +32,7 @@ class Planilhas extends Component
         $query = Transaction::where('user_id', auth()->id())
             ->whereMonth('date', $this->month)
             ->whereYear('date', $this->year)
-            ->with('category')
+            ->with('category.parent')
             ->orderBy('date', 'desc');
 
         $this->transactions = $query->get();

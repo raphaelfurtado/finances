@@ -28,7 +28,7 @@
             </div>
             <h2 class="text-4xl font-bold text-gray-900 mb-2">R$ {{ number_format($transaction->amount, 2, ',', '.') }}
             </h2>
-            <p class="text-lg text-gray-600 mb-1">{{ $transaction->category->name ?? 'Sem categoria' }}</p>
+            <p class="text-lg text-gray-600 mb-1">{{ $transaction->category->full_name ?? 'Sem categoria' }}</p>
             <p class="text-sm text-gray-400">{{ $transaction->date->format('d') }}
                 {{ $transaction->date->locale('pt_BR')->isoFormat('MMM, YYYY') }} •
                 {{ $transaction->date->format('H:i') }}

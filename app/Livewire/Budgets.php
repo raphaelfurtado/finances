@@ -32,7 +32,7 @@ class Budgets extends Component
     public function loadData()
     {
         $userId = Auth::id();
-        $categories = Category::where('user_id', $userId)->orderBy('name')->get();
+        $categories = Category::where('user_id', $userId)->with('parent')->orderBy('name')->get();
 
         $currentMonthStart = Carbon::now()->startOfMonth();
         $currentMonthEnd = Carbon::now()->endOfMonth();

@@ -40,9 +40,23 @@ class NewTransaction extends Component
             $this->date = Carbon::now()->format('Y-m-d');
         }
 
-        $this->categories = Category::where('user_id', auth()->id())->get();
+        // Load categories with children, ordered by name
+        $this->categories = Category::where('user_id', auth()->id())
+            ->whereNull('parent_id')
+            ->with([
+                'children' => function ($query) {
+                    $query->orderBy('name');
+                }
+            ])
+            ->orderBy('name')
+            ->get();
+
+        // If editing, we might need to find the parent of the current category to open the right "folder"
+        // But for simply selecting, just having the tree is enough for now. 
+        // If the selected category is a child, we can handle visual state in alpine/blade.
 
         if (!$id && $this->categories->isNotEmpty() && !$this->category_id) {
+            // Default to first root category if available
             $this->category_id = $this->categories->first()->id;
         }
     }

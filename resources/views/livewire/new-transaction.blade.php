@@ -80,21 +80,116 @@
                 <span class="text-sm font-bold text-gray-900">Categoria</span>
                 <a href="/categories" class="text-xs font-semibold text-blue-600 hover:text-blue-700">Ver todas</a>
             </div>
-            <div class="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6" style="scrollbar-width: none;">
-                @foreach($categories as $category)
-                    <button type="button" wire:click="$set('category_id', {{ $category->id }})"
-                        class="flex-shrink-0 flex flex-col items-center gap-2 p-3 rounded-xl transition-all {{ $category_id == $category->id ? 'bg-blue-600' : 'bg-gray-100' }}">
-                        <div class="w-10 h-10 rounded-lg flex items-center justify-center"
-                            style="background-color: {{ $category_id == $category->id ? 'rgba(255,255,255,0.2)' : $category->color . '20' }};">
-                            <i data-lucide="{{ $category->icon }}" class="w-5 h-5"
-                                style="color: {{ $category_id == $category->id ? 'white' : $category->color }};"></i>
+            <!-- Category Driller -->
+            <div x-data="{ 
+                view: 'root', 
+                activeParent: null,
+                categories: {{ $categories->toJson() }},
+                
+                selectCategory(category) {
+                    // Check if has children using the JSON data passed from PHP
+                    let hasChildren = category.children && category.children.length > 0;
+                    
+                    if (hasChildren) {
+                        this.activeParent = category;
+                        this.view = 'children';
+                    } else {
+                        $wire.set('category_id', category.id);
+                    }
+                },
+                
+                selectChild(child) {
+                    $wire.set('category_id', child.id);
+                    // Optional: auto-return to root after selection or keep drill-down?
+                    // Keeping drill-down allows changing mind easily.
+                },
+                
+                goBack() {
+                    this.view = 'root';
+                    this.activeParent = null;
+                },
+
+                init() {
+                    // Safety check if current category is a child, pre-open parent?
+                    // For simplified UX, we start at root.
+                }
+            }" class="relative transition-all duration-300">
+
+                <!-- Root View -->
+                <div x-show="view === 'root'" x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 -translate-x-full"
+                    x-transition:enter-end="opacity-100 translate-x-0"
+                    class="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6" style="scrollbar-width: none;">
+
+                    @foreach($categories as $category)
+                        <button type="button" @click="selectCategory({{ $category->toJson() }})"
+                            class="flex-shrink-0 flex flex-col items-center gap-2 p-3 rounded-xl transition-all border-2
+                                {{ $category_id == $category->id ? 'bg-blue-600 border-blue-600 shadow-md transform scale-105' : 'bg-gray-50 border-transparent hover:bg-gray-100' }}">
+
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center relative"
+                                style="background-color: {{ $category_id == $category->id ? 'rgba(255,255,255,0.2)' : $category->color . '20' }};">
+                                <i data-lucide="{{ $category->icon }}" class="w-6 h-6"
+                                    style="color: {{ $category_id == $category->id ? 'white' : $category->color }};"></i>
+
+                                <!-- Indicator if has children -->
+                                @if($category->children->count() > 0)
+                                    <div
+                                        class="absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center shadow-sm">
+                                        <i data-lucide="chevron-right" class="w-3 h-3 text-gray-400"></i>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <span
+                                class="text-xs font-bold max-w-[80px] truncate {{ $category_id == $category->id ? 'text-white' : 'text-gray-600' }}">
+                                {{ $category->name }}
+                            </span>
+                        </button>
+                    @endforeach
+                </div>
+
+                <!-- Children View -->
+                <div x-show="view === 'children'" style="display: none;"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-x-full"
+                    x-transition:enter-end="opacity-100 translate-x-0"
+                    class="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6" style="scrollbar-width: none;">
+
+                    <!-- Back Button -->
+                    <button type="button" @click="goBack()"
+                        class="flex-shrink-0 flex flex-col items-center gap-2 p-3 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all border-2 border-transparent">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-gray-200 text-gray-600">
+                            <i data-lucide="arrow-left" class="w-6 h-6"></i>
                         </div>
-                        <span
-                            class="text-xs font-medium {{ $category_id == $category->id ? 'text-white' : 'text-gray-700' }}">
-                            {{ $category->name }}
-                        </span>
+                        <span class="text-xs font-bold text-gray-500">Voltar</span>
                     </button>
-                @endforeach
+
+                    <!-- Active Parent Header (Optional, maybe just showing items is enough) -->
+
+                    <template x-if="activeParent">
+                        <template x-for="child in activeParent.children" :key="child.id">
+                            <button type="button" @click="selectChild(child)"
+                                class="flex-shrink-0 flex flex-col items-center gap-2 p-3 rounded-xl transition-all border-2"
+                                :class="$wire.category_id == child.id ? 'bg-blue-600 border-blue-600 shadow-md transform scale-105' : 'bg-gray-50 border-transparent hover:bg-gray-100'">
+
+                                <div class="w-12 h-12 rounded-xl flex items-center justify-center"
+                                    :style="`background-color: ${$wire.category_id == child.id ? 'rgba(255,255,255,0.2)' : child.color + '20'}`">
+                                    <!-- Use dynamic component or standard i tag logic handled by alpine/lucide? 
+                                         Alpine rendering icons dynamically is tricky with Lucide if not using x-html. 
+                                         Simpler: Just use parent icon or generic dot if icon missing, or try re-init.
+                                         Actually, we can pass icon name. -->
+                                    <i :data-lucide="child.icon" class="w-6 h-6"
+                                        :style="`color: ${$wire.category_id == child.id ? 'white' : child.color}`"></i>
+                                </div>
+
+                                <span class="text-xs font-bold max-w-[80px] truncate"
+                                    :class="$wire.category_id == child.id ? 'text-white' : 'text-gray-600'"
+                                    x-text="child.name">
+                                </span>
+                            </button>
+                        </template>
+                    </template>
+                </div>
             </div>
         </div>
 

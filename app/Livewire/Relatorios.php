@@ -37,7 +37,7 @@ class Relatorios extends Component
         $expensesByCategory = Transaction::where('user_id', $userId)
             ->expense()
             ->byMonth($this->selectedMonth, $this->selectedYear)
-            ->with('category')
+            ->with('category.parent')
             ->get()
             ->groupBy('category_id');
 
@@ -77,7 +77,7 @@ class Relatorios extends Component
         $colors = [];
 
         foreach ($this->categoryExpenses as $item) {
-            $labels[] = $item['category']->name ?? 'Sem Categoria';
+            $labels[] = $item['category']->full_name ?? 'Sem Categoria';
             $data[] = $item['total'];
             $colors[] = $item['category']->color ?? '#9CA3AF';
         }

@@ -121,7 +121,7 @@
                                         <i data-lucide="{{ $item['category']->icon ?? 'circle' }}" class="w-5 h-5"></i>
                                     </div>
                                     <div>
-                                        <h3 class="font-bold text-gray-900">{{ $item['category']->name }}</h3>
+                                        <h3 class="font-bold text-gray-900">{{ $item['category']->full_name }}</h3>
                                         @if($editingCategoryId === $item['category']->id)
                                             <span class="text-xs text-indigo-600 font-medium tracking-tight">Definindo novo
                                                 limite...</span>

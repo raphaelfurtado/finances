@@ -68,7 +68,7 @@ class Dashboard extends Component
 
         // Carregar transações recentes
         $this->recentTransactions = Transaction::where('user_id', $userId)
-            ->with('category')
+            ->with('category.parent')
             ->recent(5)
             ->get();
 
@@ -85,7 +85,7 @@ class Dashboard extends Component
             ->selectRaw('category_id, sum(amount) as total')
             ->groupBy('category_id')
             ->orderByDesc('total')
-            ->with('category')
+            ->with('category.parent')
             ->first();
 
         // Cenário 1: Gastou mais do que ganhou

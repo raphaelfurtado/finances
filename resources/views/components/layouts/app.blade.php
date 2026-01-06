@@ -232,9 +232,9 @@
                 {{ $slot }}
             </div>
 
-            <!-- FAB (Only on Mobile Dashboard) -->
+            <!-- FAB (Dashboard) -->
             @if(request()->routeIs('dashboard'))
-                <div class="lg:hidden">
+                <div>
                     <x-fab-button />
                 </div>
             @endif

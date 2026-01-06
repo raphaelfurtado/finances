@@ -94,7 +94,7 @@
                                             style="background-color: {{ $transaction->category->color ?? '#9CA3AF' }}20; color: {{ $transaction->category->color ?? '#9CA3AF' }}">
                                             <span class="w-1.5 h-1.5 rounded-full"
                                                 style="background-color: {{ $transaction->category->color ?? '#9CA3AF' }}"></span>
-                                            {{ $transaction->category->name ?? 'Sem Categoria' }}
+                                            {{ $transaction->category->full_name ?? 'Sem Categoria' }}
                                         </span>
                                     </td>
                                     <td

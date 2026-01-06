@@ -214,7 +214,7 @@
                             class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 transition-all appearance-none">
                             <option value="">Selecione uma categoria</option>
                             @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                <option value="{{ $category->id }}">{{ $category->full_name }}</option>
                             @endforeach
                         </select>
                         @error('category_id') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror

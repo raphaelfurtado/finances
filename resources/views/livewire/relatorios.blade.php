@@ -69,7 +69,7 @@
                                     </div>
                                     <div>
                                         <p class="font-semibold text-gray-900 text-sm">
-                                            {{ $item['category']->name ?? 'Sem categoria' }}
+                                            {{ $item['category']->full_name ?? 'Sem categoria' }}
                                         </p>
                                         <p class="text-xs text-gray-400">{{ $item['count'] }} transações</p>
                                     </div>

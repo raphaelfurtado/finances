@@ -34,7 +34,8 @@
                     </div>
                     <div>
                         <div class="font-bold text-gray-900 text-sm mb-0.5 truncate">{{ $transaction->description }}</div>
-                        <div class="text-xs text-gray-400 truncate">{{ $transaction->category->name ?? 'Sem categoria' }}</div>
+                        <div class="text-xs text-gray-400 truncate">
+                            {{ $transaction->category->full_name ?? 'Sem categoria' }}</div>
                     </div>
                     <div class="text-right">
                         <div
@@ -51,13 +52,13 @@
                 </div>
             @endforelse
         </div>
-        
+
         <div class="mt-4">
             {{ $transactions->links() }}
         </div>
     </div>
-    
-    
+
+
 </div>
 
 <script>

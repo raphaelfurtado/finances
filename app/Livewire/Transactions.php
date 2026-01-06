@@ -13,7 +13,7 @@ class Transactions extends Component
     public function render()
     {
         $transactions = Transaction::where('user_id', auth()->id())
-            ->with('category')
+            ->with('category.parent')
             ->orderBy('date', 'desc')
             ->paginate(20);
 

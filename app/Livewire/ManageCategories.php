@@ -14,6 +14,8 @@ class ManageCategories extends Component
     public $description = '';
     public $icon = 'circle';
     public $color = '#3B82F6';
+    public $parent_id = null;
+    public $isSubcategory = false;
 
     // Available icons
     public $availableIcons = [
@@ -53,9 +55,31 @@ class ManageCategories extends Component
         $this->loadCategories();
     }
 
+    public function updatedParentId($value)
+    {
+        if ($value) {
+            $parent = Category::find($value);
+            if ($parent) {
+                $this->icon = $parent->icon;
+                $this->color = $parent->color;
+            }
+        } else {
+            // Reset to defaults if cleared
+            if (!$this->editingId) {
+                $this->icon = 'circle';
+                $this->color = '#3B82F6';
+            }
+        }
+    }
+
     public function loadCategories()
     {
-        $this->categories = Category::where('user_id', auth()->id())->get();
+        // Load with children for display
+        $this->categories = Category::where('user_id', auth()->id())
+            ->whereNull('parent_id') // Root categories
+            ->with('children')
+            ->orderBy('name')
+            ->get();
     }
 
     public function openModal()
@@ -70,6 +94,17 @@ class ManageCategories extends Component
         $this->resetForm();
     }
 
+    public function updatedIsSubcategory($value)
+    {
+        if (!$value) {
+            $this->parent_id = null;
+        } else {
+            // Reset to defaults when switching to sub
+            $this->icon = 'circle';
+            $this->color = '#3B82F6';
+        }
+    }
+
     public function resetForm()
     {
         $this->editingId = null;
@@ -77,6 +112,8 @@ class ManageCategories extends Component
         $this->description = '';
         $this->icon = 'circle';
         $this->color = '#3B82F6';
+        $this->parent_id = null;
+        $this->isSubcategory = false;
         $this->resetErrorBag();
     }
 
@@ -88,28 +125,45 @@ class ManageCategories extends Component
         $this->description = $category->description;
         $this->icon = $category->icon;
         $this->color = $category->color;
+        $this->parent_id = $category->parent_id;
+        $this->isSubcategory = !is_null($category->parent_id);
         $this->showModal = true;
     }
 
     public function save()
     {
+        // Force parent_id null if not subcategory
+        if (!$this->isSubcategory) {
+            $this->parent_id = null;
+        }
+
         $this->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
             'icon' => 'required|string',
             'color' => 'required|string',
+            'parent_id' => $this->isSubcategory ? 'required|exists:categories,id' : 'nullable',
         ], [
             'name.required' => 'O nome da categoria é obrigatório',
+            'parent_id.required' => 'Selecione a categoria pai',
         ]);
 
         if ($this->editingId) {
             // Update existing category
             $category = Category::where('user_id', auth()->id())->findOrFail($this->editingId);
+
+            // Prevent self-parenting
+            if ($this->parent_id == $this->editingId) {
+                $this->addError('parent_id', 'Uma categoria não pode ser subcategoria dela mesma.');
+                return;
+            }
+
             $category->update([
                 'name' => $this->name,
                 'description' => $this->description,
                 'icon' => $this->icon,
                 'color' => $this->color,
+                'parent_id' => $this->parent_id,
             ]);
         } else {
             // Create new category
@@ -119,6 +173,7 @@ class ManageCategories extends Component
                 'description' => $this->description,
                 'icon' => $this->icon,
                 'color' => $this->color,
+                'parent_id' => $this->parent_id,
             ]);
         }
 
@@ -136,6 +191,15 @@ class ManageCategories extends Component
 
     public function render()
     {
-        return view('livewire.manage-categories');
+        // Get potential parents (only root categories to avoid deep nesting issues for now)
+        $potentialParents = Category::where('user_id', auth()->id())
+            ->whereNull('parent_id')
+            ->where('id', '!=', $this->editingId) // Exclude self
+            ->orderBy('name')
+            ->get();
+
+        return view('livewire.manage-categories', [
+            'parents' => $potentialParents
+        ]);
     }
 }
