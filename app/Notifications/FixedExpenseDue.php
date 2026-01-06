@@ -29,7 +29,10 @@ class FixedExpenseDue extends Notification implements ShouldQueue
             ->icon('/images/icon-192.png')
             ->body("O gasto '{$this->expense->title}' vence em breve (Dia {$this->expense->due_day}).")
             ->action('Ver', 'view_expense')
-            ->data(['id' => $notification->id]);
+            ->data([
+                'id' => $notification->id,
+                'url' => route('fixed-expenses')
+            ]);
     }
 
     public function toArray(object $notifiable): array

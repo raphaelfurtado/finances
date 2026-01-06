@@ -15,28 +15,54 @@ class CheckFixedExpenses extends Command
 
     public function handle()
     {
-        $targetDate = Carbon::now()->addDays(2);
-        $dueDay = $targetDate->day;
+        $startTime = now();
+        $log = \App\Models\CronLog::create([
+            'command' => 'app:check-fixed-expenses',
+            'status' => 'running',
+            'started_at' => $startTime
+        ]);
 
-        $expenses = FixedExpense::where('due_day', $dueDay)
-            ->where('is_active', true)
-            ->with(['user', 'transactions'])
-            ->get();
+        try {
+            $targetDate = Carbon::now()->addDays(2);
+            $dueDay = $targetDate->day;
 
-        $count = 0;
+            $expenses = FixedExpense::where('due_day', $dueDay)
+                ->where('is_active', true)
+                ->with(['user', 'transactions'])
+                ->get();
 
-        foreach ($expenses as $expense) {
-            $alreadyPaid = $expense->transactions()
-                ->whereMonth('date', Carbon::now()->month)
-                ->whereYear('date', Carbon::now()->year)
-                ->exists();
+            $count = 0;
 
-            if (!$alreadyPaid) {
-                $expense->user->notify(new FixedExpenseDue($expense));
-                $count++;
+            foreach ($expenses as $expense) {
+                $alreadyPaid = $expense->transactions()
+                    ->whereMonth('date', Carbon::now()->month)
+                    ->whereYear('date', Carbon::now()->year)
+                    ->exists();
+
+                if (!$alreadyPaid) {
+                    $expense->user->notify(new FixedExpenseDue($expense));
+                    $count++;
+                }
             }
-        }
 
-        $this->info("Verificação concluída. {$count} notificações enviadas.");
+            $message = "Verificação concluída. {$count} notificações enviadas.";
+            $this->info($message);
+
+            $log->update([
+                'status' => 'success',
+                'output' => $message,
+                'finished_at' => now(),
+                'duration_ms' => now()->diffInMilliseconds($startTime)
+            ]);
+
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+            $log->update([
+                'status' => 'failed',
+                'output' => $e->getMessage(),
+                'finished_at' => now(),
+                'duration_ms' => now()->diffInMilliseconds($startTime)
+            ]);
+        }
     }
 }

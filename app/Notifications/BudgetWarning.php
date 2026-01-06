@@ -28,7 +28,10 @@ class BudgetWarning extends Notification implements ShouldQueue
             ->icon('/images/icon-192.png')
             ->body("Cuidado, você já usou " . number_format($this->percentage, 0) . "% do orçamento de {$this->categoryName}.")
             ->action('Ver', 'view_budget')
-            ->data(['id' => $notification->id]);
+            ->data([
+                'id' => $notification->id,
+                'url' => route('budgets')
+            ]);
     }
 
     public function toArray(object $notifiable): array

@@ -192,6 +192,12 @@
                             Notificações
                         </a>
 
+                        <a href="{{ route('admin.cron') }}"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('admin/cron*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                            <i data-lucide="clock" class="w-5 h-5"></i>
+                            Monitor de Cron
+                        </a>
+
                         <a href="/dashboard"
                             class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-indigo-600 hover:bg-indigo-50 transition-all border border-indigo-100 border-dashed">
                             <i data-lucide="arrow-left" class="w-5 h-5"></i>
@@ -304,7 +310,7 @@
                     .then(reg => console.log('Service Worker registrado!', reg))
                     .catch(err => console.error('Erro ao registrar Service Worker:', err));
             });
-    }
+        }
     </script>
 </body>
 

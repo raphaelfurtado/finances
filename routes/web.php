@@ -68,6 +68,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/monitoring', App\Livewire\Admin\Monitoring::class)->name('admin.monitoring');
     Route::get('/testimonials', App\Livewire\Admin\ManageTestimonials::class)->name('admin.testimonials');
     Route::get('/notifications', App\Livewire\Admin\SendNotification::class)->name('admin.notifications');
+    Route::get('/cron', App\Livewire\Admin\CronMonitoring::class)->name('admin.cron');
 });
 
 Route::middleware(['auth', App\Http\Middleware\EnsureUserIsPremium::class])->group(function () {

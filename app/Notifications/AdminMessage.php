@@ -28,7 +28,10 @@ class AdminMessage extends Notification implements ShouldQueue
             ->icon('/images/icon-192.png')
             ->body($this->body)
             ->action('Ver', 'view_notification')
-            ->data(['id' => $notification->id]);
+            ->data([
+                'id' => $notification->id,
+                'url' => route('dashboard')
+            ]);
     }
 
     public function toArray(object $notifiable): array
