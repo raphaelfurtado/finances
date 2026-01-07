@@ -10,6 +10,7 @@ class ManageCategories extends Component
     public $categories;
     public $showModal = false;
     public $editingId = null;
+    public $formMode = 'create'; // create, create_sub, edit
     public $name = '';
     public $description = '';
     public $icon = 'circle';
@@ -60,14 +61,11 @@ class ManageCategories extends Component
         if ($value) {
             $parent = Category::find($value);
             if ($parent) {
-                $this->icon = $parent->icon;
-                $this->color = $parent->color;
-            }
-        } else {
-            // Reset to defaults if cleared
-            if (!$this->editingId) {
-                $this->icon = 'circle';
-                $this->color = '#3B82F6';
+                // Only inherit style if creating new sub
+                if (!$this->editingId) {
+                    $this->icon = $parent->icon;
+                    $this->color = $parent->color;
+                }
             }
         }
     }
@@ -85,6 +83,7 @@ class ManageCategories extends Component
     public function openModal()
     {
         $this->resetForm();
+        $this->formMode = 'create';
         $this->showModal = true;
     }
 
@@ -108,6 +107,7 @@ class ManageCategories extends Component
     public function resetForm()
     {
         $this->editingId = null;
+        $this->formMode = 'create';
         $this->name = '';
         $this->description = '';
         $this->icon = 'circle';
@@ -121,12 +121,29 @@ class ManageCategories extends Component
     {
         $category = Category::where('user_id', auth()->id())->findOrFail($id);
         $this->editingId = $category->id;
+        $this->formMode = 'edit';
         $this->name = $category->name;
         $this->description = $category->description;
         $this->icon = $category->icon;
         $this->color = $category->color;
         $this->parent_id = $category->parent_id;
         $this->isSubcategory = !is_null($category->parent_id);
+        $this->showModal = true;
+    }
+
+    public function addSubcategory($parentId)
+    {
+        $this->resetForm();
+        $this->formMode = 'create_sub';
+        $this->parent_id = $parentId;
+        $this->isSubcategory = true;
+
+        $parent = Category::find($parentId);
+        if ($parent) {
+            $this->icon = $parent->icon;
+            $this->color = $parent->color;
+        }
+
         $this->showModal = true;
     }
 

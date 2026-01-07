@@ -4,7 +4,10 @@
         <a href="/perfil" wire:navigate class="p-2 -ml-2 text-gray-800 hover:text-gray-600">
             <i data-lucide="chevron-left" class="w-6 h-6"></i>
         </a>
-        <h1 class="flex-1 text-center text-xl font-bold text-gray-900 pr-8">Gerenciar Categorias</h1>
+        <h1 class="flex-1 text-center text-xl font-bold text-gray-900">Gerenciar Categorias</h1>
+        <button wire:click="openModal" class="p-2 -mr-2 text-blue-600 hover:text-blue-700">
+            <i data-lucide="plus-circle" class="w-6 h-6"></i>
+        </button>
     </div>
 
     <!-- Success Message -->
@@ -47,13 +50,18 @@
 
                         <!-- Actions -->
                         <div class="flex items-center gap-2">
+                            <button wire:click="addSubcategory({{ $category->id }})"
+                                class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                                title="Adicionar Subcategoria">
+                                <i data-lucide="plus" class="w-5 h-5"></i>
+                            </button>
                             <button wire:click="edit({{ $category->id }})"
-                                class="p-2 text-gray-300 hover:text-blue-500 transition-colors">
+                                class="p-2 text-gray-300 hover:text-blue-500 transition-colors" title="Editar">
                                 <i data-lucide="edit-3" class="w-5 h-5"></i>
                             </button>
                             <button wire:click="delete({{ $category->id }})"
                                 wire:confirm="Tem certeza que deseja excluir esta categoria? As subcategorias também serão excluídas."
-                                class="p-2 text-gray-300 hover:text-red-500 transition-colors">
+                                class="p-2 text-gray-300 hover:text-red-500 transition-colors" title="Excluir">
                                 <i data-lucide="trash-2" class="w-5 h-5"></i>
                             </button>
                         </div>
@@ -98,10 +106,10 @@
     </div>
 
     <!-- Footer Action -->
-    <div class="fixed bottom-0 left-0 right-0 p-6 bg-white border-t border-gray-100"
+    <div class="fixed bottom-24 left-0 right-0 p-6 bg-transparent pointer-events-none z-[40]"
         style="max-width: 448px; margin: 0 auto;">
         <button wire:click="openModal"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-blue-200 transition-all active:scale-95">
+            class="w-full pointer-events-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-blue-200 transition-all active:scale-95">
             <i data-lucide="plus" class="w-5 h-5"></i>
             Nova Categoria
         </button>
@@ -115,7 +123,13 @@
                 <div class="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 rounded-t-3xl">
                     <div class="flex items-center justify-between">
                         <h2 class="text-xl font-bold text-gray-900">
-                            {{ $editingId ? 'Editar Categoria' : 'Nova Categoria' }}
+                            @if($formMode === 'create_sub')
+                                Nova Subcategoria
+                            @elseif($editingId)
+                                {{ $isSubcategory ? 'Editar Subcategoria' : 'Editar Categoria' }}
+                            @else
+                                Nova Categoria
+                            @endif
                         </h2>
                         <button wire:click="closeModal" class="p-2 text-gray-400 hover:text-gray-600">
                             <i data-lucide="x" class="w-6 h-6"></i>
@@ -125,17 +139,7 @@
 
                 <!-- Modal Content -->
                 <div class="p-6 space-y-6">
-                    <!-- Type Toggle -->
-                    <div class="bg-gray-100 p-1 rounded-xl flex">
-                        <button wire:click="$set('isSubcategory', false)"
-                            class="flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all {{ !$isSubcategory ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">
-                            Categoria Principal
-                        </button>
-                        <button wire:click="$set('isSubcategory', true)"
-                            class="flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all {{ $isSubcategory ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">
-                            Subcategoria
-                        </button>
-                    </div>
+                    <!-- Type Toggle removed as per user request for separate panels -->
 
                     <!-- Parent Category Select -->
                     @if($isSubcategory)
@@ -149,7 +153,8 @@
                                         <option value="{{ $parent->id }}">{{ $parent->name }}</option>
                                     @endforeach
                                 </select>
-                                <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"></i>
+                                <i data-lucide="chevron-down"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"></i>
                             </div>
                             @error('parent_id') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>

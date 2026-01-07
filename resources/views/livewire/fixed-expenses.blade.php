@@ -183,6 +183,39 @@
                 </div>
 
                 <form wire:submit.prevent="save" class="p-6 space-y-4">
+                    <!-- Error Alert inside Modal -->
+                    <!-- Premium Upsell Alert -->
+                    @if (session()->has('error'))
+                        <div
+                            class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-6 text-white text-center mb-6 shadow-xl relative overflow-hidden">
+                            <!-- Decor -->
+                            <div class="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+                            <div class="absolute bottom-0 left-0 -ml-4 -mb-4 w-20 h-20 bg-black/10 rounded-full blur-xl"></div>
+
+                            <div class="relative z-10 flex flex-col items-center gap-3">
+                                <div
+                                    class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm mb-1">
+                                    <i data-lucide="crown" class="w-6 h-6 text-yellow-300 fill-current"></i>
+                                </div>
+
+                                <h3 class="font-bold text-lg leading-tight">Limite Gratuito Atingido</h3>
+                                <p class="text-indigo-100 text-sm mb-2">
+                                    Usuários gratuitos podem cadastrar apenas 1 gasto fixo.
+                                </p>
+
+                                <a href="/upgrade"
+                                    class="inline-flex items-center gap-2 px-6 py-3 bg-white text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition-all shadow-lg active:scale-95 mt-2">
+                                    <span>Seja Premium Agora</span>
+                                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                </a>
+
+                                <p class="text-[10px] text-indigo-200 mt-2">
+                                    Cancele quando quiser. Acesso imediato.
+                                </p>
+                            </div>
+                        </div>
+                    @endif
+
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Título</label>
                         <input type="text" wire:model="title"
