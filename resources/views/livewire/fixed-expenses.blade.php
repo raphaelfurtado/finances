@@ -48,7 +48,7 @@
         <div class="space-y-4">
             @forelse($fixedExpenses as $expense)
                 @php
-                    $status = $expense->status_this_month;
+                    $status = $expense->is_active ? $expense->status_this_month : 'inactive';
                     $statusConfig = [
                         'paid' => [
                             'label' => 'Pago',
@@ -74,10 +74,17 @@
                             'icon' => 'clock',
                             'button' => true
                         ],
+                        'inactive' => [
+                            'label' => 'Inativo',
+                            'class' => 'bg-gray-200 text-gray-500',
+                            'icon' => 'pause-circle',
+                            'button' => false
+                        ],
                     ][$status];
                 @endphp
 
-                <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 flex flex-col gap-4">
+                <div
+                    class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 flex flex-col gap-4 transition-all {{ !$expense->is_active ? 'opacity-60 grayscale-[0.5]' : '' }}">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <div
