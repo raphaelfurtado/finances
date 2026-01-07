@@ -84,15 +84,18 @@
             <div x-data="{ 
                 view: 'root', 
                 activeParent: null,
-                categories: {{ $categories->toJson() }},
+                currentChildren: [],
+                categories: {{ $categories->toJson(JSON_HEX_APOS | JSON_HEX_QUOT) }},
                 
                 selectCategory(category) {
-                    // Check if has children using the JSON data passed from PHP
-                    let hasChildren = category.children && category.children.length > 0;
-                    
-                    if (hasChildren) {
+                    if (category.children && category.children.length > 0) {
                         this.activeParent = category;
+                        this.currentChildren = category.children;
                         this.view = 'children';
+                        
+                        this.$nextTick(() => {
+                            lucide.createIcons();
+                        });
                     } else {
                         $wire.set('category_id', category.id);
                     }
@@ -100,18 +103,19 @@
                 
                 selectChild(child) {
                     $wire.set('category_id', child.id);
-                    // Optional: auto-return to root after selection or keep drill-down?
-                    // Keeping drill-down allows changing mind easily.
                 },
                 
                 goBack() {
                     this.view = 'root';
                     this.activeParent = null;
+                    this.currentChildren = [];
+                    this.$nextTick(() => {
+                        lucide.createIcons();
+                    });
                 },
 
                 init() {
-                    // Safety check if current category is a child, pre-open parent?
-                    // For simplified UX, we start at root.
+                    
                 }
             }" class="relative transition-all duration-300">
 
@@ -122,9 +126,9 @@
                     class="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6" style="scrollbar-width: none;">
 
                     @foreach($categories as $category)
-                        <button type="button" @click="selectCategory({{ $category->toJson() }})"
+                        <button type="button" @click="selectCategory(categories[{{ $loop->index }}])"
                             class="flex-shrink-0 flex flex-col items-center gap-2 p-3 rounded-xl transition-all border-2
-                                {{ $category_id == $category->id ? 'bg-blue-600 border-blue-600 shadow-md transform scale-105' : 'bg-gray-50 border-transparent hover:bg-gray-100' }}">
+                                                        {{ $category_id == $category->id ? 'bg-blue-600 border-blue-600 shadow-md transform scale-105' : 'bg-gray-50 border-transparent hover:bg-gray-100' }}">
 
                             <div class="w-12 h-12 rounded-xl flex items-center justify-center relative"
                                 style="background-color: {{ $category_id == $category->id ? 'rgba(255,255,255,0.2)' : $category->color . '20' }};">
@@ -166,28 +170,22 @@
 
                     <!-- Active Parent Header (Optional, maybe just showing items is enough) -->
 
-                    <template x-if="activeParent">
-                        <template x-for="child in activeParent.children" :key="child.id">
-                            <button type="button" @click="selectChild(child)"
-                                class="flex-shrink-0 flex flex-col items-center gap-2 p-3 rounded-xl transition-all border-2"
-                                :class="$wire.category_id == child.id ? 'bg-blue-600 border-blue-600 shadow-md transform scale-105' : 'bg-gray-50 border-transparent hover:bg-gray-100'">
+                    <template x-for="child in currentChildren" :key="child.id">
+                        <button type="button" @click="selectChild(child)"
+                            class="flex-shrink-0 flex flex-col items-center gap-2 p-3 rounded-xl transition-all border-2"
+                            :class="$wire.category_id == child.id ? 'bg-blue-600 border-blue-600 shadow-md transform scale-105' : 'bg-gray-50 border-transparent hover:bg-gray-100'">
 
-                                <div class="w-12 h-12 rounded-xl flex items-center justify-center"
-                                    :style="`background-color: ${$wire.category_id == child.id ? 'rgba(255,255,255,0.2)' : child.color + '20'}`">
-                                    <!-- Use dynamic component or standard i tag logic handled by alpine/lucide? 
-                                         Alpine rendering icons dynamically is tricky with Lucide if not using x-html. 
-                                         Simpler: Just use parent icon or generic dot if icon missing, or try re-init.
-                                         Actually, we can pass icon name. -->
-                                    <i :data-lucide="child.icon" class="w-6 h-6"
-                                        :style="`color: ${$wire.category_id == child.id ? 'white' : child.color}`"></i>
-                                </div>
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center"
+                                :style="`background-color: ${$wire.category_id == child.id ? 'rgba(255,255,255,0.2)' : child.color + '20'}`">
+                                <i :data-lucide="child.icon || 'help-circle'" class="w-6 h-6"
+                                    :style="`color: ${$wire.category_id == child.id ? 'white' : child.color}`"></i>
+                            </div>
 
-                                <span class="text-xs font-bold max-w-[80px] truncate"
-                                    :class="$wire.category_id == child.id ? 'text-white' : 'text-gray-600'"
-                                    x-text="child.name">
-                                </span>
-                            </button>
-                        </template>
+                            <span class="text-xs font-bold max-w-[80px] truncate"
+                                :class="$wire.category_id == child.id ? 'text-white' : 'text-gray-600'"
+                                x-text="child.name">
+                            </span>
+                        </button>
                     </template>
                 </div>
             </div>
@@ -233,7 +231,7 @@
                     <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
                         <i data-lucide="repeat" class="w-5 h-5 text-purple-600"></i>
                     </div>
-                    <span class="text-sm font-medium text-gray-900">Repetir despesa</span>
+                    <span class="text-sm font-medium text-gray-900">Repetir</span>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" wire:model="is_recurring" class="sr-only peer">
