@@ -33,49 +33,49 @@
     <div class="grid @if(request()->is('admin*')) grid-cols-5 @else grid-cols-7 @endif gap-0 px-1 py-2 min-w-[360px]">
         @if(!request()->is('admin*'))
             <!-- Dashboard -->
-            <a href="/dashboard"
+            <a href="/dashboard" wire:navigate
                 class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'painel') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
                 <i data-lucide="layout-grid" class="w-6 h-6 mb-0.5"></i>
                 <span class="text-[9px] font-bold leading-none tracking-tighter">Painel</span>
             </a>
 
             <!-- Planilhas -->
-            <a href="/planilhas"
+            <a href="/planilhas" wire:navigate
                 class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'planilhas') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
                 <i data-lucide="file-spreadsheet" class="w-6 h-6 mb-0.5"></i>
                 <span class="text-[9px] font-bold leading-none tracking-tighter">Planilhas</span>
             </a>
 
             <!-- Limites -->
-            <a href="/orcamentos"
+            <a href="/orcamentos" wire:navigate
                 class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'budgets') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
                 <i data-lucide="target" class="w-6 h-6 mb-0.5"></i>
                 <span class="text-[9px] font-bold leading-none tracking-tighter">Limites</span>
             </a>
 
             <!-- Crédito -->
-            <a href="/loans"
+            <a href="/loans" wire:navigate
                 class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'loans') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
                 <i data-lucide="banknote" class="w-6 h-6 mb-0.5"></i>
                 <span class="text-[9px] font-bold leading-none tracking-tighter">Crédito</span>
             </a>
 
             <!-- Fixos -->
-            <a href="/gastos-fixos"
+            <a href="/gastos-fixos" wire:navigate
                 class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'gastos-fixos') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
                 <i data-lucide="calendar-clock" class="w-6 h-6 mb-0.5"></i>
                 <span class="text-[9px] font-bold leading-none tracking-tighter">Fixos</span>
             </a>
 
             <!-- Relatórios -->
-            <a href="/relatorios"
+            <a href="/relatorios" wire:navigate
                 class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'relatorios') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
                 <i data-lucide="pie-chart" class="w-6 h-6 mb-0.5"></i>
                 <span class="text-[9px] font-bold leading-none tracking-tighter">Relat.</span>
             </a>
 
             <!-- Perfil/Config -->
-            <a href="/perfil"
+            <a href="/perfil" wire:navigate
                 class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'perfil') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
                 <i data-lucide="user" class="w-6 h-6 mb-0.5"></i>
                 <span class="text-[9px] font-bold leading-none tracking-tighter">Perfil</span>

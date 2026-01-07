@@ -26,6 +26,25 @@
         }
 
         [x-cloak] { display: none !important; }
+
+        /* Master Performance: NProgress Style Loading Bar */
+        .livewire-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, #4f46e5, #818cf8);
+            z-index: 9999;
+            transform-origin: 0%;
+            animation: loading-bar 2s ease-out infinite;
+        }
+
+        @keyframes loading-bar {
+            0% { transform: scaleX(0); }
+            50% { transform: scaleX(0.7); }
+            100% { transform: scaleX(1); }
+        }
     </style>
 </head>
 
@@ -114,44 +133,44 @@
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mb-4">Menu Principal</p>
 
                     <div class="space-y-1">
-                        <a href="/dashboard"
+                        <a href="/dashboard" wire:navigate.hover
                             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('dashboard*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
                             <i data-lucide="layout-grid" class="w-5 h-5"></i>
                             Dashboard
                         </a>
 
-                        <a href="/planilhas"
+                        <a href="/planilhas" wire:navigate.hover
                             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('planilhas*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
                             <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
                             Planilhas
                         </a>
 
-                        <a href="/loans"
+                        <a href="/loans" wire:navigate.hover
                             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('loans*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
                             <i data-lucide="banknote" class="w-5 h-5"></i>
                             Crédito
                         </a>
 
-                        <a href="/gastos-fixos"
+                        <a href="/gastos-fixos" wire:navigate.hover
                             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('gastos-fixos*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
                             <i data-lucide="calendar-clock" class="w-5 h-5"></i>
                             Fixos
                         </a>
 
-                        <a href="/orcamentos"
+                        <a href="/orcamentos" wire:navigate.hover
                             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('orcamentos*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
                             <i data-lucide="target" class="w-5 h-5"></i>
                             Limites
                         </a>
 
-                        <a href="/relatorios"
+                        <a href="/relatorios" wire:navigate.hover
                             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('relatorios*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
                             <i data-lucide="pie-chart" class="w-5 h-5"></i>
                             Relatórios
                         </a>
 
                         @if(auth()->user()->isAdmin())
-                            <a href="/admin"
+                            <a href="/admin" wire:navigate.hover
                                 class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 transition-all border border-red-100 border-dashed mt-4">
                                 <i data-lucide="shield-check" class="w-5 h-5"></i>
                                 Painel Admin
@@ -209,7 +228,7 @@
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mt-8 mb-4">Minha Conta</p>
 
                 <div class="space-y-1">
-                    <a href="/perfil"
+                    <a href="/perfil" wire:navigate.hover
                         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('perfil*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
                         <i data-lucide="user" class="w-5 h-5"></i>
                         Configurações
@@ -260,6 +279,9 @@
                     <x-fab-button />
                 </div>
             @endif
+
+            <!-- Global Loading Indicator -->
+            <div wire:loading.delay.longest class="livewire-loading"></div>
         </main>
     </div>
 
@@ -269,13 +291,18 @@
     </div>
 
     <script>
-        lucide.createIcons();
-
-        document.addEventListener('livewire:init', () => {
-            Livewire.hook('morph.updated', ({ component, cleanup }) => {
+        // Funcao mestre para inicializar icones com seguranca
+        const initIcons = () => {
+            if (window.lucide) {
                 lucide.createIcons();
-            });
-        });
+            }
+        };
+
+        // Inicializacao imediata
+        initIcons();
+
+        // Re-inicializa apos navegacao SPA (wire:navigate)
+        document.addEventListener('livewire:navigated', initIcons);
 
         // PWA Install Logic
         window.deferredPrompt = window.deferredPrompt || null;
