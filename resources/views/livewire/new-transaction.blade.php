@@ -128,7 +128,7 @@
                     @foreach($categories as $category)
                         <button type="button" @click="selectCategory(categories[{{ $loop->index }}])"
                             class="flex-shrink-0 flex flex-col items-center gap-2 p-3 rounded-xl transition-all border-2
-                                                        {{ $category_id == $category->id ? 'bg-blue-600 border-blue-600 shadow-md transform scale-105' : 'bg-gray-50 border-transparent hover:bg-gray-100' }}">
+                                                            {{ $category_id == $category->id ? 'bg-blue-600 border-blue-600 shadow-md transform scale-105' : 'bg-gray-50 border-transparent hover:bg-gray-100' }}">
 
                             <div class="w-12 h-12 rounded-xl flex items-center justify-center relative"
                                 style="background-color: {{ $category_id == $category->id ? 'rgba(255,255,255,0.2)' : $category->color . '20' }};">
@@ -221,24 +221,6 @@
                     <option value="cash">Dinheiro</option>
                     <option value="pix">PIX</option>
                 </select>
-            </div>
-        </div>
-
-        <!-- Recurring -->
-        <div class="px-6 py-4 border-b border-gray-100">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
-                        <i data-lucide="repeat" class="w-5 h-5 text-purple-600"></i>
-                    </div>
-                    <span class="text-sm font-medium text-gray-900">Repetir</span>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" wire:model="is_recurring" class="sr-only peer">
-                    <div
-                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600">
-                    </div>
-                </label>
             </div>
         </div>
 

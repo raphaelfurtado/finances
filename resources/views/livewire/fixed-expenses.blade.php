@@ -4,10 +4,28 @@
         <a href="/dashboard" class="p-2 -ml-2 text-gray-800 hover:text-gray-600">
             <i data-lucide="chevron-left" class="w-6 h-6"></i>
         </a>
-        <h1 class="flex-1 text-center text-xl font-bold text-gray-900 pr-8">Gastos Fixos</h1>
+        <h1 class="flex-1 text-center text-xl font-bold text-gray-900 pr-8">Fixos</h1>
         <button wire:click="openModal" class="p-2 text-blue-600 hover:text-blue-700">
             <i data-lucide="plus-circle" class="w-6 h-6"></i>
         </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="px-6 py-3 bg-white border-b border-gray-100 overflow-x-auto">
+        <div class="flex items-center gap-2 min-w-max">
+            <button wire:click="$set('activeFilter', 'all')"
+                class="px-4 py-2 rounded-xl text-xs font-bold transition-all {{ $activeFilter === 'all' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-100 text-gray-500 hover:bg-gray-200' }}">
+                Todos
+            </button>
+            <button wire:click="$set('activeFilter', 'expense')"
+                class="px-4 py-2 rounded-xl text-xs font-bold transition-all {{ $activeFilter === 'expense' ? 'bg-red-500 text-white shadow-md' : 'bg-gray-100 text-gray-500 hover:bg-gray-200' }}">
+                Despesas
+            </button>
+            <button wire:click="$set('activeFilter', 'income')"
+                class="px-4 py-2 rounded-xl text-xs font-bold transition-all {{ $activeFilter === 'income' ? 'bg-green-600 text-white shadow-md' : 'bg-gray-100 text-gray-500 hover:bg-gray-200' }}">
+                Recebíveis
+            </button>
+        </div>
     </div>
 
     <!-- Content -->
@@ -62,9 +80,16 @@
                 <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 flex flex-col gap-4">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center">
+                            <div
+                                class="w-12 h-12 rounded-2xl flex items-center justify-center relative {{ $expense->type === 'income' ? 'bg-green-50' : 'bg-red-50' }}">
                                 <i data-lucide="{{ $expense->category->icon ?? 'credit-card' }}"
-                                    class="w-6 h-6 text-gray-400"></i>
+                                    class="w-6 h-6 {{ $expense->type === 'income' ? 'text-green-600' : 'text-red-600' }}"></i>
+
+                                <div
+                                    class="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center bg-white shadow-sm border border-gray-100">
+                                    <i data-lucide="{{ $expense->type === 'income' ? 'arrow-down' : 'arrow-up' }}"
+                                        class="w-3 h-3 {{ $expense->type === 'income' ? 'text-green-600' : 'text-red-600' }}"></i>
+                                </div>
                             </div>
                             <div>
                                 <h3 class="font-bold text-gray-900">{{ $expense->title }}</h3>
@@ -97,7 +122,7 @@
                             <button wire:click="openPaymentModal({{ $expense->id }})"
                                 class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm active:scale-95">
                                 <i data-lucide="check" class="w-3 h-3"></i>
-                                Dar Baixa
+                                {{ $expense->type === 'income' ? 'Registrar' : 'Dar Baixa' }}
                             </button>
                         @endif
                     </div>
@@ -107,8 +132,9 @@
                     <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i data-lucide="calendar-days" class="w-10 h-10 text-gray-300"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-1">Nenhum gasto fixo</h3>
-                    <p class="text-gray-500 text-sm mb-6">Cadastre seus gastos recorrentes para não esquecer de pagar.</p>
+                    <h3 class="text-lg font-bold text-gray-900 mb-1">Nada fixo por aqui</h3>
+                    <p class="text-gray-500 text-sm mb-6">Cadastre seus gastos ou recebimentos recorrentes para não
+                        esquecer.</p>
                     <button wire:click="openModal"
                         class="px-6 py-3 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg active:scale-95">
                         Adicionar Primeiro
@@ -134,12 +160,12 @@
 
                 <form wire:submit.prevent="registerPayment" class="p-6 space-y-6">
                     <div class="text-center">
-                        <div
-                            class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="receipt-text" class="w-8 h-8"></i>
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                            style="background-color: {{ $paymentColor }}20; color: {{ $paymentColor }};">
+                            <i data-lucide="{{ $paymentIcon }}" class="w-8 h-8"></i>
                         </div>
                         <h3 class="text-lg font-bold text-gray-900 mb-1">{{ $paymentTitle }}</h3>
-                        <p class="text-sm text-gray-500">Confirme o valor pago para registrar no sistema.</p>
+                        <p class="text-sm text-gray-500">Confirme o valor para registrar no sistema.</p>
                     </div>
 
                     <div>
@@ -175,14 +201,27 @@
 
             <div
                 class="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 max-h-[90vh] flex flex-col">
-                <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between flex-none bg-white z-10">
-                    <h2 class="text-xl font-bold text-gray-900">{{ $editingId ? 'Editar' : 'Novo' }} Gasto Fixo</h2>
+                <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between flex-none bg-white z-20">
+                    <h2 class="text-xl font-bold text-gray-900">{{ $editingId ? 'Editar' : 'Novo' }} Fixo</h2>
                     <button wire:click="closeModal" class="p-2 text-gray-400 hover:text-gray-600">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
                 </div>
-
                 <div class="flex-1 overflow-y-auto">
+                    <!-- Type Toggle -->
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <div class="flex gap-2 bg-gray-100 p-1 rounded-xl">
+                            <button type="button" wire:click="$set('type', 'expense')"
+                                class="flex-1 py-2.5 rounded-lg font-bold text-xs transition-all {{ $type === 'expense' ? 'bg-red-500 text-white shadow-md' : 'text-gray-600' }}">
+                                Despesa
+                            </button>
+                            <button type="button" wire:click="$set('type', 'income')"
+                                class="flex-1 py-2.5 rounded-lg font-bold text-xs transition-all {{ $type === 'income' ? 'bg-green-500 text-white shadow-md' : 'text-gray-600' }}">
+                                Recebível
+                            </button>
+                        </div>
+                    </div>
+
                     <form wire:submit.prevent="save" class="p-6 space-y-4">
                         <!-- Premium Upsell Alert -->
                         @if (session()->has('error'))
@@ -202,7 +241,7 @@
 
                                     <h3 class="font-bold text-lg leading-tight">Limite Gratuito Atingido</h3>
                                     <p class="text-indigo-100 text-sm mb-2">
-                                        Usuários gratuitos podem cadastrar apenas 1 gasto fixo.
+                                        Usuários gratuitos podem cadastrar apenas 1 item fixo.
                                     </p>
 
                                     <a href="/upgrade"
@@ -291,7 +330,7 @@
                             <button type="submit"
                                 class="w-full py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2">
                                 <i data-lucide="save" class="w-5 h-5"></i>
-                                Salvar Gasto Fixo
+                                Salvar Transação Fixa
                             </button>
                             <button type="button" wire:click="closeModal"
                                 class="w-full py-4 text-gray-500 font-bold hover:bg-gray-50 rounded-2xl transition-all">

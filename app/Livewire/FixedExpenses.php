@@ -18,7 +18,11 @@ class FixedExpenses extends Component
     public $showPaymentModal = false;
     public $paymentAmount = 0;
     public $paymentTitle = '';
+    public $paymentIcon = '';
+    public $paymentColor = '';
     public $selectedPaymentExpenseId = null;
+
+    public $activeFilter = 'all';
 
     // Form fields
     public $title = '';
@@ -26,6 +30,7 @@ class FixedExpenses extends Component
     public $amount = '';
     public $due_day = '';
     public $category_id = '';
+    public $type = 'expense';
     public $is_active = true;
     public $mark_as_paid_now = false;
 
@@ -37,6 +42,7 @@ class FixedExpenses extends Component
             'amount' => 'required|numeric|min:0.01',
             'due_day' => 'required|integer|min:1|max:31',
             'category_id' => 'required|exists:categories,id',
+            'type' => 'required|in:expense,income',
             'is_active' => 'boolean',
         ];
     }
@@ -45,6 +51,7 @@ class FixedExpenses extends Component
     {
         $this->resetForm();
         $this->showModal = true;
+        $this->dispatch('modal-opened');
     }
 
     public function closeModal()
@@ -61,6 +68,7 @@ class FixedExpenses extends Component
         $this->amount = '';
         $this->due_day = '';
         $this->category_id = '';
+        $this->type = 'expense';
         $this->is_active = true;
         $this->mark_as_paid_now = false;
         $this->resetErrorBag();
@@ -75,8 +83,10 @@ class FixedExpenses extends Component
         $this->amount = $expense->amount;
         $this->due_day = $expense->due_day;
         $this->category_id = $expense->category_id;
+        $this->type = $expense->type;
         $this->is_active = $expense->is_active;
         $this->showModal = true;
+        $this->dispatch('modal-opened');
     }
 
     public function save()
@@ -99,6 +109,7 @@ class FixedExpenses extends Component
             'amount' => $this->amount,
             'due_day' => $this->due_day,
             'category_id' => $this->category_id,
+            'type' => $this->type,
             'is_active' => $this->is_active,
         ];
 
@@ -122,12 +133,13 @@ class FixedExpenses extends Component
                     Transaction::create([
                         'user_id' => auth()->id(),
                         'category_id' => $expense->category_id,
-                        'type' => 'expense',
+                        'type' => $expense->type,
                         'amount' => $this->amount,
                         'description' => 'Pgto: ' . $expense->title,
                         'date' => $now,
                         'payment_method' => 'other',
                         'status' => 'paid',
+                        'is_recurring' => true,
                         'fixed_expense_id' => $expense->id,
                     ]);
                 }
@@ -154,11 +166,14 @@ class FixedExpenses extends Component
 
     public function openPaymentModal($id)
     {
-        $expense = FixedExpense::where('user_id', auth()->id())->findOrFail($id);
+        $expense = FixedExpense::where('user_id', auth()->id())->with('category')->findOrFail($id);
         $this->selectedPaymentExpenseId = $expense->id;
         $this->paymentTitle = $expense->title;
         $this->paymentAmount = $expense->amount;
+        $this->paymentIcon = $expense->category->icon ?? 'credit-card';
+        $this->paymentColor = $expense->category->color ?? '#cbd5e1';
         $this->showPaymentModal = true;
+        $this->dispatch('modal-opened');
     }
 
     public function closePaymentModal()
@@ -188,12 +203,13 @@ class FixedExpenses extends Component
         Transaction::create([
             'user_id' => auth()->id(),
             'category_id' => $expense->category_id,
-            'type' => 'expense',
+            'type' => $expense->type,
             'amount' => $this->paymentAmount,
             'description' => 'Pgto: ' . $expense->title,
             'date' => $now,
             'payment_method' => 'other',
             'status' => 'paid',
+            'is_recurring' => true,
             'fixed_expense_id' => $expense->id,
         ]);
 
@@ -204,8 +220,14 @@ class FixedExpenses extends Component
 
     public function render()
     {
+        $query = FixedExpense::where('user_id', auth()->id())->with('category');
+
+        if ($this->activeFilter !== 'all') {
+            $query->where('type', $this->activeFilter);
+        }
+
         return view('livewire.fixed-expenses', [
-            'fixedExpenses' => FixedExpense::where('user_id', auth()->id())->with('category')->orderBy('due_day')->get(),
+            'fixedExpenses' => $query->orderBy('due_day')->get(),
             'categories' => Category::where('user_id', auth()->id())->get(),
         ]);
     }

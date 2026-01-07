@@ -71,7 +71,7 @@
                 <!-- Recurring -->
                 <div>
                     <span class="text-xs font-medium text-gray-400 uppercase block mb-2">Recorrente</span>
-                    <span class="text-sm font-medium text-gray-900">{{ $transaction->is_recurring ? 'Sim' : 'Não' }}</span>
+                    <span class="text-sm font-medium text-gray-900">{{ ($transaction->is_recurring || $transaction->fixed_expense_id) ? 'Sim' : 'Não' }}</span>
                 </div>
             </div>
         </div>

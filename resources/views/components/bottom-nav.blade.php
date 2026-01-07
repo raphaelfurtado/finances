@@ -60,11 +60,11 @@
                 <span class="text-[9px] font-bold leading-none tracking-tighter">Crédito</span>
             </a>
 
-            <!-- Gastos Fixos -->
+            <!-- Fixos -->
             <a href="/gastos-fixos"
                 class="flex flex-col items-center justify-center py-1 {{ isActive($active, 'gastos-fixos') ? 'text-indigo-600' : 'text-gray-400' }} transition-colors">
                 <i data-lucide="calendar-clock" class="w-6 h-6 mb-0.5"></i>
-                <span class="text-[9px] font-bold leading-none tracking-tighter">Fixo</span>
+                <span class="text-[9px] font-bold leading-none tracking-tighter">Fixos</span>
             </a>
 
             <!-- Relatórios -->

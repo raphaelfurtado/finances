@@ -132,9 +132,15 @@
                             </div>
                         </div>
                         <div>
-                            <div class="font-bold text-gray-900 text-sm mb-0.5">{{ $transaction->description }}</div>
+                            <div class="flex items-center gap-1.5 mb-0.5">
+                                <div class="font-bold text-gray-900 text-sm truncate">{{ $transaction->description }}</div>
+                                @if($transaction->fixed_expense_id)
+                                    <i data-lucide="refresh-cw" class="w-3 h-3 text-purple-500" title="Item Fixo"></i>
+                                @endif
+                            </div>
                             <div class="text-xs text-gray-400 truncate">
-                                {{ $transaction->category->full_name ?? 'Sem categoria' }}</div>
+                                {{ $transaction->category->full_name ?? 'Sem categoria' }}
+                            </div>
                         </div>
                         <div class="text-right">
                             <div

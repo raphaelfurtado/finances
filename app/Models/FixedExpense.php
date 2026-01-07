@@ -9,6 +9,7 @@ class FixedExpense extends Model
 {
     protected $fillable = [
         'user_id',
+        'type',
         'category_id',
         'title',
         'description',

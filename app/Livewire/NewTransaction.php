@@ -15,7 +15,6 @@ class NewTransaction extends Component
     public $category_id = '';
     public $date;
     public $payment_method = 'credit';
-    public $is_recurring = false;
     public $observation = '';
     public $categories = [];
 
@@ -33,7 +32,6 @@ class NewTransaction extends Component
             $this->category_id = $this->editingTransaction->category_id;
             $this->date = $this->editingTransaction->date->format('Y-m-d');
             $this->payment_method = $this->editingTransaction->payment_method;
-            $this->is_recurring = $this->editingTransaction->is_recurring;
             $this->observation = $this->editingTransaction->observation;
         } else {
             $this->type = $type;
@@ -117,7 +115,6 @@ class NewTransaction extends Component
                     'description' => $this->description,
                     'date' => $newDate,
                     'payment_method' => $this->payment_method,
-                    'is_recurring' => $this->is_recurring,
                     'observation' => $this->observation,
                 ]);
                 session()->flash('message', 'Transação atualizada com sucesso!');
@@ -138,7 +135,6 @@ class NewTransaction extends Component
                     'date' => $transactionDate,
                     'payment_method' => $this->payment_method,
                     'status' => 'paid',
-                    'is_recurring' => $this->is_recurring,
                     'observation' => $this->observation,
                 ]);
                 session()->flash('message', 'Transação criada com sucesso!');
