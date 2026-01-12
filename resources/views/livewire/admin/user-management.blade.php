@@ -185,7 +185,7 @@
                                 <div class="space-y-1 text-sm">
                                     <p class="text-yellow-700">
                                         Ativado em:
-                                        {{ $selectedUser->premium_activated_at->locale('pt_BR')->isoFormat('DD/MM/YYYY') }}
+                                        {{ $selectedUser->premium_activated_at?->locale('pt_BR')?->isoFormat('DD/MM/YYYY') }}
                                     </p>
                                     @if($selectedUser->premium_expires_at)
                                         <p class="text-yellow-700">
