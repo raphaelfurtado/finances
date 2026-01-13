@@ -176,6 +176,40 @@
                     empréstimos ativos.</p>
                 @error('free_loan_limit') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Limite Transações (Novo)</label>
+                    <div class="relative">
+                        <input type="number" inputmode="numeric" pattern="[0-9]*" wire:model="free_plan_limit" min="1"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                            placeholder="Ex: 50">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Limite mensal para novos usuários.</p>
+                    @error('free_plan_limit') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Limite Transações (Antigo)</label>
+                    <div class="relative">
+                        <input type="number" inputmode="numeric" pattern="[0-9]*" wire:model="legacy_plan_limit" min="1"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                            placeholder="Ex: 70">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Limite mensal para usuários legados.</p>
+                    @error('legacy_plan_limit') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Data de Corte (Usuários Antigos)</label>
+                    <div class="relative">
+                        <input type="date" wire:model="legacy_cutoff_date"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Usuários criados ANTES desta data serão considerados
+                        "Antigos".</p>
+                    @error('legacy_cutoff_date') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
         </div>
 
         <!-- Save Button -->

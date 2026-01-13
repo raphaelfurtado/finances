@@ -117,4 +117,48 @@ class User extends Authenticatable
 
         return max(0, now()->diffInDays($this->premium_expires_at, false));
     }
+
+    public function getPlanLimit(): int
+    {
+        // Get cutoff date from settings
+        $cutoffDate = \Carbon\Carbon::parse(AppSetting::getLegacyCutoffDate());
+
+        if ($this->created_at < $cutoffDate) {
+            return AppSetting::getLegacyPlanLimit();
+        }
+
+        return AppSetting::getFreePlanLimit();
+    }
+
+    public function getMonthlyTransactionCount(): int
+    {
+        return $this->transactions()
+            ->whereMonth('date', now()->month)
+            ->whereYear('date', now()->year)
+            ->count();
+    }
+
+    public function canCreateTransaction(): bool
+    {
+        if ($this->isPremium()) {
+            return true;
+        }
+
+        return $this->getMonthlyTransactionCount() < $this->getPlanLimit();
+    }
+
+    public function getTransactionLimitProgress(): int
+    {
+        if ($this->isPremium()) {
+            return 0;
+        }
+
+        $limit = $this->getPlanLimit();
+        if ($limit <= 0)
+            return 100;
+
+        $count = $this->getMonthlyTransactionCount();
+
+        return min(100, (int) round(($count / $limit) * 100));
+    }
 }

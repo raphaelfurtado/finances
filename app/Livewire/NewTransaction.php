@@ -86,6 +86,12 @@ class NewTransaction extends Component
             return;
         }
 
+        // Check Transaction Limit (only for new transactions)
+        if (!$this->transaction_id && !auth()->user()->canCreateTransaction()) {
+            $this->dispatch('open-paywall-modal');
+            return;
+        }
+
         // Replace comma with dot for decimal conversion
         $amount = str_replace(',', '.', $cleanAmount);
 

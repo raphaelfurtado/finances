@@ -65,4 +65,22 @@ class AppSetting extends Model
     {
         return (int) self::get('free_loan_limit', '2');
     }
+
+    // Get free user transaction limit
+    public static function getFreePlanLimit(): int
+    {
+        return (int) self::get('free_plan_limit', '50');
+    }
+
+    // Get legacy user transaction limit
+    public static function getLegacyPlanLimit(): int
+    {
+        return (int) self::get('legacy_plan_limit', '70');
+    }
+
+    // Get legacy user cutoff date
+    public static function getLegacyCutoffDate(): string
+    {
+        return self::get('legacy_cutoff_date', '2025-01-01');
+    }
 }

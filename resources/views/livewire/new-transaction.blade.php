@@ -14,6 +14,31 @@
         </button>
     </div>
 
+    <!-- Freemium Progress Bar -->
+    @if(!auth()->user()->isPremium())
+        @php
+            $progress = auth()->user()->getTransactionLimitProgress();
+            $count = auth()->user()->getMonthlyTransactionCount();
+            $limit = auth()->user()->getPlanLimit();
+            $barColor = $progress < 50 ? 'bg-blue-600' : ($progress > 80 ? 'bg-red-500' : 'bg-yellow-500');
+        @endphp
+        <div class="px-6 py-3 bg-gray-50 border-b border-gray-100">
+            <div class="flex justify-between items-end mb-1">
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Uso do Plano Grátis</span>
+                <span class="text-xs font-bold {{ $progress >= 100 ? 'text-red-600' : 'text-gray-700' }}">
+                    {{ $count }} / {{ $limit }} lançamentos
+                </span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="{{ $barColor }} h-2 rounded-full transition-all duration-500" style="width: {{ $progress }}%">
+                </div>
+            </div>
+            @if($progress >= 100)
+                <p class="text-xs text-red-600 font-medium mt-1 text-center">Limite atingido! Faça upgrade para continuar.</p>
+            @endif
+        </div>
+    @endif
+
     <!-- Error Messages -->
     @if ($errors->any())
         <div class="mx-6 mt-4 bg-red-50 border border-red-200 rounded-xl p-4">
@@ -128,7 +153,7 @@
                     @foreach($categories as $category)
                         <button type="button" @click="selectCategory(categories[{{ $loop->index }}])"
                             class="flex-shrink-0 flex flex-col items-center gap-2 p-3 rounded-xl transition-all border-2
-                                                            {{ $category_id == $category->id ? 'bg-blue-600 border-blue-600 shadow-md transform scale-105' : 'bg-gray-50 border-transparent hover:bg-gray-100' }}">
+                                                                    {{ $category_id == $category->id ? 'bg-blue-600 border-blue-600 shadow-md transform scale-105' : 'bg-gray-50 border-transparent hover:bg-gray-100' }}">
 
                             <div class="w-12 h-12 rounded-xl flex items-center justify-center relative"
                                 style="background-color: {{ $category_id == $category->id ? 'rgba(255,255,255,0.2)' : $category->color . '20' }};">
@@ -251,20 +276,128 @@
             <span wire:loading wire:target="save">Salvando...</span>
         </button>
     </div>
+
+    <div x-data="{ showPaywall: false }" x-on:open-paywall-modal.window="showPaywall = true"
+        x-on:keydown.escape.window="showPaywall = false" style="display: none;" x-show="showPaywall"
+        class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+
+        <!-- Backdrop -->
+        <div x-show="showPaywall" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm"></div>
+
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <!-- Modal Panel -->
+            <div x-show="showPaywall" x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                @click.away="showPaywall = false"
+                class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+
+                <!-- Close Button -->
+                <div class="absolute right-0 top-0 pr-4 pt-4 z-10">
+                    <button @click="showPaywall = false" type="button"
+                        class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none">
+                        <span class="sr-only">Fechar</span>
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+
+                <!-- Header with Pattern -->
+                <div class="relative bg-gradient-to-br from-indigo-600 to-purple-700 p-8 text-center overflow-hidden">
+                    <div class="absolute inset-0 opacity-10"
+                        style="background-image: url('data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\' fill-rule=\'evenodd\'%3E%3Ccircle cx=\'3\' cy=\'3\' r=\'3\'/%3E%3Ccircle cx=\'13\' cy=\'13\' r=\'3\'/%3E%3C/g%3E%3C/svg%3E');">
+                    </div>
+
+                    <!-- Floating Icon Animation -->
+                    <div
+                        class="relative z-10 w-20 h-20 mx-auto bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-4 shadow-xl ring-4 ring-white/10 animate-pulse">
+                        <span class="text-5xl filter drop-shadow-md">🏆</span>
+                    </div>
+
+                    <h3 class="relative z-10 text-2xl font-bold text-white mb-2 tracking-tight">Você é um Power User!
+                    </h3>
+                    <p class="relative z-10 text-indigo-100 text-sm font-medium">Sua organização financeira é
+                        inspiradora.</p>
+                </div>
+
+                <!-- Body -->
+                <div class="p-8">
+                    <div class="text-center mb-8">
+                        <p class="text-gray-600 leading-relaxed text-lg">
+                            Você atingiu o limite de <span
+                                class="font-bold text-gray-900 bg-gray-100 px-2 py-0.5 rounded">{{ auth()->user()->getPlanLimit() }}
+                                lançamentos</span> do seu Plano Grátis.
+                        </p>
+                        <p class="text-gray-500 text-sm mt-2">Para continuar registrando, faça um upgrade.</p>
+                    </div>
+
+                    <div class="bg-indigo-50/50 rounded-xl p-5 mb-8 border border-indigo-100 ring-1 ring-indigo-50">
+                        <p class="text-indigo-900 font-bold text-center mb-4 text-xs uppercase tracking-wider">
+                            Benefícios do Premium</p>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3 text-sm text-gray-700">
+                                <div
+                                    class="mt-0.5 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="check" class="w-3 h-3 text-green-600"></i>
+                                </div>
+                                <span class="font-medium">Lançamentos <span
+                                        class="text-indigo-600 font-bold">ILIMITADOS</span></span>
+                            </li>
+                            <li class="flex items-start gap-3 text-sm text-gray-700">
+                                <div
+                                    class="mt-0.5 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="check" class="w-3 h-3 text-green-600"></i>
+                                </div>
+                                <span class="font-medium">Consultor financeiro com IA</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-sm text-gray-700">
+                                <div
+                                    class="mt-0.5 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="check" class="w-3 h-3 text-green-600"></i>
+                                </div>
+                                <span class="font-medium">Relatórios e gráficos avançados</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-3">
+                        <a href="/upgrade"
+                            class="group relative w-full flex justify-center py-4 px-4 border border-transparent text-base font-bold rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-200 transition-all transform hover:scale-[1.02] active:scale-[0.98]">
+                            Liberar Acesso Ilimitado
+                            <div
+                                class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 px-2 py-0.5 rounded text-xs">
+                                R$ {{ \App\Models\AppSetting::getPlanPrice() }}
+                            </div>
+                        </a>
+
+                        <button @click="showPaywall = false" type="button"
+                            class="w-full py-3 px-4 border border-transparent text-sm font-semibold rounded-xl text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors">
+                            Agora não, obrigado
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('livewire:navigated', () => {
+            lucide.createIcons();
+        });
+
+        document.addEventListener('livewire:init', () => {
+            Livewire.hook('morph.updated', ({ component, cleanup }) => {
+                lucide.createIcons();
+            });
+
+            Livewire.hook('morph.added', ({ el }) => {
+                lucide.createIcons();
+            });
+        });
+    </script>
 </div>
-
-<script>
-    document.addEventListener('livewire:navigated', () => {
-        lucide.createIcons();
-    });
-
-    document.addEventListener('livewire:init', () => {
-        Livewire.hook('morph.updated', ({ component, cleanup }) => {
-            lucide.createIcons();
-        });
-
-        Livewire.hook('morph.added', ({ el }) => {
-            lucide.createIcons();
-        });
-    });
-</script>
