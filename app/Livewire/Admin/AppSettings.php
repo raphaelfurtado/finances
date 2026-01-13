@@ -14,6 +14,9 @@ class AppSettings extends Component
     public $global_banner_type;
     public $plan_price;
     public $free_loan_limit;
+    public $free_plan_limit;
+    public $legacy_plan_limit;
+    public $legacy_cutoff_date;
 
     public function mount()
     {
@@ -29,6 +32,9 @@ class AppSettings extends Component
         $this->global_banner_type = AppSetting::get('global_banner_type', 'info');
         $this->plan_price = AppSetting::getPlanPrice();
         $this->free_loan_limit = AppSetting::getFreeLoanLimit();
+        $this->free_plan_limit = AppSetting::getFreePlanLimit();
+        $this->legacy_plan_limit = AppSetting::getLegacyPlanLimit();
+        $this->legacy_cutoff_date = AppSetting::getLegacyCutoffDate();
     }
 
     public function toggleMaintenanceMode()
@@ -59,6 +65,9 @@ class AppSettings extends Component
             'global_banner_type' => 'required|in:info,warning,error,success',
             'plan_price' => 'required|string|max:20',
             'free_loan_limit' => 'required|integer|min:1|max:100',
+            'free_plan_limit' => 'required|integer|min:1',
+            'legacy_plan_limit' => 'required|integer|min:1',
+            'legacy_cutoff_date' => 'required|date_format:Y-m-d',
         ]);
 
         AppSetting::set('maintenance_message', $this->maintenance_message);
@@ -66,6 +75,9 @@ class AppSettings extends Component
         AppSetting::set('global_banner_type', $this->global_banner_type);
         AppSetting::set('plan_price', $this->plan_price);
         AppSetting::set('free_loan_limit', $this->free_loan_limit);
+        AppSetting::set('free_plan_limit', $this->free_plan_limit);
+        AppSetting::set('legacy_plan_limit', $this->legacy_plan_limit);
+        AppSetting::set('legacy_cutoff_date', $this->legacy_cutoff_date);
 
         session()->flash('message', '✅ Configurações salvas com sucesso!');
     }
