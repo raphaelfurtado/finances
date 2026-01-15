@@ -47,6 +47,38 @@ class FixedExpenses extends Component
         ];
     }
 
+    public function getTotalFixedExpenseProperty()
+    {
+        return FixedExpense::where('user_id', auth()->id())
+            ->where('is_active', true)
+            ->where('type', 'expense')
+            ->sum('amount');
+    }
+
+    public function getTotalFixedIncomeProperty()
+    {
+        return FixedExpense::where('user_id', auth()->id())
+            ->where('is_active', true)
+            ->where('type', 'income')
+            ->sum('amount');
+    }
+
+    public function getActiveExpenseCountProperty()
+    {
+        return FixedExpense::where('user_id', auth()->id())
+            ->where('is_active', true)
+            ->where('type', 'expense')
+            ->count();
+    }
+
+    public function getActiveIncomeCountProperty()
+    {
+        return FixedExpense::where('user_id', auth()->id())
+            ->where('is_active', true)
+            ->where('type', 'income')
+            ->count();
+    }
+
     public function openModal()
     {
         $this->resetForm();
