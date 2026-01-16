@@ -32,11 +32,13 @@
     <div class="px-6 pt-6 pb-2">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Expenses Card -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border {{ $this->totalFixedExpense > 0 ? 'border-red-200' : 'border-gray-100' }} relative overflow-hidden">
+            <div
+                class="bg-white rounded-3xl p-6 shadow-sm border {{ $this->totalFixedExpense > 0 ? 'border-red-200' : 'border-gray-100' }} relative overflow-hidden">
                 <div class="relative z-10">
                     <div class="flex items-start justify-between mb-4">
                         <div>
-                            <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Custo de Sobrevivência</h2>
+                            <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Custo de
+                                Sobrevivência</h2>
                             <h3 class="text-3xl font-bold text-gray-900">
                                 R$ {{ number_format($this->totalFixedExpense, 2, ',', '.') }}
                             </h3>
@@ -45,9 +47,10 @@
                             <i data-lucide="anchor" class="w-6 h-6"></i>
                         </div>
                     </div>
-                    
+
                     <p class="text-sm text-gray-600">
-                        Comprometimento mensal com <strong class="text-gray-900">{{ $this->activeExpenseCount }} contas ativas</strong>.
+                        Comprometimento mensal com <strong class="text-gray-900">{{ $this->activeExpenseCount }} contas
+                            ativas</strong>.
                     </p>
                 </div>
                 <!-- Background Decoration -->
@@ -55,11 +58,13 @@
             </div>
 
             <!-- Income Card -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border {{ $this->totalFixedIncome > 0 ? 'border-green-200' : 'border-gray-100' }} relative overflow-hidden">
+            <div
+                class="bg-white rounded-3xl p-6 shadow-sm border {{ $this->totalFixedIncome > 0 ? 'border-green-200' : 'border-gray-100' }} relative overflow-hidden">
                 <div class="relative z-10">
                     <div class="flex items-start justify-between mb-4">
                         <div>
-                            <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Receita Recorrente</h2>
+                            <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Receita Recorrente
+                            </h2>
                             <h3 class="text-3xl font-bold text-gray-900">
                                 R$ {{ number_format($this->totalFixedIncome, 2, ',', '.') }}
                             </h3>
@@ -68,9 +73,10 @@
                             <i data-lucide="trending-up" class="w-6 h-6"></i>
                         </div>
                     </div>
-                    
+
                     <p class="text-sm text-gray-600">
-                        Valor total garantido por <strong class="text-gray-900">{{ $this->activeIncomeCount }} fontes de renda</strong>.
+                        Valor total garantido por <strong class="text-gray-900">{{ $this->activeIncomeCount }} fontes de
+                            renda</strong>.
                     </p>
                 </div>
                 <!-- Background Decoration -->
@@ -401,14 +407,3 @@
         </div>
     @endif
 </div>
-
-<script>
-    document.addEventListener('livewire:navigated', () => {
-        lucide.createIcons();
-    });
-
-    // Listen for showModal changes to re-init icons
-    $wire.on('modal-opened', () => {
-        setTimeout(() => lucide.createIcons(), 50);
-    });
-</script>

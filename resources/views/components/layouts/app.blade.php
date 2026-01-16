@@ -304,6 +304,13 @@
         // Re-inicializa apos navegacao SPA (wire:navigate)
         document.addEventListener('livewire:navigated', initIcons);
 
+        // Re-inicializa apos qualquer atualizacao do Livewire (mudanca de mes, modal, etc)
+        document.addEventListener('livewire:init', () => {
+            Livewire.hook('morph.updated', ({ el, component }) => {
+                initIcons();
+            });
+        });
+
         // PWA Install Logic
         window.deferredPrompt = window.deferredPrompt || null;
         const installBtn = document.getElementById('pwa-install-btn');
