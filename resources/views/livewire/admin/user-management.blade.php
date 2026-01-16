@@ -80,6 +80,15 @@
                                 </p>
                             </div>
                         </div>
+
+                        <!-- Mini Badges -->
+                        <div class="flex flex-col gap-1 items-end">
+                            @if($user->hasCompletedWizard())
+                                <div title="Wizard Respondido" class="bg-indigo-100 text-indigo-600 p-1 rounded-full">
+                                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- User Stats & Premium Toggle -->

@@ -70,6 +70,39 @@
                     data-lucide="alert-circle" class="w-3 h-3"></i> {{ $message }}</span> @enderror
                 </div>
 
+                <!-- Profession -->
+                <div class="space-y-4 pt-4 border-t border-gray-100">
+                    <div class="space-y-3">
+                        <label for="profession" class="block text-sm font-semibold text-gray-700">Qual sua profissão?
+                            (Opcional)</label>
+                        <div class="relative">
+                            <input type="text" wire:model="profession" id="profession"
+                                class="w-full rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50 px-4 py-3 transition-all focus:bg-white"
+                                placeholder="Pode ser: 'Empresário', 'Autônomo', 'Estudante'...">
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                                <i data-lucide="briefcase" class="w-4 h-4 text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <div class="flex gap-3 items-center">
+                            <div class="bg-indigo-100 p-2 rounded-lg">
+                                <i data-lucide="eye" class="w-4 h-4 text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-800">Mostrar minha profissão</p>
+                                <p class="text-xs text-gray-500">Exibir ao lado do meu nome no depoimento</p>
+                            </div>
+                        </div>
+                        <button type="button" wire:click="$toggle('showProfession')"
+                            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 {{ $showProfession ? 'bg-indigo-600' : 'bg-gray-200' }}">
+                            <span
+                                class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ $showProfession ? 'translate-x-5' : 'translate-x-0' }}"></span>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Info Alert -->
                 <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-4">
                     <div class="bg-blue-100/50 p-2 rounded-lg h-fit">

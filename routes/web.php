@@ -23,7 +23,10 @@ Route::get('/', function () {
         ->latest()
         ->take(3)
         ->get();
-    return view('landing', compact('testimonials'));
+
+    $plans = App\Models\Plan::with('benefits')->where('active', true)->orderBy('price')->get();
+
+    return view('landing', compact('testimonials', 'plans'));
 })->name('landing');
 
 // Dashboard (Home)
@@ -70,6 +73,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/testimonials', App\Livewire\Admin\ManageTestimonials::class)->name('admin.testimonials');
     Route::get('/notifications', App\Livewire\Admin\SendNotification::class)->name('admin.notifications');
     Route::get('/cron', App\Livewire\Admin\CronMonitoring::class)->name('admin.cron');
+    Route::get('/plans', App\Livewire\Admin\ManagePlans::class)->name('admin.plans');
 });
 
 Route::middleware(['auth', App\Http\Middleware\EnsureUserIsPremium::class])->group(function () {

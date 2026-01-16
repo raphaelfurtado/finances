@@ -153,7 +153,7 @@
                     @foreach($categories as $category)
                         <button type="button" @click="selectCategory(categories[{{ $loop->index }}])"
                             class="flex-shrink-0 flex flex-col items-center gap-2 p-3 rounded-xl transition-all border-2
-                                                                    {{ $category_id == $category->id ? 'bg-blue-600 border-blue-600 shadow-md transform scale-105' : 'bg-gray-50 border-transparent hover:bg-gray-100' }}">
+                                                                        {{ $category_id == $category->id ? 'bg-blue-600 border-blue-600 shadow-md transform scale-105' : 'bg-gray-50 border-transparent hover:bg-gray-100' }}">
 
                             <div class="w-12 h-12 rounded-xl flex items-center justify-center relative"
                                 style="background-color: {{ $category_id == $category->id ? 'rgba(255,255,255,0.2)' : $category->color . '20' }};">
@@ -371,7 +371,7 @@
                             Liberar Acesso Ilimitado
                             <div
                                 class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 px-2 py-0.5 rounded text-xs">
-                                R$ {{ \App\Models\AppSetting::getPlanPrice() }}
+                                A partir de R$ {{ number_format(\App\Models\Plan::min('price') / 100, 2, ',', '.') }}
                             </div>
                         </a>
 

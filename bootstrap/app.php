@@ -23,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Exclude Stripe webhook from CSRF protection
         $middleware->validateCsrfTokens(except: [
-            'webhook/stripe',
+            'stripe/webhook',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
