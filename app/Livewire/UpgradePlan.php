@@ -31,6 +31,10 @@ class UpgradePlan extends Component
             if (str_contains($e->getMessage(), 'No such customer')) {
                 $user = auth()->user();
                 $user->stripe_id = null;
+                // Sync with custom column if it exists
+                if (array_key_exists('stripe_customer_id', $user->getAttributes())) {
+                    $user->stripe_customer_id = null;
+                }
                 $user->save();
 
                 $checkout = $user->newSubscription('premium', $priceId)
