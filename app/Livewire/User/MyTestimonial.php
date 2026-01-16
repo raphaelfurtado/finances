@@ -8,15 +8,19 @@ class MyTestimonial extends Component
 {
     public $message = '';
     public $rating = 5;
+    public $profession = '';
+    public $showProfession = false;
     public $testimonialId = null;
 
     public function mount()
     {
+        $this->profession = auth()->user()->profession;
         $testimonial = \App\Models\Testimonial::where('user_id', auth()->id())->first();
         if ($testimonial) {
             $this->testimonialId = $testimonial->id;
             $this->message = $testimonial->message;
             $this->rating = $testimonial->rating;
+            $this->showProfession = $testimonial->show_profession;
         }
     }
 
@@ -25,6 +29,8 @@ class MyTestimonial extends Component
         $this->validate([
             'message' => 'required|string|min:10|max:500',
             'rating' => 'required|integer|min:1|max:5',
+            'profession' => 'nullable|string|max:100',
+            'showProfession' => 'boolean',
         ], [
             'message.required' => 'O campo depoimento é obrigatório.',
             'message.min' => 'O depoimento deve ter pelo menos 10 caracteres.',
@@ -32,11 +38,15 @@ class MyTestimonial extends Component
             'rating.required' => 'A avaliação é obrigatória.',
         ]);
 
+        // Update user profession
+        auth()->user()->update(['profession' => $this->profession]);
+
         \App\Models\Testimonial::updateOrCreate(
             ['user_id' => auth()->id()],
             [
                 'message' => $this->message,
                 'rating' => $this->rating,
+                'show_profession' => $this->showProfession,
                 'is_approved' => false, // Reset approval if edited
             ]
         );

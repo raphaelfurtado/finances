@@ -33,6 +33,7 @@ class User extends Authenticatable
         'employment_status',
         'family_structure',
         'financial_goal',
+        'profession',
     ];
 
     /**
@@ -165,5 +166,10 @@ class User extends Authenticatable
         $count = $this->getMonthlyTransactionCount();
 
         return min(100, (int) round(($count / $limit) * 100));
+    }
+
+    public function hasCompletedWizard(): bool
+    {
+        return !empty($this->financial_goal);
     }
 }

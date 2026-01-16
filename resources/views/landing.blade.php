@@ -228,7 +228,13 @@
                                     </div>
                                 @endif
                                 <div>
-                                    <div class="font-bold text-slate-900">{{ $testimonial->user->name }}</div>
+                                    <div class="font-bold text-slate-900">
+                                        {{ $testimonial->user->name }}
+                                        @if($testimonial->show_profession && $testimonial->user->profession)
+                                            <span class="text-xs font-normal text-slate-500 ml-1">•
+                                                {{ $testimonial->user->profession }}</span>
+                                        @endif
+                                    </div>
                                     <div class="text-sm text-slate-500">Usuário Verificado</div>
                                 </div>
                             </div>
@@ -277,102 +283,70 @@
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                    <!-- Free Plan -->
-                    <div
-                        class="bg-slate-800 rounded-3xl p-8 border border-slate-700 flex flex-col hover:border-slate-600 transition-colors relative group">
-                        <div class="mb-6">
-                            <h3 class="text-2xl font-bold text-white mb-2">Plano Grátis</h3>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-4xl font-extrabold text-white">R$ 0</span>
-                                <span class="text-slate-400">/mês</span>
-                            </div>
-                            <p class="mt-4 text-slate-400">Perfeito para começar a organizar suas finanças.</p>
-                        </div>
-                        <ul class="space-y-4 mb-8 flex-1">
-                            <li class="flex items-center gap-3">
-                                <i data-lucide="check" class="w-5 h-5 text-green-400 flex-shrink-0"></i>
-                                <span class="text-slate-300">Dashboard financeiro</span>
-                            </li>
-                            <li class="flex items-center gap-3">
-                                <i data-lucide="check" class="w-5 h-5 text-green-400 flex-shrink-0"></i>
-                                <span class="text-slate-300">Transações ilimitadas</span>
-                            </li>
-                            <li class="flex items-center gap-3">
-                                <i data-lucide="check" class="w-5 h-5 text-green-400 flex-shrink-0"></i>
-                                <span class="text-slate-300">Gestão de categorias</span>
-                            </li>
-                            <li class="flex items-center gap-3 opacity-50">
-                                <i data-lucide="x" class="w-5 h-5 text-slate-500 flex-shrink-0"></i>
-                                <span class="text-slate-500">Relatórios avançados</span>
-                            </li>
-                        </ul>
-                        @auth
-                            <a href="{{ route('dashboard') }}"
-                                class="w-full block text-center bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl transition-colors">
-                                Continuar Grátis
-                            </a>
-                        @else
-                            <a href="{{ route('login') }}"
-                                class="w-full block text-center bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl transition-colors">
-                                Começar Grátis
-                            </a>
-                        @endauth
-                    </div>
-
-                    <!-- Premium Plan -->
-                    <div
-                        class="bg-gradient-to-b from-indigo-900 via-indigo-900 to-slate-900 rounded-3xl p-8 border border-indigo-500/50 flex flex-col relative transform md:-translate-y-4 shadow-2xl shadow-indigo-500/20">
-                        <div class="absolute top-0 right-0 p-4">
-                            <span
-                                class="bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full">POPULAR</span>
-                        </div>
-                        <div class="mb-6">
-                            <h3 class="text-2xl font-bold text-white mb-2">Premium</h3>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-4xl font-extrabold text-white">R$
-                                    {{ \App\Models\AppSetting::getPlanPrice() }}</span>
-                                <span class="text-slate-400">/mês</span>
-                            </div>
-                            <p class="mt-4 text-indigo-200">Para quem quer controle absoluto e análises profundas.</p>
-                        </div>
-                        <ul class="space-y-4 mb-8 flex-1">
-                            <li class="flex items-center gap-3">
-                                <i data-lucide="check" class="w-5 h-5 text-indigo-400 flex-shrink-0"></i>
-                                <span class="text-white">Tudo do Grátis +</span>
-                            </li>
-                            <li class="flex items-center gap-3">
-                                <i data-lucide="check" class="w-5 h-5 text-indigo-400 flex-shrink-0"></i>
-                                <span class="text-white">Relatórios Avançados</span>
-                            </li>
-                            <li class="flex items-center gap-3">
-                                <i data-lucide="check" class="w-5 h-5 text-indigo-400 flex-shrink-0"></i>
-                                <span class="text-white">Exportação para Excel</span>
-                            </li>
-                            <li class="flex items-center gap-3">
-                                <i data-lucide="check" class="w-5 h-5 text-indigo-400 flex-shrink-0"></i>
-                                <span class="text-white">Badge Premium Exclusivo</span>
-                            </li>
-                        </ul>
-                        @auth
-                            @if(auth()->user()->isPremium())
-                                <button disabled
-                                    class="w-full block text-center bg-green-600 text-white font-bold py-3 rounded-xl opacity-75 cursor-default">
-                                    Premium Ativo
-                                </button>
-                            @else
-                                <a href="{{ route('upgrade') }}"
-                                    class="w-full block text-center bg-white text-indigo-600 font-bold py-3 rounded-xl hover:bg-indigo-50 transition-colors">
-                                    Fazer Upgrade
-                                </a>
+                <div class="grid grid-cols-1 md:grid-cols-{{ $plans->count() }} gap-8 max-w-6xl mx-auto">
+                    @foreach($plans as $plan)
+                        @php
+                            $isFree = $plan->price == 0;
+                            $userOnThisPlan = false;
+                            if (auth()->check()) {
+                                if ($isFree) {
+                                    $userOnThisPlan = !auth()->user()->isPremium();
+                                } else {
+                                    $userOnThisPlan = auth()->user()->subscribedToPrice($plan->stripe_id, 'premium');
+                                }
+                            }
+                        @endphp
+                        <div class="rounded-3xl p-8 border flex flex-col transition-all relative {{ $isFree ? 'bg-slate-800 border-slate-700 hover:border-slate-600' : 'bg-indigo-900 border-indigo-500 hover:border-indigo-400 transform md:-translate-y-4 shadow-2xl shadow-indigo-500/20' }}">
+                            @if($plan->recommended)
+                                <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+                                    <span class="bg-indigo-500 text-white text-xs font-bold px-4 py-1 rounded-full shadow-lg">POPULAR</span>
+                                </div>
                             @endif
-                        @else
-                            <a href="{{ route('login') }}"
-                                class="w-full block text-center bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-colors shadow-lg shadow-indigo-600/30">
-                                Começar Premium
-                            </a>
-                        @endauth
-                    </div>
+                            
+                            <div class="mb-6">
+                                <h3 class="text-2xl font-bold text-white mb-2">{{ $plan->name }}</h3>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-4xl font-extrabold text-white">R$ {{ number_format($plan->price / 100, 2, ',', '.') }}</span>
+                                    <span class="text-slate-400">/{{ $plan->interval === 'year' ? 'ano' : 'mês' }}</span>
+                                </div>
+                                <p class="mt-4 text-slate-300 text-sm italic">
+                                    {{ $isFree ? 'Perfeito para começar a organizar suas finanças.' : 'Para quem quer controle absoluto e análises profundas.' }}
+                                </p>
+                            </div>
+
+                            <ul class="space-y-4 mb-8 flex-1">
+                                @if(!$isFree)
+                                    <li class="flex items-center gap-3">
+                                        <i data-lucide="check" class="w-5 h-5 text-indigo-400 flex-shrink-0"></i>
+                                        <span class="text-slate-200 text-sm">Tudo do Grátis +</span>
+                                    </li>
+                                @endif
+                                @foreach($plan->benefits as $benefit)
+                                    <li class="flex items-center gap-3">
+                                        <i data-lucide="check" class="w-5 h-5 {{ $isFree ? 'text-green-500' : 'text-indigo-400' }} flex-shrink-0"></i>
+                                        <span class="text-slate-200 text-sm">{{ $benefit->description }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+
+                            @auth
+                                @if($userOnThisPlan)
+                                    <button disabled class="w-full block text-center {{ $isFree ? 'bg-slate-700 text-slate-400' : 'bg-green-600 text-white' }} font-bold py-3 rounded-xl opacity-75 cursor-default">
+                                        {{ $isFree ? 'Plano Atual' : 'Premium Ativo' }}
+                                    </button>
+                                @else
+                                    <a href="{{ route('upgrade') }}" class="w-full block text-center {{ $isFree ? 'bg-slate-100 text-slate-900 border-2 border-slate-100' : 'bg-white text-indigo-600' }} font-bold py-3 rounded-xl hover:scale-105 transition-all">
+                                        Fazer Upgrade
+                                    </a>
+                                @endif
+                            @else
+                                <a href="{{ route('login') }}" class="w-full block text-center {{ $isFree ? 'bg-slate-100 text-slate-900 border-2 border-slate-100' : 'bg-indigo-600 text-white' }} font-bold py-3 rounded-xl hover:scale-105 transition-all shadow-lg">
+                                    Começar {{ $plan->name }}
+                                </a>
+                            @endauth
+                        </div>
+                    @endforeach
+                </div>
                 </div>
             </div>
 

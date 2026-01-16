@@ -72,10 +72,16 @@
                     <span class="font-semibold text-yellow-700 text-sm">Depoimentos</span>
                 </a>
 
+                <a href="{{ route('admin.plans') }}" wire:navigate
+                    class="flex items-center justify-center gap-2 p-4 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition-colors">
+                    <i data-lucide="credit-card" class="w-5 h-5 text-indigo-600"></i>
+                    <span class="font-semibold text-indigo-700 text-sm">Planos</span>
+                </a>
+
                 <a href="{{ route('admin.monitoring') }}" wire:navigate
-                    class="flex items-center justify-center gap-2 p-4 bg-green-50 hover:bg-green-100 rounded-xl transition-colors col-span-2">
+                    class="flex items-center justify-center gap-2 p-4 bg-green-50 hover:bg-green-100 rounded-xl transition-colors">
                     <i data-lucide="activity" class="w-5 h-5 text-green-600"></i>
-                    <span class="font-semibold text-green-700 text-sm">Monitoramento de Uso</span>
+                    <span class="font-semibold text-green-700 text-sm">Monitoramento</span>
                 </a>
             </div>
         </div>

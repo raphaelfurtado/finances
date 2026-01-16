@@ -22,80 +22,67 @@
 
         <!-- Pricing Cards -->
         <div class="max-w-md mx-auto space-y-4 mb-8">
-            <!-- Free Plan -->
-            <div class="bg-white rounded-2xl border-2 border-gray-200 p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-900">Plano Grátis</h3>
-                    <span class="text-3xl font-bold text-gray-900">R$ 0</span>
-                </div>
-                <ul class="space-y-3 mb-6">
-                    <li class="flex items-center gap-2 text-sm">
-                        <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
-                        <span>Dashboard financeiro</span>
-                    </li>
-                    <li class="flex items-center gap-2 text-sm">
-                        <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
-                        <span>Transações ilimitadas</span>
-                    </li>
-                    <li class="flex items-center gap-2 text-sm">
-                        <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
-                        <span>Gerenciamento de categorias</span>
-                    </li>
-                    <li class="flex items-center gap-2 text-sm text-gray-400">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                        <span>Relatórios avançados</span>
-                    </li>
-                    <li class="flex items-center gap-2 text-sm text-gray-400">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                        <span>Planilhas exportáveis</span>
-                    </li>
-                </ul>
-                <p class="text-xs text-gray-500 text-center">Plano atual</p>
-            </div>
+            @foreach($plans as $plan)
+                @php
+                    $isFree = $plan->price == 0;
+                    $userOnThisPlan = false;
+                    if (auth()->check()) {
+                        if ($isFree) {
+                            $userOnThisPlan = !auth()->user()->isPremium();
+                        } else {
+                            $userOnThisPlan = auth()->user()->subscribedToPrice($plan->stripe_id, 'premium');
+                        }
+                    }
+                @endphp
+                <div
+                    class="{{ $isFree ? 'bg-white border-gray-200' : 'bg-gradient-to-br from-blue-600 to-purple-600 border-blue-500 text-white' }} rounded-2xl border-2 p-6 relative overflow-hidden transition-all shadow-md">
+                    @if($plan->recommended)
+                        <div class="absolute top-0 right-0">
+                            <div class="bg-yellow-400 text-gray-900 px-3 py-1 text-xs font-bold rounded-bl-xl shadow-sm">
+                                RECOMENDADO
+                            </div>
+                        </div>
+                    @endif
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold {{ $isFree ? 'text-gray-900' : 'text-white' }}">{{ $plan->name }}</h3>
+                        <div class="text-right">
+                            <div class="text-3xl font-bold {{ $isFree ? 'text-gray-900' : 'text-white' }}">R$
+                                {{ number_format($plan->price / 100, 2, ',', '.') }}</div>
+                            <div class="text-xs {{ $isFree ? 'text-gray-500' : 'opacity-75' }}">/
+                                {{ $plan->interval === 'year' ? 'ano' : 'mês' }}</div>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 mb-6">
+                        @if(!$isFree)
+                            <li class="flex items-center gap-2 text-sm">
+                                <i data-lucide="check" class="w-5 h-5 text-yellow-300"></i>
+                                <span>Tudo do Grátis +</span>
+                            </li>
+                        @endif
+                        @foreach($plan->benefits as $benefit)
+                            <li class="flex items-center gap-2 text-sm">
+                                <i data-lucide="check" class="w-5 h-5 {{ $isFree ? 'text-green-600' : 'text-yellow-300' }}"></i>
+                                <span class="{{ $isFree ? 'text-gray-700' : 'text-white' }}">{{ $benefit->description }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
 
-            <!--  Premium Plan -->
-            <div
-                class="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl border-2 border-blue-500 p-6 text-white relative overflow-hidden">
-                <div class="absolute top-0 right-0">
-                    <div class="bg-yellow-400 text-gray-900 px-3 py-1 text-xs font-bold rounded-bl-xl">
-                        RECOMENDADO
-                    </div>
+                    @if($userOnThisPlan)
+                        <div
+                            class="w-full py-4 text-center rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center gap-2 font-bold {{ $isFree ? 'text-gray-500' : 'bg-green-100 text-green-700' }}">
+                            <i data-lucide="{{ $isFree ? 'check' : 'crown' }}" class="w-5 h-5"></i>
+                            {{ $isFree ? 'Plano Atual' : 'Premium Ativo' }}
+                        </div>
+                    @else
+                        <button wire:click="checkout('{{ $plan->stripe_id }}')" wire:loading.attr="disabled"
+                            class="w-full font-bold py-4 rounded-xl transition-all active:scale-95 shadow-lg disabled:opacity-50 {{ $isFree ? 'bg-gray-100 text-gray-600' : 'bg-white text-blue-600 hover:bg-gray-50' }}">
+                            <span wire:loading.remove wire:target="checkout">🚀
+                                {{ $isFree ? 'Começar Grátis' : 'Assinar ' . $plan->name }}</span>
+                            <span wire:loading wire:target="checkout">Redirecionando...</span>
+                        </button>
+                    @endif
                 </div>
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold">Premium</h3>
-                    <div class="text-right">
-                        <div class="text-3xl font-bold">R$ {{ \App\Models\AppSetting::getPlanPrice() }}</div>
-                        <div class="text-xs opacity-75">/mês</div>
-                    </div>
-                </div>
-                <ul class="space-y-3 mb-6">
-                    <li class="flex items-center gap-2 text-sm">
-                        <i data-lucide="check" class="w-5 h-5 text-yellow-300"></i>
-                        <span>Tudo do Grátis +</span>
-                    </li>
-                    <li class="flex items-center gap-2 text-sm">
-                        <i data-lucide="bar-chart-3" class="w-5 h-5 text-yellow-300"></i>
-                        <span>Relatórios detalhados com gráficos</span>
-                    </li>
-                    <li class="flex items-center gap-2 text-sm">
-                        <i data-lucide="file-spreadsheet" class="w-5 h-5 text-yellow-300"></i>
-                        <span>Planilhas prontas para exportar</span>
-                    </li>
-                    <li class="flex items-center gap-2 text-sm">
-                        <i data-lucide="trending-up" class="w-5 h-5 text-yellow-300"></i>
-                        <span>Análise por categoria</span>
-                    </li>
-                    <li class="flex items-center gap-2 text-sm">
-                        <i data-lucide="crown" class="w-5 h-5 text-yellow-300"></i>
-                        <span>Badge Premium no perfil</span>
-                    </li>
-                </ul>
-                <button wire:click="checkout" wire:loading.attr="disabled"
-                    class="w-full bg-white text-blue-600 font-bold py-4 rounded-xl hover:bg-gray-50 transition-all active:scale-95 shadow-lg disabled:opacity-50">
-                    <span wire:loading.remove wire:target="checkout">🚀 Assinar Premium Agora</span>
-                    <span wire:loading wire:target="checkout">Redirecionando...</span>
-                </button>
-            </div>
+            @endforeach
         </div>
 
         <!-- Benefits Section -->

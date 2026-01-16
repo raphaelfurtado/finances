@@ -23,6 +23,16 @@ class Dashboard extends Component
     {
         $this->selectedMonth = Carbon::now()->month;
         $this->selectedYear = Carbon::now()->year;
+
+        // Sync subscription if return from Stripe Checkout success
+        if (request()->query('checkout') === 'success') {
+            try {
+                auth()->user()->updateSubscriptions();
+            } catch (\Exception $e) {
+                // Ignore if it fails, fallback to standard display
+            }
+        }
+
         $this->loadData();
     }
 
