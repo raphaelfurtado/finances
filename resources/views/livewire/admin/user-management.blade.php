@@ -82,47 +82,42 @@
                         </div>
                     </div>
 
-                    <!-- User Stats -->
-                    <div class="grid grid-cols-3 gap-2 mb-3 p-3 bg-gray-50 rounded-xl">
-                        <div class="text-center">
-                            <p class="text-xs text-gray-500">Transações</p>
-                            <p class="font-bold text-gray-900">{{ $user->transactions->count() }}</p>
+                    <!-- User Stats & Premium Toggle -->
+                    <div class="grid grid-cols-4 gap-2 mb-3 items-center">
+                        <div class="bg-gray-50 rounded-xl p-2 text-center">
+                            <p class="text-[10px] text-gray-500">Transações</p>
+                            <p class="font-bold text-gray-900 text-sm">{{ $user->transactions->count() }}</p>
                         </div>
-                        <div class="text-center">
-                            <p class="text-xs text-gray-500">Categorias</p>
-                            <p class="font-bold text-gray-900">{{ $user->categories->count() }}</p>
+                        <div class="bg-gray-50 rounded-xl p-2 text-center">
+                            <p class="text-[10px] text-gray-500">Categorias</p>
+                            <p class="font-bold text-gray-900 text-sm">{{ $user->categories->count() }}</p>
                         </div>
-                        @if($user->isPremium() && $user->premium_expires_at)
-                            <div class="text-center">
-                                <p class="text-xs text-gray-500">Dias restantes</p>
-                                <p class="font-bold text-yellow-600">{{ $user->premiumDaysRemaining() }}</p>
+                        <div class="col-span-2 bg-gray-50 rounded-xl p-2 flex items-center justify-between px-3">
+                            <div>
+                                <p class="text-[10px] text-gray-500">Premium</p>
+                                <p class="font-bold text-xs {{ $user->isPremium() ? 'text-green-600' : 'text-gray-400' }}">
+                                    {{ $user->isPremium() ? 'SIM' : 'NÃO' }}
+                                </p>
                             </div>
-                        @else
-                            <div class="text-center">
-                                <p class="text-xs text-gray-500">Status</p>
-                                <p class="font-bold text-gray-500">Free</p>
-                            </div>
-                        @endif
+                            @if(!$user->isAdmin())
+                                <button wire:click="togglePremium({{ $user->id }})"
+                                    wire:confirm="Tem certeza que deseja {{ $user->isPremium() ? 'DESATIVAR' : 'ATIVAR' }} o acesso Premium para este usuário?"
+                                    wire:loading.attr="disabled"
+                                    class="w-8 h-8 rounded-lg flex items-center justify-center transition-colors {{ $user->isPremium() ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400' }}">
+                                    <i data-lucide="{{ $user->isPremium() ? 'toggle-right' : 'toggle-left' }}"
+                                        class="w-5 h-5"></i>
+                                </button>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- Actions -->
                     <div class="flex gap-2">
                         <button wire:click="viewUser({{ $user->id }})"
-                            class="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors text-sm flex items-center justify-center gap-2">
-                            <i data-lucide="eye" class="w-4 h-4"></i>
-                            Ver Detalhes
+                            class="flex-1 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-xl transition-colors text-sm flex items-center justify-center gap-2">
+                            <i data-lucide="user-cog" class="w-4 h-4"></i>
+                            Gerenciar Perfil
                         </button>
-
-                        @if(!$user->isAdmin())
-                            <button wire:click="togglePremium({{ $user->id }})" wire:loading.attr="disabled"
-                                class="flex-1 px-4 py-2 {{ $user->isPremium() ? 'bg-red-100 hover:bg-red-200 text-red-700' : 'bg-yellow-100 hover:bg-yellow-200 text-yellow-700' }} font-semibold rounded-xl transition-colors text-sm flex items-center justify-center gap-2 disabled:opacity-50">
-                                <i data-lucide="{{ $user->isPremium() ? 'x-circle' : 'crown' }}" class="w-4 h-4"></i>
-                                <span wire:loading.remove wire:target="togglePremium({{ $user->id }})">
-                                    {{ $user->isPremium() ? 'Remover' : 'Ativar' }} Premium
-                                </span>
-                                <span wire:loading wire:target="togglePremium({{ $user->id }})">...</span>
-                            </button>
-                        @endif
                     </div>
                 </div>
             @endforeach
@@ -229,73 +224,69 @@
                             </div>
                         </div>
                         <!-- Perfil Financeiro (Calibração) -->
-                        @if($selectedUser->employment_status || $selectedUser->family_structure || $selectedUser->financial_goal)
-                            <div class="bg-indigo-50 rounded-xl p-4">
-                                <h4 class="font-semibold text-indigo-900 mb-3 flex items-center gap-2">
-                                    <i data-lucide="user-cog" class="w-4 h-4"></i>
+                        <div class="bg-indigo-50 rounded-xl p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="font-semibold text-indigo-900 flex items-center gap-2">
+                                    <i data-lucide="sparkles" class="w-4 h-4"></i>
                                     Perfil Financeiro
                                 </h4>
+                                @if($selectedUser->employment_status || $selectedUser->family_structure || $selectedUser->financial_goal)
+                                    <button wire:click="resetWizard({{ $selectedUser->id }})"
+                                        wire:confirm="Tem certeza que deseja reiniciar o wizard deste usuário? Todos os dados demográficos serão apagados."
+                                        class="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-1 rounded-lg hover:bg-red-100 transition-colors uppercase">
+                                        Reiniciar Wizard
+                                    </button>
+                                @endif
+                            </div>
 
-                                @php
-                                    $employmentMap = [
-                                        'clt' => 'CLT / Público',
-                                        'public_servant' => 'Funcionário Público',
-                                        'freelancer_pj' => 'Freelancer / PJ',
-                                        'business_owner' => 'Empresário',
-                                        'student' => 'Estudante',
-                                        'retired' => 'Aposentado',
-                                        'unemployed' => 'Desempregado'
-                                    ];
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-xs text-indigo-500 block mb-1">Situação de Trabalho</label>
+                                    <select wire:model="employment_status" wire:change="saveOnboarding"
+                                        class="w-full bg-white border border-indigo-100 rounded-lg text-sm p-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                                        <option value="">Não informado</option>
+                                        <option value="clt">CLT / Público</option>
+                                        <option value="freelancer_pj">Freelancer / PJ</option>
+                                        <option value="business_owner">Empresário</option>
+                                        <option value="student">Estudante</option>
+                                        <option value="retired">Aposentado</option>
+                                        <option value="unemployed">Desempregado</option>
+                                    </select>
+                                </div>
 
-                                    $familyMap = [
-                                        'single' => 'Solteiro(a)',
-                                        'couple_no_kids' => 'Casal sem filhos',
-                                        'couple_with_kids' => 'Casal com filhos',
-                                        'single_parent' => 'Mãe/Pai Solo',
-                                        'living_with_parents' => 'Mora com os pais'
-                                    ];
+                                <div>
+                                    <label class="text-xs text-indigo-500 block mb-1">Estrutura Familiar</label>
+                                    <select wire:model="family_structure" wire:change="saveOnboarding"
+                                        class="w-full bg-white border border-indigo-100 rounded-lg text-sm p-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                                        <option value="">Não informado</option>
+                                        <option value="single">Solteiro(a)</option>
+                                        <option value="couple_no_kids">Casal sem filhos</option>
+                                        <option value="couple_with_kids">Casal com filhos</option>
+                                        <option value="single_parent">Mãe/Pai Solo</option>
+                                        <option value="living_with_parents">Mora com os pais</option>
+                                    </select>
+                                </div>
 
-                                    $goalMap = [
-                                        'debt_free' => 'Sair das Dívidas',
-                                        'travel' => 'Viajar',
-                                        'buy_property' => 'Comprar Casa/Carro',
-                                        'investing' => 'Investir / Aposentadoria',
-                                        'emergency_fund' => 'Reserva de Emergência'
-                                    ];
-                                @endphp
+                                <div>
+                                    <label class="text-xs text-indigo-500 block mb-1">Objetivo Financeiro</label>
+                                    <select wire:model="financial_goal" wire:change="saveOnboarding"
+                                        class="w-full bg-white border border-indigo-100 rounded-lg text-sm p-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                                        <option value="">Não informado</option>
+                                        <option value="debt_free">Sair das Dívidas</option>
+                                        <option value="travel">Viajar</option>
+                                        <option value="buy_property">Comprar Casa/Carro</option>
+                                        <option value="investing">Investir / Aposentadoria</option>
+                                        <option value="emergency_fund">Reserva de Emergência</option>
+                                    </select>
+                                </div>
 
-                                <div class="space-y-2 text-sm">
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <div>
-                                            <span class="text-xs text-indigo-500 block">Vínculo</span>
-                                            <span
-                                                class="font-medium text-indigo-900 capitalize">{{ $employmentMap[$selectedUser->employment_status] ?? $selectedUser->employment_status ?? '-' }}</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-xs text-indigo-500 block">Família</span>
-                                            <span
-                                                class="font-medium text-indigo-900 capitalize">{{ $familyMap[$selectedUser->family_structure] ?? $selectedUser->family_structure ?? '-' }}</span>
-                                        </div>
-                                        <div class="col-span-2">
-                                            <span class="text-xs text-indigo-500 block">Objetivo</span>
-                                            <span
-                                                class="font-medium text-indigo-900 capitalize">{{ $goalMap[$selectedUser->financial_goal] ?? $selectedUser->financial_goal ?? '-' }}</span>
-                                        </div>
-                                        @if($selectedUser->birth_date)
-                                            <div class="col-span-2">
-                                                <span class="text-xs text-indigo-500 block">Aniversário</span>
-                                                <span
-                                                    class="font-medium text-indigo-900">{{ $selectedUser->birth_date->format('d/m/Y') }}</span>
-                                            </div>
-                                        @endif
-                                    </div>
+                                <div>
+                                    <label class="text-xs text-indigo-500 block mb-1">Data de Nascimento</label>
+                                    <input type="date" wire:model="birth_date" wire:change="saveOnboarding"
+                                        class="w-full bg-white border border-indigo-100 rounded-lg text-sm p-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
                                 </div>
                             </div>
-                        @else
-                            <div class="bg-gray-50 rounded-xl p-4 text-center">
-                                <p class="text-sm text-gray-400">Perfil Financeiro não calibrado.</p>
-                            </div>
-                        @endif
+                        </div>
                     </div>
 
                     <!-- Impersonate Action -->
