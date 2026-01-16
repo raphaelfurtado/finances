@@ -15,6 +15,12 @@ class UserManagement extends Component
     public $selectedUser = null;
     public $showUserModal = false;
 
+    // Local onboarding properties for better binding
+    public $employment_status = '';
+    public $family_structure = '';
+    public $financial_goal = '';
+    public $birth_date = '';
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -38,11 +44,58 @@ class UserManagement extends Component
         }
 
         $this->dispatch('userUpdated');
+
+        if ($this->selectedUser && $this->selectedUser->id === $userId) {
+            $this->selectedUser->refresh();
+        }
+    }
+
+    public function resetWizard($userId)
+    {
+        $user = User::findOrFail($userId);
+        $user->update([
+            'birth_date' => null,
+            'employment_status' => null,
+            'family_structure' => null,
+            'financial_goal' => null,
+        ]);
+
+        session()->flash('message', "Wizard reiniciado para {$user->name}");
+
+        if ($this->selectedUser && $this->selectedUser->id === $userId) {
+            $this->selectedUser->refresh();
+            $this->employment_status = '';
+            $this->family_structure = '';
+            $this->financial_goal = '';
+            $this->birth_date = '';
+        }
+    }
+
+    public function saveOnboarding()
+    {
+        if (!$this->selectedUser)
+            return;
+
+        $this->selectedUser->update([
+            'employment_status' => $this->employment_status,
+            'family_structure' => $this->family_structure,
+            'financial_goal' => $this->financial_goal,
+            'birth_date' => $this->birth_date ?: null,
+        ]);
+
+        session()->flash('message', "Perfil financeiro de {$this->selectedUser->name} atualizado.");
     }
 
     public function viewUser($userId)
     {
         $this->selectedUser = User::with(['categories', 'transactions'])->findOrFail($userId);
+
+        // Populate local properties
+        $this->employment_status = $this->selectedUser->employment_status ?? '';
+        $this->family_structure = $this->selectedUser->family_structure ?? '';
+        $this->financial_goal = $this->selectedUser->financial_goal ?? '';
+        $this->birth_date = $this->selectedUser->birth_date?->format('Y-m-d') ?? '';
+
         $this->showUserModal = true;
     }
 
