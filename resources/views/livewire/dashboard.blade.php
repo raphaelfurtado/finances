@@ -28,6 +28,39 @@
 
     <!-- Content -->
     <div class="flex-1 overflow-y-auto px-6 py-4">
+        <!-- Flash Message -->
+        @if (session()->has('message'))
+            <div class="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl relative flex items-center gap-3 shadow-sm"
+                role="alert">
+                <i data-lucide="check-circle" class="w-5 h-5 text-green-600"></i>
+                <span class="block sm:inline font-medium text-sm">{{ session('message') }}</span>
+            </div>
+        @endif
+        <!-- Profile Calibration Call to Action -->
+        @if(!auth()->user()->financial_goal)
+            <div
+                class="mb-6 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-4 shadow-lg text-white relative overflow-hidden">
+                <div class="absolute right-0 top-0 h-full w-1/3 bg-white/10 skew-x-12 transform translate-x-12"></div>
+
+                <div class="flex items-center gap-4 relative z-10">
+                    <div class="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
+                        <i data-lucide="sparkles" class="w-6 h-6 text-yellow-300"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg leading-tight mb-1">Calibre seu Consultor</h3>
+                        <p class="text-indigo-100 text-xs font-medium mb-3">
+                            Responda 4 perguntas rápidas para eu parar de dar dicas genéricas e começar a dar broncas sob
+                            medida.
+                        </p>
+                        <a href="/calibrar-perfil"
+                            class="inline-block px-4 py-2 bg-white text-indigo-600 text-xs font-bold rounded-lg hover:bg-indigo-50 transition-colors shadow-sm">
+                            Começar Agora
+                        </a>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <!-- Notification Banner (WhatsApp style) -->
         <livewire:notification-banner />
 

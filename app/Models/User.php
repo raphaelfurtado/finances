@@ -29,6 +29,10 @@ class User extends Authenticatable
         'premium_expires_at',
         'stripe_customer_id',
         'stripe_subscription_id',
+        'birth_date',
+        'employment_status',
+        'family_structure',
+        'financial_goal',
     ];
 
     /**
@@ -55,6 +59,7 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
             'premium_activated_at' => 'datetime',
             'premium_expires_at' => 'datetime',
+            'birth_date' => 'date',
         ];
     }
 

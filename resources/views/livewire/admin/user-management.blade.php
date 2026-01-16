@@ -228,6 +228,74 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Perfil Financeiro (Calibração) -->
+                        @if($selectedUser->employment_status || $selectedUser->family_structure || $selectedUser->financial_goal)
+                            <div class="bg-indigo-50 rounded-xl p-4">
+                                <h4 class="font-semibold text-indigo-900 mb-3 flex items-center gap-2">
+                                    <i data-lucide="user-cog" class="w-4 h-4"></i>
+                                    Perfil Financeiro
+                                </h4>
+
+                                @php
+                                    $employmentMap = [
+                                        'clt' => 'CLT / Público',
+                                        'public_servant' => 'Funcionário Público',
+                                        'freelancer_pj' => 'Freelancer / PJ',
+                                        'business_owner' => 'Empresário',
+                                        'student' => 'Estudante',
+                                        'retired' => 'Aposentado',
+                                        'unemployed' => 'Desempregado'
+                                    ];
+
+                                    $familyMap = [
+                                        'single' => 'Solteiro(a)',
+                                        'couple_no_kids' => 'Casal sem filhos',
+                                        'couple_with_kids' => 'Casal com filhos',
+                                        'single_parent' => 'Mãe/Pai Solo',
+                                        'living_with_parents' => 'Mora com os pais'
+                                    ];
+
+                                    $goalMap = [
+                                        'debt_free' => 'Sair das Dívidas',
+                                        'travel' => 'Viajar',
+                                        'buy_property' => 'Comprar Casa/Carro',
+                                        'investing' => 'Investir / Aposentadoria',
+                                        'emergency_fund' => 'Reserva de Emergência'
+                                    ];
+                                @endphp
+
+                                <div class="space-y-2 text-sm">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <span class="text-xs text-indigo-500 block">Vínculo</span>
+                                            <span
+                                                class="font-medium text-indigo-900 capitalize">{{ $employmentMap[$selectedUser->employment_status] ?? $selectedUser->employment_status ?? '-' }}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-xs text-indigo-500 block">Família</span>
+                                            <span
+                                                class="font-medium text-indigo-900 capitalize">{{ $familyMap[$selectedUser->family_structure] ?? $selectedUser->family_structure ?? '-' }}</span>
+                                        </div>
+                                        <div class="col-span-2">
+                                            <span class="text-xs text-indigo-500 block">Objetivo</span>
+                                            <span
+                                                class="font-medium text-indigo-900 capitalize">{{ $goalMap[$selectedUser->financial_goal] ?? $selectedUser->financial_goal ?? '-' }}</span>
+                                        </div>
+                                        @if($selectedUser->birth_date)
+                                            <div class="col-span-2">
+                                                <span class="text-xs text-indigo-500 block">Aniversário</span>
+                                                <span
+                                                    class="font-medium text-indigo-900">{{ $selectedUser->birth_date->format('d/m/Y') }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <div class="bg-gray-50 rounded-xl p-4 text-center">
+                                <p class="text-sm text-gray-400">Perfil Financeiro não calibrado.</p>
+                            </div>
+                        @endif
                     </div>
 
                     <!-- Impersonate Action -->
