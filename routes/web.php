@@ -49,6 +49,7 @@ Route::get('/upgrade', UpgradePlan::class)->middleware('auth')->name('upgrade');
 
 // Other Screens
 Route::get('/perfil', Perfil::class)->middleware('auth')->name('perfil');
+Route::get('/calibrar-perfil', App\Livewire\UserOnboarding::class)->middleware('auth')->name('user.onboarding');
 Route::get('/meu-depoimento', App\Livewire\User\MyTestimonial::class)->middleware('auth')->name('my-testimonial');
 Route::get('/configuracoes', Configuracoes::class)->middleware('auth')->name('configuracoes');
 
