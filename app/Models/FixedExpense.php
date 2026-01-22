@@ -15,13 +15,15 @@ class FixedExpense extends Model
         'description',
         'amount',
         'due_day',
-        'is_active'
+        'is_active',
+        'start_date'
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'is_active' => 'boolean',
-        'due_day' => 'integer'
+        'due_day' => 'integer',
+        'start_date' => 'date'
     ];
 
     public function user()
@@ -42,6 +44,11 @@ class FixedExpense extends Model
     public function getStatusThisMonthAttribute()
     {
         $now = Carbon::now();
+
+        // Check if the expense starts in the future
+        if ($this->start_date && $this->start_date->isFuture() && !$this->start_date->isSameMonth($now)) {
+            return 'not_started';
+        }
 
         $hasTransaction = $this->transactions()
             ->whereMonth('date', $now->month)
