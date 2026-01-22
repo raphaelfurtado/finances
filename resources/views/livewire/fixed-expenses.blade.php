@@ -131,6 +131,12 @@
                             'icon' => 'clock',
                             'button' => true
                         ],
+                        'not_started' => [
+                            'label' => 'Em breve',
+                            'class' => 'bg-indigo-100 text-indigo-700',
+                            'icon' => 'calendar',
+                            'button' => false
+                        ],
                     ][$status];
                 @endphp
 
@@ -369,18 +375,35 @@
                         </div>
 
                         @if(!$editingId)
-                            <div class="flex items-center gap-3 py-2 bg-blue-50 px-4 rounded-2xl border border-blue-100">
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" wire:model="mark_as_paid_now" class="sr-only peer">
-                                    <div
-                                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600">
-                                    </div>
-                                </label>
-                                <div class="flex-1">
-                                    <span class="text-sm font-bold text-gray-900 block">Já paguei este mês</span>
-                                    <span class="text-xs text-gray-600">Vincular transação existente</span>
+                            <div class="space-y-4 py-2">
+                                <label class="block text-sm font-bold text-gray-700">Quando começa?</label>
+                                <div class="flex gap-2 bg-gray-100 p-1 rounded-xl">
+                                    <button type="button" wire:click="$set('start_month', 'current')"
+                                        class="flex-1 py-2.5 rounded-lg font-bold text-xs transition-all {{ $start_month === 'current' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">
+                                        Este mês ({{ \Carbon\Carbon::now()->format('M') }})
+                                    </button>
+                                    <button type="button" wire:click="$set('start_month', 'next')"
+                                        class="flex-1 py-2.5 rounded-lg font-bold text-xs transition-all {{ $start_month === 'next' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">
+                                        Próximo mês ({{ \Carbon\Carbon::now()->addMonth()->format('M') }})
+                                    </button>
                                 </div>
                             </div>
+
+                            @if($start_month === 'current')
+                                <div
+                                    class="flex items-center gap-3 py-4 bg-blue-50 px-4 rounded-2xl border border-blue-100 animate-in fade-in slide-in-from-top-4 duration-300">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" wire:model="mark_as_paid_now" class="sr-only peer">
+                                        <div
+                                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600">
+                                        </div>
+                                    </label>
+                                    <div class="flex-1">
+                                        <span class="text-sm font-bold text-gray-900 block">Já paguei este mês</span>
+                                        <span class="text-xs text-gray-600">Vincular transação existente</span>
+                                    </div>
+                                </div>
+                            @endif
                         @endif
 
                         <div class="pt-4 flex flex-col gap-3">

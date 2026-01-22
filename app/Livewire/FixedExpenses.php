@@ -33,6 +33,7 @@ class FixedExpenses extends Component
     public $type = 'expense';
     public $is_active = true;
     public $mark_as_paid_now = false;
+    public $start_month = 'current';
 
     protected function rules()
     {
@@ -103,6 +104,7 @@ class FixedExpenses extends Component
         $this->type = 'expense';
         $this->is_active = true;
         $this->mark_as_paid_now = false;
+        $this->start_month = 'current';
         $this->resetErrorBag();
     }
 
@@ -143,6 +145,7 @@ class FixedExpenses extends Component
             'category_id' => $this->category_id,
             'type' => $this->type,
             'is_active' => $this->is_active,
+            'start_date' => $this->start_month === 'next' ? Carbon::now()->addMonth()->startOfMonth() : Carbon::now()->startOfMonth(),
         ];
 
         if ($this->editingId) {

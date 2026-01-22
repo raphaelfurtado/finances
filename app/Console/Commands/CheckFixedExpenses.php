@@ -28,6 +28,10 @@ class CheckFixedExpenses extends Command
 
             $expenses = FixedExpense::where('due_day', $dueDay)
                 ->where('is_active', true)
+                ->where(function ($query) {
+                    $query->whereNull('start_date')
+                        ->orWhere('start_date', '<=', Carbon::now()->endOfMonth());
+                })
                 ->with(['user', 'transactions'])
                 ->get();
 
