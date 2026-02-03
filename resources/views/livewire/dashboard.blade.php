@@ -8,7 +8,15 @@
                     <h1 class="text-xl font-bold text-gray-900">Minhas Finanças</h1>
                 </div>
             </div>
-            <a href="/configuracoes" class="p-2 text-gray-400 hover:text-gray-600">
+            <div class="flex items-center gap-2">
+                <a href="/importar-transacoes"
+                    class="flex items-center gap-2 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+                    title="Importar Transações">
+                    <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                    <span class="text-xs font-bold uppercase tracking-wider hidden sm:inline">Importar</span>
+                </a>
+            </div>
+            <a href="/configuracoes" class="p-2 text-gray-400 hover:text-gray-600" title="Configurações">
                 <i data-lucide="settings" class="w-5 h-5"></i>
             </a>
         </div>
