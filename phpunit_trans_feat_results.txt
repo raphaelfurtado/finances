@@ -1,0 +1,46 @@
+﻿PHPUnit 11.5.46 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.16
+Configuration: C:\laragon\www\financas-app\phpunit.xml
+
+.[31;1mE[0m                                                                  2 / 2 (100%)
+
+Time: 00:00.598, Memory: 50.00 MB
+
+There was 1 error:
+
+1) Tests\Feature\Livewire\TransactionsTest::test_it_can_delete_a_transaction
+Livewire\Exceptions\MethodNotFoundException: Unable to call component method. Public method [deleteTransaction] not found on component
+
+C:\laragon\www\financas-app\vendor\livewire\livewire\src\Mechanisms\HandleComponents\HandleComponents.php:488
+C:\laragon\www\financas-app\vendor\livewire\livewire\src\Mechanisms\HandleComponents\HandleComponents.php:101
+C:\laragon\www\financas-app\vendor\livewire\livewire\src\LivewireManager.php:102
+C:\laragon\www\financas-app\vendor\livewire\livewire\src\Mechanisms\HandleRequests\HandleRequests.php:94
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Routing\ControllerDispatcher.php:46
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Routing\Route.php:265
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Routing\Route.php:211
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Routing\Router.php:822
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:180
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:137
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Routing\Router.php:821
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Routing\Router.php:800
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Routing\Router.php:764
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Routing\Router.php:753
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php:200
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:180
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:137
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php:175
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php:144
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\MakesHttpRequests.php:607
+C:\laragon\www\financas-app\vendor\livewire\livewire\src\Features\SupportTesting\SubsequentRender.php:36
+C:\laragon\www\financas-app\vendor\livewire\livewire\src\Features\SupportTesting\RequestBroker.php:30
+C:\laragon\www\financas-app\vendor\livewire\livewire\src\Features\SupportTesting\SubsequentRender.php:35
+C:\laragon\www\financas-app\vendor\livewire\livewire\src\Features\SupportTesting\Render.php:24
+C:\laragon\www\financas-app\vendor\livewire\livewire\src\Features\SupportTesting\SubsequentRender.php:34
+C:\laragon\www\financas-app\vendor\livewire\livewire\src\Features\SupportTesting\SubsequentRender.php:16
+C:\laragon\www\financas-app\vendor\livewire\livewire\src\Features\SupportTesting\Testable.php:252
+C:\laragon\www\financas-app\vendor\livewire\livewire\src\Features\SupportTesting\Testable.php:219
+C:\laragon\www\financas-app\tests\Feature\Livewire\TransactionsTest.php:41
+
+[37;41mERRORS![0m
+[37;41mTests: 2[0m[37;41m, Assertions: 1[0m[37;41m, Errors: 1[0m[37;41m.[0m

@@ -1,0 +1,95 @@
+﻿PHPUnit 11.5.46 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.16
+Configuration: C:\laragon\www\financas-app\phpunit.xml
+
+[31;1mE[0m[31;1mE[0m                                                                  2 / 2 (100%)
+
+Time: 00:01.066, Memory: 46.00 MB
+
+There were 2 errors:
+
+1) Tests\Unit\Models\TransactionTest::test_it_can_filter_by_type
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: transactions.payment_method (Connection: sqlite, SQL: insert into "transactions" ("user_id", "category_id", "type", "amount", "description", "date", "status", "is_recurring", "updated_at", "created_at") values (1, 1, income, 35.79, Qui corrupti nihil ducimus pariatur nobis ipsa nemo., 2026-01-22 19:27:53, paid, 0, 2026-01-22 19:27:53, 2026-01-22 19:27:53))
+
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:826
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:780
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:559
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:523
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Query\Processors\Processor.php:32
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php:3853
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Builder.php:2235
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Model.php:1436
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Model.php:1401
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Model.php:1240
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:370
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Collections\Traits\EnumeratesValues.php:271
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:365
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:325
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:315
+C:\laragon\www\financas-app\tests\Unit\Models\TransactionTest.php:16
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: transactions.payment_method
+
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:570
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:813
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:780
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:559
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:523
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Query\Processors\Processor.php:32
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php:3853
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Builder.php:2235
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Model.php:1436
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Model.php:1401
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Model.php:1240
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:370
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Collections\Traits\EnumeratesValues.php:271
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:365
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:325
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:315
+C:\laragon\www\financas-app\tests\Unit\Models\TransactionTest.php:16
+
+2) Tests\Unit\Models\TransactionTest::test_it_belongs_to_a_user
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: transactions.payment_method (Connection: sqlite, SQL: insert into "transactions" ("user_id", "category_id", "type", "amount", "description", "date", "status", "is_recurring", "updated_at", "created_at") values (1, 1, expense, 215.57, Officiis facilis molestiae minus corrupti error aut., 2026-01-22 19:27:53, paid, 0, 2026-01-22 19:27:53, 2026-01-22 19:27:53))
+
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:826
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:780
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:559
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:523
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Query\Processors\Processor.php:32
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php:3853
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Builder.php:2235
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Model.php:1436
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Model.php:1401
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Model.php:1240
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:370
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Collections\Traits\EnumeratesValues.php:271
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:365
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:321
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:315
+C:\laragon\www\financas-app\tests\Unit\Models\TransactionTest.php:26
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: transactions.payment_method
+
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:570
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:813
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:780
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:559
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Connection.php:523
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Query\Processors\Processor.php:32
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php:3853
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Builder.php:2235
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Model.php:1436
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Model.php:1401
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Model.php:1240
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:370
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Collections\Traits\EnumeratesValues.php:271
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:365
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:321
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:315
+C:\laragon\www\financas-app\tests\Unit\Models\TransactionTest.php:26
+
+[37;41mERRORS![0m
+[37;41mTests: 2[0m[37;41m, Assertions: 0[0m[37;41m, Errors: 2[0m[37;41m.[0m
