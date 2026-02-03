@@ -12,7 +12,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('loan_installments', function (Blueprint $table) {
-            DB::statement("ALTER TABLE loan_installments MODIFY COLUMN status ENUM('pending', 'partial', 'paid', 'overdue', 'refinanced') DEFAULT 'pending'");
+            if (DB::getDriverName() === 'mysql') {
+                DB::statement("ALTER TABLE loan_installments MODIFY COLUMN status ENUM('pending', 'partial', 'paid', 'overdue', 'refinanced') DEFAULT 'pending'");
+            }
         });
     }
 
@@ -22,7 +24,9 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('loan_installments', function (Blueprint $table) {
-            DB::statement("ALTER TABLE loan_installments MODIFY COLUMN status ENUM('pending', 'partial', 'paid', 'overdue') DEFAULT 'pending'");
+            if (DB::getDriverName() === 'mysql') {
+                DB::statement("ALTER TABLE loan_installments MODIFY COLUMN status ENUM('pending', 'partial', 'paid', 'overdue') DEFAULT 'pending'");
+            }
         });
     }
 };

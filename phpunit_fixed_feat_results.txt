@@ -1,0 +1,161 @@
+﻿PHPUnit 11.5.46 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.16
+Configuration: C:\laragon\www\financas-app\phpunit.xml
+
+[41;37mF[0m[41;37mF[0m[41;37mF[0m                                                                 3 / 3 (100%)
+
+Time: 00:00.908, Memory: 50.00 MB
+
+There were 3 failures:
+
+1) Tests\Feature\Livewire\FixedExpensesTest::test_it_creates_fixed_expense_with_current_month
+Failed asserting that a row in the table [fixed_expenses] matches the attributes {
+    "title": "Internet",
+    "start_date": "2026-01-01"
+}.
+
+Found similar results: [
+    {
+        "title": "Internet",
+        "start_date": "2026-01-01 00:00:00"
+    }
+].
+
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase.php:43
+C:\laragon\www\financas-app\tests\Feature\Livewire\FixedExpensesTest.php:33
+
+2) Tests\Feature\Livewire\FixedExpensesTest::test_it_creates_fixed_expense_with_next_month
+Failed asserting that a row in the table [fixed_expenses] matches the attributes {
+    "title": "Aluguel",
+    "start_date": "2026-02-01"
+}.
+
+Found similar results: [
+    {
+        "title": "Aluguel",
+        "start_date": "2026-02-01 00:00:00"
+    }
+].
+
+C:\laragon\www\financas-app\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase.php:43
+C:\laragon\www\financas-app\tests\Feature\Livewire\FixedExpensesTest.php:54
+
+3) Tests\Feature\Livewire\FixedExpensesTest::test_mark_as_paid_now_is_hidden_when_next_month_is_selected
+Failed asserting that '"SBibIPa8RKVtvKoDfaCP" class="flex flex-col h-full bg-gray-50">\n
+    <!-- Header -->\n
+    <div class="flex items-center px-6 py-4 bg-white border-b border-gray-100">\n
+        <a href="/dashboard" class="p-2 -ml-2 text-gray-800 hover:text-gray-600">\n
+            <i data-lucide="chevron-left" class="w-6 h-6"></i>\n
+        </a>\n
+        <h1 class="flex-1 text-center text-xl font-bold text-gray-900 pr-8">Fixos</h1>\n
+        <button wire:click="openModal" class="p-2 text-blue-600 hover:text-blue-700">\n
+            <i data-lucide="plus-circle" class="w-6 h-6"></i>\n
+        </button>\n
+    </div>\n
+\n
+    <!-- Filters -->\n
+    <div class="px-6 py-3 bg-white border-b border-gray-100 overflow-x-auto">\n
+        <div class="flex items-center gap-2 min-w-max">\n
+            <button wire:click="$set('activeFilter', 'all')"\n
+                class="px-4 py-2 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md">\n
+                Todos\n
+            </button>\n
+            <button wire:click="$set('activeFilter', 'expense')"\n
+                class="px-4 py-2 rounded-xl text-xs font-bold transition-all bg-gray-100 text-gray-500 hover:bg-gray-200">\n
+                Despesas\n
+            </button>\n
+            <button wire:click="$set('activeFilter', 'income')"\n
+                class="px-4 py-2 rounded-xl text-xs font-bold transition-all bg-gray-100 text-gray-500 hover:bg-gray-200">\n
+                Receb├¡veis\n
+            </button>\n
+        </div>\n
+    </div>\n
+\n
+    <!-- Financial Summary Cards -->\n
+    <div class="px-6 pt-6 pb-2">\n
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">\n
+            <!-- Expenses Card -->\n
+            <div\n
+                class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 relative overflow-hidden">\n
+                <div class="relative z-10">\n
+                    <div class="flex items-start justify-between mb-4">\n
+                        <div>\n
+                            <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Custo de\n
+                                Sobreviv├¬ncia</h2>\n
+                            <h3 class="text-3xl font-bold text-gray-900">\n
+                                R$ 0,00\n
+                            </h3>\n
+                        </div>\n
+                        <div class="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center text-red-600">\n
+                            <i data-lucide="anchor" class="w-6 h-6"></i>\n
+                        </div>\n
+                    </div>\n
+\n
+                    <p class="text-sm text-gray-600">\n
+                        Comprometimento mensal com <strong class="text-gray-900">0 contas\n
+                            ativas</strong>.\n
+                    </p>\n
+                </div>\n
+                <!-- Background Decoration -->\n
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-red-50 rounded-full blur-3xl opacity-50"></div>\n
+            </div>\n
+\n
+            <!-- Income Card -->\n
+            <div\n
+                class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 relative overflow-hidden">\n
+                <div class="relative z-10">\n
+                    <div class="flex items-start justify-between mb-4">\n
+                        <div>\n
+                            <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Receita Recorrente\n
+                            </h2>\n
+                            <h3 class="text-3xl font-bold text-gray-900">\n
+                                R$ 0,00\n
+                            </h3>\n
+                        </div>\n
+                        <div class="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-green-600">\n
+                            <i data-lucide="trending-up" class="w-6 h-6"></i>\n
+                        </div>\n
+                    </div>\n
+\n
+                    <p class="text-sm text-gray-600">\n
+                        Valor total garantido por <strong class="text-gray-900">0 fontes de\n
+                            renda</strong>.\n
+                    </p>\n
+                </div>\n
+                <!-- Background Decoration -->\n
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-green-50 rounded-full blur-3xl opacity-50"></div>\n
+            </div>\n
+        </div>\n
+    </div>\n
+\n
+    <!-- Content -->\n
+    <div class="flex-1 overflow-y-auto px-6 py-6">\n
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->\n
+        <!--[if ENDBLOCK]><![endif]-->\n
+        <div class="space-y-4">\n
+            <!--[if BLOCK]><![endif]-->                <div class="bg-white rounded-3xl p-12 text-center border-2 border-dashed border-gray-200">\n
+                    <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">\n
+                        <i data-lucide="calendar-days" class="w-10 h-10 text-gray-300"></i>\n
+                    </div>\n
+                    <h3 class="text-lg font-bold text-gray-900 mb-1">Nada fixo por aqui</h3>\n
+                    <p class="text-gray-500 text-sm mb-6">Cadastre seus gastos ou recebimentos recorrentes para n├úo\n
+                        esquecer.</p>\n
+                    <button wire:click="openModal"\n
+                        class="px-6 py-3 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg active:scale-95">\n
+                        Adicionar Primeiro\n
+                    </button>\n
+                </div>\n
+            <!--[if ENDBLOCK]><![endif]-->        </div>\n
+    </div>\n
+\n
+    <!-- Payment Confirmation Modal -->\n
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->\n
+    <!-- Modal -->\n
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--></div>' [UTF-8](length: 5637) contains "J├í paguei este m├¬s" [UTF-8](length: 20).
+
+C:\laragon\www\financas-app\vendor\livewire\livewire\src\Features\SupportTesting\MakesAssertions.php:14
+C:\laragon\www\financas-app\tests\Feature\Livewire\FixedExpensesTest.php:67
+
+[37;41mFAILURES![0m
+[37;41mTests: 3[0m[37;41m, Assertions: 3[0m[37;41m, Failures: 3[0m[37;41m.[0m

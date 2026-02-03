@@ -111,6 +111,12 @@ class Transactions extends Component
         $this->dispatch('transaction-created');
     }
 
+    public function deleteTransaction($id)
+    {
+        Transaction::where('user_id', auth()->id())->findOrFail($id)->delete();
+        $this->dispatch('transaction-created'); // Refresh data
+    }
+
     public function render()
     {
         // Use Service to get merged list

@@ -40,6 +40,7 @@ Route::get('/transactions', App\Livewire\Transactions::class)->middleware('auth'
 Route::get('/transactions/new', NewTransaction::class)->middleware('auth')->name('transactions.new');
 Route::get('/transactions/{id}/edit', NewTransaction::class)->middleware('auth')->name('transactions.edit');
 Route::get('/transactions/{id}', TransactionDetails::class)->middleware('auth')->name('transactions.show');
+Route::get('/importar-transacoes', App\Livewire\ImportTransactions::class)->middleware('auth')->name('transactions.import');
 
 // Premium Features (protected by premium middleware)
 Route::middleware(['auth', 'premium'])->group(function () {

@@ -79,4 +79,15 @@ class TransactionService
         // 5. Sort by date desc (or asc depending on preference, usually desc for timeline)
         return $mergedList->sortByDesc('date');
     }
+
+    /**
+     * Create a new transaction.
+     *
+     * @param array $data
+     * @return Transaction
+     */
+    public function create(array $data)
+    {
+        return Transaction::create($data);
+    }
 }
