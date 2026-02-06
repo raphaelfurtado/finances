@@ -59,11 +59,39 @@
                 </div>
             @else
                 <!-- Review Section -->
-                <div>
+                <div class="relative">
+                    <!-- Global Loading Overlay for Review Section - Centered in Viewport -->
+                    <div wire:loading wire:target="toggleSelectAll, selectedRows, togglePayments, removeTransaction"
+                        class="fixed inset-0 bg-gray-900/40 backdrop-blur-[2px] z-[100] grid place-items-center p-4"
+                        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;">
+                        <div
+                            class="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-6 border border-gray-100 max-w-sm w-full animate-in fade-in zoom-in duration-300">
+                            <div class="relative flex items-center justify-center">
+                                <div class="absolute inset-0 rounded-full bg-indigo-100 animate-ping opacity-30 scale-150">
+                                </div>
+                                <div class="relative bg-white rounded-full p-2">
+                                    <svg class="animate-spin h-16 w-16 text-indigo-600" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <h3 class="text-xl font-black text-gray-900 tracking-tight">Calculando...</h3>
+                                <p class="text-sm text-gray-500 mt-2 font-medium">Estamos processando os registros para
+                                    garantir que tudo esteja correto.</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="flex flex-col gap-4 mb-6">
                         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                             <h2 class="text-lg font-medium text-gray-900">Revisar Transações</h2>
-                            
+
                             <button wire:click="$set('transactions', [])"
                                 class="text-sm text-gray-500 hover:text-red-600 flex items-center gap-1 self-end md:self-auto">
                                 <i data-lucide="x" class="w-4 h-4"></i>
@@ -71,24 +99,29 @@
                             </button>
                         </div>
 
-                         <!-- Date Override Controls -->
-                        <div class="flex flex-col sm:flex-row items-start sm:items-center bg-yellow-50 px-4 py-3 rounded-lg border border-yellow-200 gap-3">
+                        <!-- Date Override Controls -->
+                        <div
+                            class="flex flex-col sm:flex-row items-start sm:items-center bg-yellow-50 px-4 py-3 rounded-lg border border-yellow-200 gap-3">
                             <label class="flex items-center space-x-2 text-sm text-gray-700 cursor-pointer">
-                                <input type="checkbox" wire:model.live="useTargetDate" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <input type="checkbox" wire:model.live="useTargetDate"
+                                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                 <span class="font-bold text-gray-800">Considerar Vencimento:</span>
                             </label>
-                            <input type="date" wire:model.live="targetDate" class="w-full sm:w-auto border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm text-sm p-2 disabled:bg-gray-100 disabled:text-gray-400" @if(!$useTargetDate) disabled @endif>
+                            <input type="date" wire:model.live="targetDate"
+                                class="w-full sm:w-auto border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm text-sm p-2 disabled:bg-gray-100 disabled:text-gray-400"
+                                @if(!$useTargetDate) disabled @endif>
                         </div>
                     </div>
 
                     <div class="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
                         <i data-lucide="info" class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0"></i>
                         <p class="text-sm text-blue-700">
-                            <strong>Dica:</strong> As transações que você deixar sem categoria serão salvas automaticamente em <span class="font-bold bg-blue-100 text-blue-800 px-1 py-0.5 rounded">Outros</span>.
+                            <strong>Dica:</strong> As transações que você deixar sem categoria serão salvas automaticamente
+                            em <span class="font-bold bg-blue-100 text-blue-800 px-1 py-0.5 rounded">Outros</span>.
                         </p>
                     </div>
 
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto border border-gray-200 rounded-xl">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
@@ -136,9 +169,14 @@
                                             <input type="text" wire:model="transactions.{{ $index }}.description"
                                                 class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm sm:text-sm">
                                         </td>
-                                        <td
-                                            class="px-6 py-4 whitespace-nowrap text-sm {{ $transaction['type'] == 'expense' ? 'text-red-600' : 'text-green-600' }}">
-                                            R$ {{ number_format($transaction['amount'], 2, ',', '.') }}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            <div class="flex items-center">
+                                                <span
+                                                    class="mr-1 {{ $transaction['type'] == 'expense' ? 'text-red-600' : 'text-green-600' }}">R$</span>
+                                                <input type="number" step="0.01"
+                                                    wire:model.live.blur="transactions.{{ $index }}.amount"
+                                                    class="w-24 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm sm:text-sm {{ $transaction['type'] == 'expense' ? 'text-red-600' : 'text-green-600' }} font-bold text-right">
+                                            </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             <select wire:model="transactions.{{ $index }}.category_id"
@@ -163,7 +201,8 @@
                         </table>
                     </div>
 
-                    <div class="mt-8 flex flex-col md:flex-row justify-end items-center gap-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <div
+                        class="mt-8 flex flex-col md:flex-row justify-end items-center gap-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
                         <!-- Action Link -->
                         <button wire:click="togglePayments"
                             class="text-sm text-indigo-600 hover:text-indigo-800 font-medium underline decoration-indigo-200 hover:decoration-indigo-500 transition-all">
@@ -171,18 +210,22 @@
                         </button>
 
                         <!-- Totals Block -->
-                        <div class="flex flex-col items-end text-sm text-gray-600 bg-white px-4 py-2 rounded-lg border border-gray-100 shadow-sm w-full md:w-auto">
+                        <div
+                            class="flex flex-col items-end text-sm text-gray-600 bg-white px-4 py-2 rounded-lg border border-gray-100 shadow-sm w-full md:w-auto">
                             <div class="flex justify-between w-full md:w-48 gap-4">
                                 <span class="font-medium">Entradas:</span>
-                                <span class="text-green-600 font-bold">R$ {{ number_format($this->summary['income'], 2, ',', '.') }}</span>
+                                <span class="text-green-600 font-bold">R$
+                                    {{ number_format($this->summary['income'], 2, ',', '.') }}</span>
                             </div>
                             <div class="flex justify-between w-full md:w-48 gap-4 mt-1">
                                 <span class="font-medium">Saídas:</span>
-                                <span class="text-red-600 font-bold">R$ {{ number_format($this->summary['expense'], 2, ',', '.') }}</span>
+                                <span class="text-red-600 font-bold">R$
+                                    {{ number_format($this->summary['expense'], 2, ',', '.') }}</span>
                             </div>
                             <div class="border-t border-gray-100 mt-2 pt-2 flex justify-between w-full md:w-48 gap-4">
                                 <span class="font-bold text-gray-800">Total:</span>
-                                <span class="font-bold {{ $this->summary['net'] >= 0 ? 'text-red-600' : 'text-green-600' }}">
+                                <span
+                                    class="font-bold {{ $this->summary['net'] >= 0 ? 'text-green-600' : 'text-red-600' }}">
                                     R$ {{ number_format($this->summary['net'], 2, ',', '.') }}
                                 </span>
                             </div>
@@ -193,11 +236,12 @@
                             <span class="text-sm text-gray-500 font-medium whitespace-nowrap">
                                 <span class="font-bold text-gray-900 text-lg mx-1">
                                     {{ is_array($selectedRows) ? count($selectedRows) : 0 }}
-                                </span> 
+                                </span>
                                 itens selecionados
                             </span>
-                            
-                            <button wire:click="confirmImport" wire:loading.attr="disabled" wire:confirm="Tem certeza que deseja importar as transações selecionadas?"
+
+                            <button wire:click="confirmImport" wire:loading.attr="disabled"
+                                wire:confirm="Tem certeza que deseja importar as transações selecionadas?"
                                 class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-4 focus:ring-green-200 transition-all shadow-md flex justify-center items-center disabled:opacity-50 disabled:cursor-not-allowed">
                                 <svg wire:loading wire:target="confirmImport"
                                     class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
