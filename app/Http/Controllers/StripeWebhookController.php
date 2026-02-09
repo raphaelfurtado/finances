@@ -182,13 +182,22 @@ class StripeWebhookController extends Controller
      */
     protected function handleInvoicePaymentSucceeded($invoice)
     {
+        Log::info('Webhook: Handling invoice.payment_succeeded', [
+            'invoice_id' => $invoice->id,
+            'customer' => $invoice->customer,
+            'subscription' => $invoice->subscription
+        ]);
+
         $user = User::where('stripe_customer_id', $invoice->customer)
             ->orWhere('stripe_id', $invoice->customer)
             ->first();
 
         if (!$user) {
+            Log::warning('Webhook: User not found for invoice', ['customer' => $invoice->customer]);
             return;
         }
+
+        Log::info('Webhook: User found', ['user_id' => $user->id]);
 
         // Extend premium if it's a recurring payment
         if ($invoice->subscription) {
@@ -198,8 +207,11 @@ class StripeWebhookController extends Controller
             ]);
 
             Log::info('Premium renewed via invoice payment', [
-                'user_id' => $user->id
+                'user_id' => $user->id,
+                'new_expires_at' => $user->premium_expires_at
             ]);
+        } else {
+            Log::info('Webhook: No subscription associated with invoice', ['invoice_id' => $invoice->id]);
         }
     }
 
