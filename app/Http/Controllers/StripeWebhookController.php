@@ -161,19 +161,30 @@ class StripeWebhookController extends Controller
      */
     protected function handleSubscriptionDeleted($subscription)
     {
-        $user = User::where('stripe_subscription_id', $subscription->id)->first();
+        Log::info('Webhook: Handling customer.subscription.deleted', [
+            'subscription_id' => $subscription->id,
+            'customer' => $subscription->customer ?? null,
+        ]);
+
+        $user = User::where('stripe_subscription_id', $subscription->id)
+            ->orWhere('stripe_customer_id', $subscription->customer)
+            ->orWhere('stripe_id', $subscription->customer)
+            ->first();
 
         if (!$user) {
+            Log::warning('Webhook: User not found for subscription cancellation', ['customer' => $subscription->customer]);
             return;
         }
 
         $user->update([
             'is_premium' => false,
             'premium_expires_at' => null,
+            'stripe_subscription_id' => null, // Clear subscription ID to reflect state
         ]);
 
         Log::info('Subscription cancelled', [
-            'user_id' => $user->id
+            'user_id' => $user->id,
+            'subscription_id' => $subscription->id
         ]);
     }
 
