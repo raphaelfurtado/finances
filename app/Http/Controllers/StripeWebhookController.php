@@ -126,7 +126,9 @@ class StripeWebhookController extends Controller
 
         if (!$user) {
             // Try to find by customer ID
-            $user = User::where('stripe_customer_id', $subscription->customer)->first();
+            $user = User::where('stripe_customer_id', $subscription->customer)
+                ->orWhere('stripe_id', $subscription->customer)
+                ->first();
         }
 
         if (!$user) {
@@ -180,7 +182,9 @@ class StripeWebhookController extends Controller
      */
     protected function handleInvoicePaymentSucceeded($invoice)
     {
-        $user = User::where('stripe_customer_id', $invoice->customer)->first();
+        $user = User::where('stripe_customer_id', $invoice->customer)
+            ->orWhere('stripe_id', $invoice->customer)
+            ->first();
 
         if (!$user) {
             return;
@@ -204,7 +208,9 @@ class StripeWebhookController extends Controller
      */
     protected function handleInvoicePaymentFailed($invoice)
     {
-        $user = User::where('stripe_customer_id', $invoice->customer)->first();
+        $user = User::where('stripe_customer_id', $invoice->customer)
+            ->orWhere('stripe_id', $invoice->customer)
+            ->first();
 
         if (!$user) {
             return;
