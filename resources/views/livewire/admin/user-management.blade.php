@@ -107,6 +107,11 @@
                                 <p class="font-bold text-xs {{ $user->isPremium() ? 'text-green-600' : 'text-gray-400' }}">
                                     {{ $user->isPremium() ? 'SIM' : 'NÃO' }}
                                 </p>
+                                @if($user->isPremium() && $user->premium_expires_at)
+                                    <p class="text-[10px] text-gray-500 leading-tight">
+                                        Expira: {{ $user->premium_expires_at->format('d/m/Y') }}
+                                    </p>
+                                @endif
                             </div>
                             @if(!$user->isAdmin())
                                 <button wire:click="togglePremium({{ $user->id }})"
