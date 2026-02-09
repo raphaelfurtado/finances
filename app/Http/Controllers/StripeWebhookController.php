@@ -199,19 +199,44 @@ class StripeWebhookController extends Controller
 
         Log::info('Webhook: User found', ['user_id' => $user->id]);
 
-        // Extend premium if it's a recurring payment
-        if ($invoice->subscription) {
+        // Check for subscription OR if it's a one-time payment for a plan
+        $plan = null;
+        if (isset($invoice->lines) && isset($invoice->lines->data)) {
+            foreach ($invoice->lines->data as $line) {
+                if (isset($line->price->id)) {
+                    $plan = \App\Models\Plan::where('stripe_id', $line->price->id)->first();
+                    if ($plan)
+                        break;
+                }
+            }
+        }
+
+        // Extend premium if it's a recurring payment (subscription) OR we found a valid plan in lines OR it's a paid invoice
+        if ($invoice->subscription || $plan || $invoice->amount_paid > 0) {
+            $expiration = now()->addMonth(); // Default fall back
+
+            if ($plan) {
+                if ($plan->interval === 'year' || $plan->interval === 'yearly') {
+                    $expiration = now()->addYear();
+                } else {
+                    // Default to month if not explicitly yearly
+                    $expiration = now()->addMonth();
+                }
+            }
+
             $user->update([
                 'is_premium' => true,
-                'premium_expires_at' => now()->addMonth(),
+                'premium_expires_at' => $expiration,
             ]);
 
             Log::info('Premium renewed via invoice payment', [
                 'user_id' => $user->id,
-                'new_expires_at' => $user->premium_expires_at
+                'plan' => $plan ? $plan->name : 'Unknown/Legacy',
+                'new_expires_at' => $user->premium_expires_at,
+                'subscription_id' => $invoice->subscription // null if not present
             ]);
         } else {
-            Log::info('Webhook: No subscription associated with invoice', ['invoice_id' => $invoice->id]);
+            Log::info('Webhook: Invoice handled but no action taken (amount 0 or no plan)', ['invoice_id' => $invoice->id]);
         }
     }
 
