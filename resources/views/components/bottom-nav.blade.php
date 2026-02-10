@@ -30,7 +30,8 @@
 
 <nav
     class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-40 lg:hidden text-center overflow-x-auto">
-    <div class="grid @if(request()->is('admin*')) grid-cols-5 @else grid-cols-7 @endif gap-0 px-1 py-2 min-w-[360px]">
+    <div
+        class="@if(request()->is('admin*')) flex items-center gap-2 overflow-x-auto no-scrollbar px-4 @else grid grid-cols-7 gap-0 px-1 @endif py-2 min-w-full">
         @if(!request()->is('admin*'))
             <!-- Dashboard -->
             <a href="/dashboard" wire:navigate
@@ -88,28 +89,44 @@
                 </a>
             @endif
         @else
-            <!-- Admin Links -->
+            <!-- Admin Links (Scrollable Flex) -->
             <a href="/admin"
-                class="flex flex-col items-center justify-center py-1 {{ request()->is('admin') ? 'text-indigo-600' : 'text-gray-400' }}">
+                class="flex flex-col items-center justify-center py-1 px-4 min-w-[70px] {{ request()->is('admin') ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-400' }}">
                 <i data-lucide="layout-dashboard" class="w-6 h-6 mb-0.5"></i>
                 <span class="text-[9px] font-bold tracking-tighter">Admin</span>
             </a>
             <a href="/admin/users"
-                class="flex flex-col items-center justify-center py-1 {{ request()->is('admin/users*') ? 'text-indigo-600' : 'text-gray-400' }}">
+                class="flex flex-col items-center justify-center py-1 px-4 min-w-[70px] {{ request()->is('admin/users*') ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-400' }}">
                 <i data-lucide="users" class="w-6 h-6 mb-0.5"></i>
                 <span class="text-[9px] font-bold tracking-tighter">Usuários</span>
             </a>
             <a href="/admin/settings"
-                class="flex flex-col items-center justify-center py-1 {{ request()->is('admin/settings*') ? 'text-indigo-600' : 'text-gray-400' }}">
+                class="flex flex-col items-center justify-center py-1 px-4 min-w-[70px] {{ request()->is('admin/settings*') ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-400' }}">
                 <i data-lucide="settings" class="w-6 h-6 mb-0.5"></i>
                 <span class="text-[9px] font-bold tracking-tighter">Config</span>
             </a>
             <a href="{{ route('admin.monitoring') }}"
-                class="flex flex-col items-center justify-center py-1 {{ request()->is('admin/monitoring*') ? 'text-indigo-600' : 'text-gray-400' }}">
+                class="flex flex-col items-center justify-center py-1 px-4 min-w-[70px] {{ request()->is('admin/monitoring*') ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-400' }}">
                 <i data-lucide="activity" class="w-6 h-6 mb-0.5"></i>
                 <span class="text-[9px] font-bold tracking-tighter">Monitor</span>
             </a>
-            <a href="/dashboard" class="flex flex-col items-center justify-center py-1 text-indigo-600 font-bold">
+            <a href="{{ route('admin.push-broadcast') }}"
+                class="flex flex-col items-center justify-center py-1 px-4 min-w-[70px] {{ request()->is('admin/push-broadcast*') ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-400' }}">
+                <i data-lucide="send" class="w-6 h-6 mb-0.5"></i>
+                <span class="text-[9px] font-bold tracking-tighter">Push</span>
+            </a>
+            <a href="{{ route('admin.cron') }}"
+                class="flex flex-col items-center justify-center py-1 px-4 min-w-[70px] {{ request()->is('admin/cron*') ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-400' }}">
+                <i data-lucide="clock" class="w-6 h-6 mb-0.5"></i>
+                <span class="text-[9px] font-bold tracking-tighter">Cron</span>
+            </a>
+            <a href="/pulse" target="_blank"
+                class="flex flex-col items-center justify-center py-1 px-4 min-w-[70px] text-gray-400">
+                <i data-lucide="activity" class="w-6 h-6 mb-0.5"></i>
+                <span class="text-[9px] font-bold tracking-tighter">Pulse</span>
+            </a>
+            <a href="/dashboard"
+                class="flex flex-col items-center justify-center py-1 px-4 min-w-[70px] text-indigo-600 font-bold border-l border-gray-100 ms-2">
                 <i data-lucide="home" class="w-6 h-6 mb-0.5"></i>
                 <span class="text-[9px] tracking-tighter">App</span>
             </a>
