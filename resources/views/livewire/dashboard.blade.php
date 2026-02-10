@@ -147,6 +147,65 @@
             </div>
         </div>
 
+        <!-- Hall da Fama dos Gastos -->
+        <div class="mb-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-50 flex items-center gap-2">
+                    <span class="text-xl">🏛️</span>
+                    <h2 class="text-lg font-bold text-gray-900">Hall da Fama dos Gastos</h2>
+                </div>
+                <div class="p-6 space-y-4">
+                    @foreach($this->categoryRanking as $index => $item)
+                        @php
+                            $percentage = ($item->total_amount / $this->totalExpenses) * 100;
+                            $emoji = match ($index) {
+                                0 => '🥇',
+                                1 => '🥈',
+                                2 => '🥉',
+                                default => '💸',
+                            };
+                            $barColor = match ($index) {
+                                0 => 'bg-red-500',
+                                1 => 'bg-yellow-400',
+                                default => 'bg-blue-400',
+                            };
+                        @endphp
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-sm font-bold text-gray-700 flex items-center gap-2">
+                                    <span>{{ $emoji }}</span>
+                                    {{ $item->category->name ?? 'Sem Categoria' }}
+                                </span>
+                                <span class="text-xs font-bold text-gray-500">
+                                    R$ {{ number_format($item->total_amount, 2, ',', '.') }} ({{ round($percentage) }}%)
+                                </span>
+                            </div>
+                            <div class="w-full bg-gray-100 rounded-full h-2.5">
+                                <div class="{{ $barColor }} h-2.5 rounded-full" style="width: {{ $percentage }}%"></div>
+                            </div>
+                        </div>
+                    @endforeach
+
+                    @if($this->categoryRanking->isEmpty())
+                        <div class="text-center py-4 text-gray-400 italic text-sm">
+                            Nenhum gasto registrado este mês. Milagre?
+                        </div>
+                    @endif
+                </div>
+
+                <div class="bg-gray-50 px-6 py-4 border-t border-gray-50">
+                    <div class="flex items-start gap-3">
+                        <div class="bg-white p-1.5 rounded-lg shadow-sm">
+                            <i data-lucide="message-square" class="w-4 h-4 text-indigo-600"></i>
+                        </div>
+                        <p class="text-xs font-medium text-gray-600 leading-relaxed italic">
+                            "{{ $this->consultorComment }}"
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Recent Transactions -->
         <div class="mb-20">
             <div class="flex items-center justify-between mb-4">
