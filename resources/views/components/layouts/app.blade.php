@@ -211,10 +211,22 @@
                             Notificações
                         </a>
 
+                        <a href="{{ route('admin.push-broadcast') }}"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('admin/push-broadcast*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
+                            <i data-lucide="send" class="w-5 h-5"></i>
+                            Broadcast Push
+                        </a>
+
                         <a href="{{ route('admin.cron') }}"
                             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ request()->is('admin/cron*') ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50' }}">
                             <i data-lucide="clock" class="w-5 h-5"></i>
                             Monitor de Cron
+                        </a>
+
+                        <a href="/pulse" target="_blank"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all text-gray-600 hover:text-indigo-600 hover:bg-gray-50">
+                            <i data-lucide="activity" class="w-5 h-5"></i>
+                            Monitor de Performance
                         </a>
 
                         <a href="/dashboard"

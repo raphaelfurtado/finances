@@ -12,6 +12,16 @@
         </select>
     </div>
 
+    <!-- Pulse Real-time Monitoring -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            <livewire:pulse.queues cols="12" />
+        </div>
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            <livewire:pulse.servers cols="12" />
+        </div>
+    </div>
+
     <!-- Quick Stats -->
     <div class="grid grid-cols-2 gap-4 mb-8">
         <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">

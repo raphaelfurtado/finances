@@ -73,6 +73,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/monitoring', App\Livewire\Admin\Monitoring::class)->name('admin.monitoring');
     Route::get('/testimonials', App\Livewire\Admin\ManageTestimonials::class)->name('admin.testimonials');
     Route::get('/notifications', App\Livewire\Admin\SendNotification::class)->name('admin.notifications');
+    Route::get('/push-broadcast', App\Livewire\Admin\PushSender::class)->name('admin.push-broadcast');
     Route::get('/cron', App\Livewire\Admin\CronMonitoring::class)->name('admin.cron');
     Route::get('/plans', App\Livewire\Admin\ManagePlans::class)->name('admin.plans');
 });
