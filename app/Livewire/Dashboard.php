@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\Attributes\Computed;
 use App\Models\Transaction;
 use Carbon\Carbon;
 
@@ -154,6 +155,57 @@ class Dashboard extends Component
         $this->selectedMonth = $date->month;
         $this->selectedYear = $date->year;
         $this->loadData();
+    }
+
+    #[Computed]
+    public function categoryRanking()
+    {
+        return Transaction::where('user_id', auth()->id())
+            ->expense()
+            ->byMonth($this->selectedMonth, $this->selectedYear)
+            ->selectRaw('category_id, sum(amount) as total_amount')
+            ->groupBy('category_id')
+            ->orderByDesc('total_amount')
+            ->with('category')
+            ->limit(5)
+            ->get();
+    }
+
+    #[Computed]
+    public function totalExpenses()
+    {
+        $total = Transaction::where('user_id', auth()->id())
+            ->expense()
+            ->byMonth($this->selectedMonth, $this->selectedYear)
+            ->sum('amount');
+
+        return $total > 0 ? $total : 1;
+    }
+
+    #[Computed]
+    public function consultorComment()
+    {
+        $topCategory = $this->categoryRanking->first();
+
+        if (!$topCategory || !$topCategory->category) {
+            return "Sua vida financeira está tão parada que nem eu tenho o que falar.";
+        }
+
+        $categoryName = strtolower($topCategory->category->name);
+
+        if (str_contains($categoryName, 'ifood') || str_contains($categoryName, 'alimentação')) {
+            return "Patrocinador oficial do Delivery.";
+        }
+
+        if (str_contains($categoryName, 'uber') || str_contains($categoryName, 'transporte')) {
+            return "Já pensou em andar a pé? É de graça.";
+        }
+
+        if (str_contains($categoryName, 'lazer') || str_contains($categoryName, 'bar')) {
+            return "Seu fígado pede socorro tanto quanto sua carteira.";
+        }
+
+        return "Seu maior gasto é com " . ($topCategory->category->name ?? 'coisas aleatórias') . ". Interessante...";
     }
 
     public function render()
