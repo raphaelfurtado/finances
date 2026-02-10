@@ -38,5 +38,9 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
         }
+
+        \Illuminate\Support\Facades\Gate::define('viewPulse', function (\App\Models\User $user) {
+            return $user->isAdmin();
+        });
     }
 }
