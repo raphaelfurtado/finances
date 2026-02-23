@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "cihansenturk/ofxparser": "^1.0",
+        "google/apiclient": "^2.19",
         "laravel-notification-channels/webpush": "^10.4",
         "laravel/cashier": "^16.1",
         "laravel/framework": "^12.0",

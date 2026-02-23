@@ -51,4 +51,48 @@ class SocialiteController extends Controller
 
         return redirect()->intended('/dashboard');
     }
+
+    /**
+     * Handle Google JS Login (Credential Request)
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function googleJsLogin(Request $request)
+    {
+        $token = $request->input('credential');
+
+        if (!$token) {
+            return response()->json(['success' => false, 'message' => 'Token não fornecido.'], 400);
+        }
+
+        $client = new \Google\Client(['client_id' => config('services.google.client_id')]);
+        $payload = $client->verifyIdToken($token);
+
+        if ($payload) {
+            $email = $payload['email'];
+            $name = $payload['name'];
+            $googleId = $payload['sub'];
+            $avatar = $payload['picture'] ?? null;
+
+            $user = User::updateOrCreate([
+                'email' => $email,
+            ], [
+                'name' => $name,
+                'google_id' => $googleId,
+                'avatar' => $avatar,
+                'password' => null,
+            ]);
+
+            if ($user->wasRecentlyCreated) {
+                \App\Services\CategoryTemplateService::applyPersonalFinancesTemplate($user);
+            }
+
+            Auth::login($user);
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Falha na validação do token.'], 401);
+    }
 }

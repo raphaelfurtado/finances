@@ -108,6 +108,7 @@ Route::get('/login', function () {
 
 Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
+Route::post('/auth/google/js-login', [SocialiteController::class, 'googleJsLogin'])->name('google.js.login');
 
 Route::post('/logout', function () {
     Auth::logout();
