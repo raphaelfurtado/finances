@@ -18,7 +18,7 @@ class SocialiteController extends Controller
      */
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->stateless()->redirect();
+        return Socialite::driver('google')->redirect();
     }
 
     /**
@@ -29,7 +29,7 @@ class SocialiteController extends Controller
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->stateless()->user();
+            $googleUser = Socialite::driver('google')->user();
         } catch (Exception $e) {
             return redirect('/login')->with('error', 'Algo deu errado com o login via Google.');
         }
