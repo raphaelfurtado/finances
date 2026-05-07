@@ -73,54 +73,49 @@
         <livewire:notification-banner />
 
         <!-- Bloco 1: O Cofre (Saldo Global) -->
-        <div class="bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl p-6 shadow-lg mb-6">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-sm font-medium text-blue-100 uppercase tracking-wide">💰 Saldo em Contas</span>
-            </div>
+        <div class="bg-blue-50 rounded-xl p-5 mb-6 border border-blue-100">
+            <div class="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-2">💰 Saldo em Contas</div>
             <div class="mb-2">
-                <span class="text-4xl font-bold text-white">R$ {{ number_format($this->globalBalance, 2, ',', '.') }}</span>
+                <span class="text-4xl font-bold text-gray-900">R$ {{ number_format($this->globalBalance, 2, ',', '.') }}</span>
             </div>
-            <p class="text-blue-100 text-sm">O que você realmente tem hoje.</p>
+            <p class="text-sm text-gray-600">O que você realmente tem hoje.</p>
         </div>
 
         <!-- Bloco 2: O Espelho do Mês (Fluxo Mensal) -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-            <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4">Espelho do Mês</h3>
+        <div class="mb-6">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Espelho do Mês</h3>
             
             <!-- Mini Cards - Entradas/Saídas/Sobrou -->
-            <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="grid grid-cols-3 gap-2 mb-4">
                 <!-- Entradas -->
-                <div class="bg-gray-50 rounded-2xl p-4 text-center">
-                    <div class="text-xs font-medium text-gray-500 mb-1">Entradas</div>
-                    <div class="text-xl font-bold text-green-600">R$ {{ number_format($this->monthlyIncome, 2, ',', '.') }}</div>
+                <div class="bg-green-50 rounded-lg p-3 border border-green-100 text-center">
+                    <div class="text-xs text-gray-500 mb-1">Entradas</div>
+                    <div class="text-lg font-bold text-green-600">R$ {{ number_format($this->monthlyIncome, 2, ',', '.') }}</div>
                 </div>
 
                 <!-- Saídas -->
-                <div class="bg-gray-50 rounded-2xl p-4 text-center">
-                    <div class="text-xs font-medium text-gray-500 mb-1">Saídas</div>
-                    <div class="text-xl font-bold text-red-600">R$ {{ number_format($this->monthlyExpense, 2, ',', '.') }}</div>
+                <div class="bg-red-50 rounded-lg p-3 border border-red-100 text-center">
+                    <div class="text-xs text-gray-500 mb-1">Saídas</div>
+                    <div class="text-lg font-bold text-red-600">R$ {{ number_format($this->monthlyExpense, 2, ',', '.') }}</div>
                 </div>
 
                 <!-- Sobrou no Mês -->
-                <div class="bg-gray-50 rounded-2xl p-4 text-center">
-                    <div class="text-xs font-medium text-gray-500 mb-1">Sobrou no Mês</div>
-                    <div class="text-xl font-bold {{ $this->monthlyBalance >= 0 ? 'text-blue-600' : 'text-red-600' }}">
+                <div class="bg-blue-50 rounded-lg p-3 border border-blue-100 text-center">
+                    <div class="text-xs text-gray-500 mb-1">Sobrou</div>
+                    <div class="text-lg font-bold {{ $this->monthlyBalance >= 0 ? 'text-blue-600' : 'text-red-600' }}">
                         R$ {{ number_format($this->monthlyBalance, 2, ',', '.') }}
                     </div>
                 </div>
             </div>
 
-            <!-- Consultor Sincero Alert -->
-            <div class="px-4 py-3 rounded-lg border {{ $this->monthlyBalance < 0 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200' }} flex items-start gap-3">
-                <i data-lucide="alert-triangle" class="w-5 h-5 {{ $this->monthlyBalance < 0 ? 'text-red-600' : 'text-green-600' }} flex-shrink-0 mt-0.5"></i>
-                <div>
-                    <span class="text-xs font-bold {{ $this->monthlyBalance < 0 ? 'text-red-700' : 'text-green-700' }} block mb-0.5">Consultor Sincero:</span>
-                    <p class="text-sm {{ $this->monthlyBalance < 0 ? 'text-red-600' : 'text-green-600' }}">
-                        {{ $this->monthlyBalance < 0
-                            ? 'Você gastou mais do que ganhou este mês. O Saldo Global tá pagando a conta.'
-                            : 'Sobrou dinheiro no mês! Não invente de gastar só porque sobrou.' }}
-                    </p>
-                </div>
+            <!-- Consultor Sincero - Com destaque suave -->
+            <div class="bg-purple-50 rounded-lg p-3 border border-purple-100 flex items-start gap-2">
+                <span class="text-lg flex-shrink-0">💭</span>
+                <p class="text-xs text-purple-700">
+                    {{ $this->monthlyBalance < 0
+                        ? 'Você gastou mais do que ganhou este mês. O Saldo Global tá pagando a conta.'
+                        : 'Sobrou dinheiro no mês! Não invente de gastar só porque sobrou.' }}
+                </p>
             </div>
         </div>
 
