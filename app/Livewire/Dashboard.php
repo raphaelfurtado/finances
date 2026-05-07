@@ -158,6 +158,41 @@ class Dashboard extends Component
     }
 
     #[Computed]
+    public function globalBalance()
+    {
+        $totals = Transaction::where('user_id', auth()->id())
+            ->selectRaw("COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) as total_income")
+            ->selectRaw("COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) as total_expense")
+            ->first();
+
+        return (float) $totals->total_income - (float) $totals->total_expense;
+    }
+
+    #[Computed]
+    public function monthlyIncome()
+    {
+        return (float) Transaction::where('user_id', auth()->id())
+            ->income()
+            ->byMonth($this->selectedMonth, $this->selectedYear)
+            ->sum('amount');
+    }
+
+    #[Computed]
+    public function monthlyExpense()
+    {
+        return (float) Transaction::where('user_id', auth()->id())
+            ->expense()
+            ->byMonth($this->selectedMonth, $this->selectedYear)
+            ->sum('amount');
+    }
+
+    #[Computed]
+    public function monthlyBalance()
+    {
+        return $this->monthlyIncome - $this->monthlyExpense;
+    }
+
+    #[Computed]
     public function categoryRanking()
     {
         return Transaction::where('user_id', auth()->id())
