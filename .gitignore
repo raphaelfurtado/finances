@@ -21,3 +21,6 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+phpunit_*.txt
+test_output.txt
+temp_calc.php

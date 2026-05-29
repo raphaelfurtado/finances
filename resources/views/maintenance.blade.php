@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Em Manutenção - Financas App</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    @include('partials.assets')
 </head>
 
 <body class="bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen flex items-center justify-center px-6">

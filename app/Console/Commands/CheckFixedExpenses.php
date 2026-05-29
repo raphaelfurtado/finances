@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\FixedExpense;
-use App\Models\User;
 use App\Notifications\FixedExpenseDue;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -23,11 +22,11 @@ class CheckFixedExpenses extends Command
         ]);
 
         try {
-            $targetDate = Carbon::now()->addDays(2);
-            $dueDay = $targetDate->day;
+            $today = Carbon::now()->startOfDay();
 
-            $expenses = FixedExpense::where('due_day', $dueDay)
-                ->where('is_active', true)
+            // Load active expenses that have started, then match on the clamped due
+            // date so bills due on the 29th-31st still fire in short months.
+            $expenses = FixedExpense::where('is_active', true)
                 ->where(function ($query) {
                     $query->whereNull('start_date')
                         ->orWhere('start_date', '<=', Carbon::now()->endOfMonth());
@@ -38,6 +37,11 @@ class CheckFixedExpenses extends Command
             $count = 0;
 
             foreach ($expenses as $expense) {
+                // Notify exactly 2 days before the (clamped) due date this month.
+                if ($today->diffInDays($expense->dueDateFor($today), false) !== 2) {
+                    continue;
+                }
+
                 $alreadyPaid = $expense->transactions()
                     ->whereMonth('date', Carbon::now()->month)
                     ->whereYear('date', Carbon::now()->year)

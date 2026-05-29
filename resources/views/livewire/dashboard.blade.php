@@ -1,34 +1,14 @@
 <div class="flex flex-col h-full bg-gray-50">
-    <!-- Header with Month Selector -->
-    <div class="bg-white px-6 py-4 border-b border-gray-100">
-        <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-3">
-                <i data-lucide="gift" class="w-8 h-8 text-blue-600"></i>
-                <div>
-                    <h1 class="text-xl font-bold text-gray-900">Minhas Finanças</h1>
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <a href="/importar-transacoes"
-                    class="flex items-center gap-2 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
-                    title="Importar Transações">
-                    <i data-lucide="upload-cloud" class="w-4 h-4"></i>
-                    <span class="text-xs font-bold uppercase tracking-wider hidden sm:inline">Importar</span>
-                </a>
-            </div>
-            <a href="/configuracoes" class="p-2 text-gray-400 hover:text-gray-600" title="Configurações">
-                <i data-lucide="settings" class="w-5 h-5"></i>
-            </a>
-        </div>
-
-        <div class="flex items-center justify-center gap-4 mt-3">
-            <button wire:click="previousMonth" class="p-1 text-gray-400 hover:text-gray-600">
+    <!-- Month Selector -->
+    <div class="bg-white px-6 py-3 border-b border-gray-100">
+        <div class="flex items-center justify-center gap-4">
+            <button wire:click="previousMonth" class="p-1.5 text-gray-400 hover:text-indigo-600 rounded-lg hover:bg-gray-50 transition-colors">
                 <i data-lucide="chevron-left" class="w-5 h-5"></i>
             </button>
-            <span class="text-sm font-medium text-gray-600">
-                {{ \Carbon\Carbon::create($selectedYear, $selectedMonth, 1)->locale('pt_BR')->isoFormat('MMMM YYYY') }}
+            <span class="text-sm font-bold text-gray-700 capitalize min-w-[150px] text-center">
+                {{ \Carbon\Carbon::create($selectedYear, $selectedMonth, 1)->locale('pt_BR')->isoFormat('MMMM [de] YYYY') }}
             </span>
-            <button wire:click="nextMonth" class="p-1 text-gray-400 hover:text-gray-600">
+            <button wire:click="nextMonth" class="p-1.5 text-gray-400 hover:text-indigo-600 rounded-lg hover:bg-gray-50 transition-colors">
                 <i data-lucide="chevron-right" class="w-5 h-5"></i>
             </button>
         </div>
@@ -72,9 +52,9 @@
         <!-- Notification Banner (WhatsApp style) -->
         <livewire:notification-banner />
 
-        <!-- Bloco 1: O Cofre (Saldo Global) -->
-        <div class="bg-blue-50 rounded-xl p-5 mb-6 border border-blue-100">
-            <div class="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-2">💰 Saldo em Contas</div>
+        <!-- Saldo Global (hero) -->
+        <div class="bg-indigo-50 rounded-2xl p-5 mb-6 border border-indigo-100">
+            <div class="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2">Saldo em Contas</div>
             <div class="mb-2">
                 <span class="text-4xl font-bold text-gray-900">R$ {{ number_format($this->globalBalance, 2, ',', '.') }}</span>
             </div>
@@ -100,22 +80,12 @@
                 </div>
 
                 <!-- Sobrou no Mês -->
-                <div class="bg-blue-50 rounded-lg p-3 border border-blue-100 text-center">
+                <div class="bg-indigo-50 rounded-lg p-3 border border-indigo-100 text-center">
                     <div class="text-xs text-gray-500 mb-1">Sobrou</div>
-                    <div class="text-lg font-bold {{ $this->monthlyBalance >= 0 ? 'text-blue-600' : 'text-red-600' }}">
+                    <div class="text-lg font-bold {{ $this->monthlyBalance >= 0 ? 'text-indigo-600' : 'text-red-600' }}">
                         R$ {{ number_format($this->monthlyBalance, 2, ',', '.') }}
                     </div>
                 </div>
-            </div>
-
-            <!-- Consultor Sincero - Com destaque suave -->
-            <div class="bg-purple-50 rounded-lg p-3 border border-purple-100 flex items-start gap-2">
-                <span class="text-lg flex-shrink-0">💭</span>
-                <p class="text-xs text-purple-700">
-                    {{ $this->monthlyBalance < 0
-                        ? 'Você gastou mais do que ganhou este mês. O Saldo Global tá pagando a conta.'
-                        : 'Sobrou dinheiro no mês! Não invente de gastar só porque sobrou.' }}
-                </p>
             </div>
         </div>
 
@@ -137,7 +107,7 @@
                         <h3 class="text-xs font-bold text-purple-200 uppercase tracking-wider mb-1">Consultor Sincero
                         </h3>
                         <p class="font-medium text-sm leading-relaxed">
-                            "{{ $advice }}"
+                            "{{ $this->advice }}"
                         </p>
                     </div>
                 </div>
@@ -189,17 +159,6 @@
                         </div>
                     @endif
                 </div>
-
-                <div class="bg-gray-50 px-6 py-4 border-t border-gray-50">
-                    <div class="flex items-start gap-3">
-                        <div class="bg-white p-1.5 rounded-lg shadow-sm">
-                            <i data-lucide="message-square" class="w-4 h-4 text-indigo-600"></i>
-                        </div>
-                        <p class="text-xs font-medium text-gray-600 leading-relaxed italic">
-                            "{{ $this->consultorComment }}"
-                        </p>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -207,7 +166,7 @@
         <div class="mb-20">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-bold text-gray-900">Transações Recentes</h2>
-                <a href="/transactions" class="text-sm font-semibold text-blue-600 hover:text-blue-700">Ver Todas</a>
+                <a href="/transactions" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700">Ver Todas</a>
             </div>
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -219,7 +178,7 @@
                 </div>
 
                 <!-- Transactions List -->
-                @forelse($recentTransactions as $transaction)
+                @forelse($this->recentTransactions as $transaction)
                     <a href="/transactions/{{ $transaction->id }}"
                         class="grid grid-cols-3 gap-4 px-4 py-4 border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer">
                         <div>

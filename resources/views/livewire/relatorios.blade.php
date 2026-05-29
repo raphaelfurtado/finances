@@ -139,7 +139,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ asset('js/chart.min.js') }}"></script>
     <script>
         let chartInstance = null;
 

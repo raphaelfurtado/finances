@@ -11,20 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-
-    <style type="text/tailwindcss">
-        @theme {
-            --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-            --color-primary: #4f46e5;
-            --color-primary-hover: #4338ca;
-        }
-        
-        .gradient-text {
-            @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600;
-        }
-    </style>
+    @include('partials.assets')
 </head>
 
 <body class="font-sans antialiased bg-white text-slate-800">
