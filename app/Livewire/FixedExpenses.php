@@ -3,11 +3,11 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\Attributes\Computed;
 use App\Models\FixedExpense;
 use App\Models\Category;
-use App\Models\Transaction;
+use App\Services\TransactionService;
 use Carbon\Carbon;
-use Illuminate\Validation\Rule;
 
 class FixedExpenses extends Component
 {
@@ -35,6 +35,15 @@ class FixedExpenses extends Component
     public $mark_as_paid_now = false;
     public $start_month = 'current';
 
+    /** Status ordering so action items (overdue/urgent) float to the top. */
+    private const STATUS_PRIORITY = [
+        'overdue' => 0,
+        'due_soon' => 1,
+        'pending' => 2,
+        'not_started' => 3,
+        'paid' => 4,
+    ];
+
     protected function rules()
     {
         return [
@@ -48,36 +57,41 @@ class FixedExpenses extends Component
         ];
     }
 
-    public function getTotalFixedExpenseProperty()
+    /**
+     * Single source of truth for the summary cards and the month progress bar.
+     * One query (active expenses + this month's transactions eager-loaded).
+     */
+    #[Computed]
+    public function overview()
     {
-        return FixedExpense::where('user_id', auth()->id())
-            ->where('is_active', true)
-            ->where('type', 'expense')
-            ->sum('amount');
-    }
+        $now = Carbon::now();
 
-    public function getTotalFixedIncomeProperty()
-    {
-        return FixedExpense::where('user_id', auth()->id())
+        $active = FixedExpense::where('user_id', auth()->id())
             ->where('is_active', true)
-            ->where('type', 'income')
-            ->sum('amount');
-    }
+            ->with(['transactions' => fn($q) => $q->whereMonth('date', $now->month)->whereYear('date', $now->year)])
+            ->get();
 
-    public function getActiveExpenseCountProperty()
-    {
-        return FixedExpense::where('user_id', auth()->id())
-            ->where('is_active', true)
-            ->where('type', 'expense')
-            ->count();
-    }
+        $expenses = $active->where('type', 'expense');
+        $incomes = $active->where('type', 'income');
 
-    public function getActiveIncomeCountProperty()
-    {
-        return FixedExpense::where('user_id', auth()->id())
-            ->where('is_active', true)
-            ->where('type', 'income')
-            ->count();
+        $expenseTotal = (float) $expenses->sum('amount');
+        $incomeTotal = (float) $incomes->sum('amount');
+
+        $paidItems = $expenses->filter(fn($e) => $e->status_this_month === 'paid');
+        $paid = (float) $paidItems->sum('amount');
+
+        return [
+            'expenseTotal' => $expenseTotal,
+            'expenseCount' => $expenses->count(),
+            'incomeTotal' => $incomeTotal,
+            'incomeCount' => $incomes->count(),
+            'recurringLeftover' => $incomeTotal - $expenseTotal,
+            'paid' => $paid,
+            'remaining' => max(0, $expenseTotal - $paid),
+            'paidCount' => $paidItems->count(),
+            'pendingCount' => $expenses->count() - $paidItems->count(),
+            'percent' => $expenseTotal > 0 ? min(100, (int) round(($paid / $expenseTotal) * 100)) : 0,
+        ];
     }
 
     public function openModal()
@@ -123,7 +137,7 @@ class FixedExpenses extends Component
         $this->dispatch('modal-opened');
     }
 
-    public function save()
+    public function save(TransactionService $transactions)
     {
         // Freemium check: limit to 1 fixed expense for free users
         if (!$this->editingId && !auth()->user()->is_premium) {
@@ -154,30 +168,8 @@ class FixedExpenses extends Component
         } else {
             $expense = FixedExpense::create($data);
 
-            // If user marked as already paid, create the transaction to mark as paid
             if ($this->mark_as_paid_now) {
-                $now = Carbon::now();
-
-                // Check if payment already exists for this month (safety)
-                $exists = Transaction::where('fixed_expense_id', $expense->id)
-                    ->whereMonth('date', $now->month)
-                    ->whereYear('date', $now->year)
-                    ->exists();
-
-                if (!$exists) {
-                    Transaction::create([
-                        'user_id' => auth()->id(),
-                        'category_id' => $expense->category_id,
-                        'type' => $expense->type,
-                        'amount' => $this->amount,
-                        'description' => 'Pgto: ' . $expense->title,
-                        'date' => $now,
-                        'payment_method' => 'other',
-                        'status' => 'paid',
-                        'is_recurring' => true,
-                        'fixed_expense_id' => $expense->id,
-                    ]);
-                }
+                $transactions->payFixedExpense($expense, (float) $this->amount);
             }
 
             session()->flash('message', 'Gasto fixo criado com sucesso!');
@@ -217,36 +209,17 @@ class FixedExpenses extends Component
         $this->reset(['selectedPaymentExpenseId', 'paymentAmount', 'paymentTitle']);
     }
 
-    public function registerPayment()
+    public function registerPayment(TransactionService $transactions)
     {
         $expense = FixedExpense::where('user_id', auth()->id())->findOrFail($this->selectedPaymentExpenseId);
 
-        $now = Carbon::now();
+        $payment = $transactions->payFixedExpense($expense, (float) $this->paymentAmount);
 
-        // Safety check to avoid double payment
-        $exists = Transaction::where('fixed_expense_id', $this->selectedPaymentExpenseId)
-            ->whereMonth('date', $now->month)
-            ->whereYear('date', $now->year)
-            ->exists();
-
-        if ($exists) {
+        if (!$payment) {
             session()->flash('error', 'Este pagamento já foi registrado este mês.');
             $this->closePaymentModal();
             return;
         }
-
-        Transaction::create([
-            'user_id' => auth()->id(),
-            'category_id' => $expense->category_id,
-            'type' => $expense->type,
-            'amount' => $this->paymentAmount,
-            'description' => 'Pgto: ' . $expense->title,
-            'date' => $now,
-            'payment_method' => 'other',
-            'status' => 'paid',
-            'is_recurring' => true,
-            'fixed_expense_id' => $expense->id,
-        ]);
 
         session()->flash('message', 'Pagamento registrado com sucesso!');
         $this->closePaymentModal();
@@ -255,14 +228,22 @@ class FixedExpenses extends Component
 
     public function render()
     {
-        $query = FixedExpense::where('user_id', auth()->id())->with('category');
+        $now = Carbon::now();
+
+        $query = FixedExpense::where('user_id', auth()->id())
+            ->with('category')
+            ->with(['transactions' => fn($q) => $q->whereMonth('date', $now->month)->whereYear('date', $now->year)]);
 
         if ($this->activeFilter !== 'all') {
             $query->where('type', $this->activeFilter);
         }
 
+        $fixedExpenses = $query->orderBy('due_day')->get()
+            ->sortBy(fn($e) => self::STATUS_PRIORITY[$e->status_this_month] ?? 9)
+            ->values();
+
         return view('livewire.fixed-expenses', [
-            'fixedExpenses' => $query->orderBy('due_day')->get(),
+            'fixedExpenses' => $fixedExpenses,
             'categories' => Category::where('user_id', auth()->id())->get(),
         ]);
     }

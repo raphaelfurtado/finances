@@ -90,4 +90,35 @@ class TransactionService
     {
         return Transaction::create($data);
     }
+
+    /**
+     * Register a payment for a fixed expense in the given month.
+     * Returns the created transaction, or null if it was already paid this month.
+     */
+    public function payFixedExpense(FixedExpense $expense, ?float $amount = null, ?Carbon $date = null): ?Transaction
+    {
+        $date = $date ?? Carbon::now();
+
+        $alreadyPaid = Transaction::where('fixed_expense_id', $expense->id)
+            ->whereMonth('date', $date->month)
+            ->whereYear('date', $date->year)
+            ->exists();
+
+        if ($alreadyPaid) {
+            return null;
+        }
+
+        return Transaction::create([
+            'user_id' => $expense->user_id,
+            'category_id' => $expense->category_id,
+            'type' => $expense->type,
+            'amount' => $amount ?? $expense->amount,
+            'description' => 'Pgto: ' . $expense->title,
+            'date' => $date,
+            'payment_method' => 'other',
+            'status' => 'paid',
+            'is_recurring' => true,
+            'fixed_expense_id' => $expense->id,
+        ]);
+    }
 }

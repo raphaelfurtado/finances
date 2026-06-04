@@ -11,134 +11,22 @@ class Dashboard extends Component
 {
     public $selectedMonth;
     public $selectedYear;
-    public $income = 0;
-    public $expenses = 0;
-    public $balance = 0;
-    public $incomeChange = 0;
-    public $expenseChange = 0;
-    public $recentTransactions = [];
 
-    protected $listeners = ['transaction-created' => 'loadData'];
+    protected $listeners = ['transaction-created' => '$refresh'];
 
     public function mount()
     {
         $this->selectedMonth = Carbon::now()->month;
         $this->selectedYear = Carbon::now()->year;
 
-        // Sync subscription if return from Stripe Checkout success
+        // Sync subscription if returning from Stripe Checkout success
         if (request()->query('checkout') === 'success') {
             try {
                 auth()->user()->updateSubscriptions();
-            } catch (\Exception $e) {
-                // Ignore if it fails, fallback to standard display
+            } catch (\Throwable $e) {
+                // Ignore; fall back to standard display
             }
         }
-
-        $this->loadData();
-    }
-
-    public function loadData()
-    {
-        $userId = auth()->id();
-
-        // Calcular receitas do mês
-        $this->income = Transaction::where('user_id', $userId)
-            ->income()
-            ->byMonth($this->selectedMonth, $this->selectedYear)
-            ->sum('amount');
-
-        // Calcular despesas do mês
-        $this->expenses = Transaction::where('user_id', $userId)
-            ->expense()
-            ->byMonth($this->selectedMonth, $this->selectedYear)
-            ->sum('amount');
-
-        // Calcular saldo líquido
-        $this->balance = $this->income - $this->expenses;
-
-        // Calcular mudanças percentuais (mês anterior)
-        $previousMonth = Carbon::create($this->selectedYear, $this->selectedMonth, 1)->subMonth();
-
-        $previousIncome = Transaction::where('user_id', $userId)
-            ->income()
-            ->byMonth($previousMonth->month, $previousMonth->year)
-            ->sum('amount');
-
-        $previousExpenses = Transaction::where('user_id', $userId)
-            ->expense()
-            ->byMonth($previousMonth->month, $previousMonth->year)
-            ->sum('amount');
-
-        $this->incomeChange = $previousIncome > 0
-            ? round((($this->income - $previousIncome) / $previousIncome) * 100)
-            : 0;
-
-        $this->expenseChange = $previousExpenses > 0
-            ? round((($this->expenses - $previousExpenses) / $previousExpenses) * 100)
-            : 0;
-
-        // Carregar transações recentes
-        $this->recentTransactions = Transaction::where('user_id', $userId)
-            ->with('category.parent')
-            ->recent(5)
-            ->get();
-
-        $this->generateAdvice($userId);
-    }
-
-    public $advice = '';
-
-    public function generateAdvice($userId)
-    {
-        $topExpense = Transaction::where('user_id', $userId)
-            ->expense()
-            ->byMonth($this->selectedMonth, $this->selectedYear)
-            ->selectRaw('category_id, sum(amount) as total')
-            ->groupBy('category_id')
-            ->orderByDesc('total')
-            ->with('category.parent')
-            ->first();
-
-        // Cenário 1: Gastou mais do que ganhou
-        if ($this->expenses > $this->income && $this->income > 0) {
-            $messages = [
-                "Parabéns! Você está oficialmente patrocinando a riqueza alheia enquanto empobrece.",
-                "Se continuar assim, o Serasa vai te mandar cartão de natal.",
-                "A conta não fecha, e a culpa não é da matemática.",
-            ];
-            $this->advice = $messages[array_rand($messages)];
-            return;
-        }
-
-        // Cenário 2: Gastou muito em uma categoria específica
-        if ($topExpense && $this->expenses > 0) {
-            $percentage = ($topExpense->total / $this->expenses) * 100;
-            if ($percentage > 40) {
-                $categoryName = $topExpense->category->name ?? 'coisas aleatórias';
-                $messages = [
-                    "Você trabalha só para pagar {$categoryName}? É o que parece.",
-                    "Se {$categoryName} fosse uma pessoa, vocês já estariam casados.",
-                    "Investir em {$categoryName} não aposenta ninguém, viu?",
-                ];
-                $this->advice = $messages[array_rand($messages)];
-                return;
-            }
-        }
-
-        // Cenário 3: Sobrou dinheiro (Milagre)
-        if ($this->balance > 0) {
-            $messages = [
-                "Sobrou dinheiro? Certeza que você não esqueceu de pagar nada?",
-                "Olha só, alguém está se sentindo o Lobo de Wall Street.",
-                "Não gaste tudo em negócio de Tigrinho, hein?",
-                "Milagre! Tá sobrando dinheiro.."
-            ];
-            $this->advice = $messages[array_rand($messages)];
-            return;
-        }
-
-        // Default
-        $this->advice = "Sua vida financeira está tão parada que nem eu tenho o que falar.";
     }
 
     public function previousMonth()
@@ -146,7 +34,6 @@ class Dashboard extends Component
         $date = Carbon::create($this->selectedYear, $this->selectedMonth, 1)->subMonth();
         $this->selectedMonth = $date->month;
         $this->selectedYear = $date->year;
-        $this->loadData();
     }
 
     public function nextMonth()
@@ -154,7 +41,46 @@ class Dashboard extends Component
         $date = Carbon::create($this->selectedYear, $this->selectedMonth, 1)->addMonth();
         $this->selectedMonth = $date->month;
         $this->selectedYear = $date->year;
-        $this->loadData();
+    }
+
+    #[Computed]
+    public function monthlyTotals()
+    {
+        $row = Transaction::where('user_id', auth()->id())
+            ->byMonth($this->selectedMonth, $this->selectedYear)
+            ->selectRaw("COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) as income")
+            ->selectRaw("COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) as expense")
+            ->first();
+
+        return [
+            'income' => (float) $row->income,
+            'expense' => (float) $row->expense,
+        ];
+    }
+
+    #[Computed]
+    public function monthlyIncome()
+    {
+        return $this->monthlyTotals['income'];
+    }
+
+    #[Computed]
+    public function monthlyExpense()
+    {
+        return $this->monthlyTotals['expense'];
+    }
+
+    #[Computed]
+    public function monthlyBalance()
+    {
+        return $this->monthlyIncome - $this->monthlyExpense;
+    }
+
+    #[Computed]
+    public function totalExpenses()
+    {
+        // Used as denominator for the spending bars; avoid division by zero.
+        return $this->monthlyExpense > 0 ? $this->monthlyExpense : 1;
     }
 
     #[Computed]
@@ -166,30 +92,6 @@ class Dashboard extends Component
             ->first();
 
         return (float) $totals->total_income - (float) $totals->total_expense;
-    }
-
-    #[Computed]
-    public function monthlyIncome()
-    {
-        return (float) Transaction::where('user_id', auth()->id())
-            ->income()
-            ->byMonth($this->selectedMonth, $this->selectedYear)
-            ->sum('amount');
-    }
-
-    #[Computed]
-    public function monthlyExpense()
-    {
-        return (float) Transaction::where('user_id', auth()->id())
-            ->expense()
-            ->byMonth($this->selectedMonth, $this->selectedYear)
-            ->sum('amount');
-    }
-
-    #[Computed]
-    public function monthlyBalance()
-    {
-        return $this->monthlyIncome - $this->monthlyExpense;
     }
 
     #[Computed]
@@ -207,40 +109,59 @@ class Dashboard extends Component
     }
 
     #[Computed]
-    public function totalExpenses()
+    public function recentTransactions()
     {
-        $total = Transaction::where('user_id', auth()->id())
-            ->expense()
-            ->byMonth($this->selectedMonth, $this->selectedYear)
-            ->sum('amount');
-
-        return $total > 0 ? $total : 1;
+        return Transaction::where('user_id', auth()->id())
+            ->with('category.parent')
+            ->recent(5)
+            ->get();
     }
 
     #[Computed]
-    public function consultorComment()
+    public function advice()
     {
-        $topCategory = $this->categoryRanking->first();
+        $income = $this->monthlyIncome;
+        $expense = $this->monthlyExpense;
+        $top = $this->categoryRanking->first();
 
-        if (!$topCategory || !$topCategory->category) {
-            return "Sua vida financeira está tão parada que nem eu tenho o que falar.";
+        // Gastou mais do que ganhou
+        if ($expense > $income && $income > 0) {
+            return $this->pick([
+                "Parabéns! Você está oficialmente patrocinando a riqueza alheia enquanto empobrece.",
+                "Se continuar assim, o Serasa vai te mandar cartão de natal.",
+                "A conta não fecha, e a culpa não é da matemática.",
+            ]);
         }
 
-        $categoryName = strtolower($topCategory->category->name);
-
-        if (str_contains($categoryName, 'ifood') || str_contains($categoryName, 'alimentação')) {
-            return "Patrocinador oficial do Delivery.";
+        // Concentrou o gasto em uma categoria
+        if ($top && $top->category && $expense > 0) {
+            $percentage = ($top->total_amount / $expense) * 100;
+            if ($percentage > 40) {
+                $name = $top->category->name;
+                return $this->pick([
+                    "Você trabalha só para pagar {$name}? É o que parece.",
+                    "Se {$name} fosse uma pessoa, vocês já estariam casados.",
+                    "Investir em {$name} não aposenta ninguém, viu?",
+                ]);
+            }
         }
 
-        if (str_contains($categoryName, 'uber') || str_contains($categoryName, 'transporte')) {
-            return "Já pensou em andar a pé? É de graça.";
+        // Sobrou dinheiro
+        if (($income - $expense) > 0) {
+            return $this->pick([
+                "Sobrou dinheiro? Certeza que você não esqueceu de pagar nada?",
+                "Olha só, alguém está se sentindo o Lobo de Wall Street.",
+                "Não gaste tudo em Tigrinho, hein?",
+                "Milagre! Tá sobrando dinheiro..",
+            ]);
         }
 
-        if (str_contains($categoryName, 'lazer') || str_contains($categoryName, 'bar')) {
-            return "Seu fígado pede socorro tanto quanto sua carteira.";
-        }
+        return "Sua vida financeira está tão parada que nem eu tenho o que falar.";
+    }
 
-        return "Seu maior gasto é com " . ($topCategory->category->name ?? 'coisas aleatórias') . ". Interessante...";
+    private function pick(array $messages): string
+    {
+        return $messages[array_rand($messages)];
     }
 
     public function render()

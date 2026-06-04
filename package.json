@@ -1,5 +1,15 @@
 {
+  "private": true,
+  "scripts": {
+    "build": "tailwindcss -i ./resources/css/app.css -o ./public/css/app.css --minify && npm run vendor",
+    "dev": "tailwindcss -i ./resources/css/app.css -o ./public/css/app.css --watch",
+    "vendor": "node -e \"const fs=require('fs');fs.mkdirSync('public/js',{recursive:true});fs.copyFileSync('node_modules/lucide/dist/umd/lucide.min.js','public/js/lucide.min.js');fs.copyFileSync('node_modules/chart.js/dist/chart.umd.min.js','public/js/chart.min.js')\""
+  },
   "dependencies": {
     "chart.js": "^4.5.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "lucide": "^0.500.0"
   }
 }

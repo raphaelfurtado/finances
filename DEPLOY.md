@@ -55,12 +55,22 @@ DB_PASSWORD=sua_senha_aqui
 ## Como Fazer Deploy
 
 1. Faça suas alterações localmente
-2. Commit:
+2. **Compile os assets** (CSS do Tailwind + libs JS). O deploy via FTP apenas
+   copia arquivos — ele NÃO roda build no servidor. Por isso o resultado em
+   `public/css/` e `public/js/` é versionado no git e precisa estar atualizado:
+   ```bash
+   npm install   # apenas na primeira vez
+   npm run build # gera public/css/app.css e copia lucide/chart para public/js
+   ```
+   > Sempre que você adicionar/alterar classes do Tailwind nos arquivos `.blade.php`,
+   > rode `npm run build` de novo antes do commit, senão o estilo novo não vai para
+   > produção. Durante o desenvolvimento, `npm run dev` recompila o CSS automaticamente.
+3. Commit:
    ```bash
    git add .
    git commit -m "Descrição das mudanças"
    ```
-3. Push para a branch main:
+4. Push para a branch main:
    ```bash
    git push origin main
    ```

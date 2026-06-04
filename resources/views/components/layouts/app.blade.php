@@ -14,38 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-    <style type="text/tailwindcss">
-        @theme {
-            --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-                'Segoe UI Symbol', 'Noto Color Emoji';
-        }
-
-        [x-cloak] { display: none !important; }
-
-        /* Master Performance: NProgress Style Loading Bar */
-        .livewire-loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(to right, #4f46e5, #818cf8);
-            z-index: 9999;
-            transform-origin: 0%;
-            animation: loading-bar 2s ease-out infinite;
-        }
-
-        @keyframes loading-bar {
-            0% { transform: scaleX(0); }
-            50% { transform: scaleX(0.7); }
-            100% { transform: scaleX(1); }
-        }
-    </style>
+    @include('partials.assets')
 </head>
 
 <body class="font-sans antialiased bg-gray-50 flex flex-col min-h-screen">
@@ -349,10 +318,6 @@
                 }
             });
         }
-
-        // Configurar Axios para Laravel
-        window.axios = axios;
-        window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
         // Register Service Worker for Push Notifications
         if ('serviceWorker' in navigator) {
