@@ -54,11 +54,11 @@
 
         <!-- Saldo Global (hero) -->
         <div class="bg-indigo-50 rounded-2xl p-5 mb-6 border border-indigo-100">
-            <div class="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2">Saldo em Contas</div>
+            <div class="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2">Saldo Acumulado</div>
             <div class="mb-2">
                 <span class="text-4xl font-bold text-gray-900">R$ {{ number_format($this->globalBalance, 2, ',', '.') }}</span>
             </div>
-            <p class="text-sm text-gray-600">O que você realmente tem hoje.</p>
+            <p class="text-sm text-gray-600">Tudo que entrou menos tudo que saiu. Não é o que tá no banco.</p>
         </div>
 
         <!-- Bloco 2: O Espelho do Mês (Fluxo Mensal) -->
